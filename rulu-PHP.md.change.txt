@@ -1,0 +1,101 @@
+Changes made to coder.md (PHP, CSS, JavaScript adaptation):
+
+Added JavaScript type-check script auto-detection and creation requirement (for TypeScript within JavaScript projects):
+
+Modified Code Quality Validation Requirements section (line 94-95).
+
+Updated Verification Phase section (line 184-185).
+
+Enhanced Initialization section (line 216).
+
+Key addition: If type-check script is not found in JavaScript projects that utilize TypeScript (e.g., React, Angular, Vue, Node, Deno), the Agent will automatically add it based on project type:
+
+Vue.js: vue-tsc
+
+React: tsc
+
+Angular: ng build --dry-run
+
+Node.js: tsc
+
+Deno: deno check
+
+This ensures consistent type checking validation across all TypeScript-based parts within JavaScript projects, regardless of their initial configuration.
+
+Added Deep Error Resolution Protocol requirement:
+
+Enhanced Research & Analysis Principles section (line 62).
+
+Updated Implementation Phase workflow (line 174).
+
+Key addition: When errors cannot be resolved after a few attempts, the Agent must perform in-depth web searches including library documentation, GitHub issues, Stack Overflow discussions, and community forums to identify solutions or alternative approaches. This ensures persistent problem-solving and comprehensive error resolution.
+
+Added MANDATORY CODEBASE SAFETY PROTOCOL requirement:
+
+Enhanced Research & Analysis Principles section (line 63).
+
+Updated Analysis & Research Phase workflow (lines 132-137).
+
+Enhanced Implementation Phase workflow (lines 169-171).
+
+Updated Initialization section (line 222).
+
+Key addition: ABSOLUTELY NEVER write or modify code without first conducting exhaustive codebase analysis to identify the exact location requiring modification. In large codebases where similar logic might exist in multiple places, use ALL available search methods to locate the precise file and function that needs modification. If multiple similar implementations are found, ask the user to specify the exact location to modify. NEVER make assumptions about which file to modify when multiple candidates exist. This safety requirement is NON-NEGOTIABLE and must be followed for every code modification task.
+
+This critical safety protocol ensures that the agent always has sufficient context and identifies the correct location for modifications in large codebases, preventing accidental changes to wrong code sections.
+
+Added Request Categorization System:
+
+Added comprehensive 3-level categorization system at the beginning of the prompt (lines 3-29).
+
+Defined Quick, Common, and Deep level requests with specific definitions, workflows, examples, and requirements.
+
+Added Categorization Protocol requiring explicit categorization before proceeding with any workflow.
+
+Ensures appropriate workflow selection based on request complexity while maintaining safety protocols.
+
+Key addition: All user requests must be categorized into Quick (simple edits), Common (standard coding tasks), or Deep (complex features) levels, with explicit categorization stated before proceeding. Each level has specific workflow requirements while maintaining the MANDATORY CODEBASE SAFETY PROTOCOL across all complexity levels.
+
+Added difficulty level assessment to English confirmation structure:
+
+Modified Language Requirements section (line 81).
+
+Enhanced the English confirmation structure to include difficulty assessment.
+
+Key addition: When confirming non-English requests, the agent must now include "Based on your request, the code snippets you provided, and the selected file, I assess the difficulty level as quick|common|deep" in the confirmation structure. This ensures consistent difficulty evaluation and categorization for all requests regardless of the original language used.
+
+Adapted comprehensive language-specific guidelines for PHP, CSS, and JavaScript:
+
+Enhanced Profile section expertise (line 39) and target audience (line 40) to specifically mention PHP, CSS, and JavaScript.
+
+Updated Technical Research & Analysis section (line 46) to include PHP, CSS, and JavaScript.
+
+Enhanced Dependency Analysis section (line 48) to reflect relevant package managers/tools for PHP (Composer), CSS, and JavaScript (npm/Yarn).
+
+Updated Implementation Excellence section (line 58) to include PHP, CSS, and JavaScript.
+
+Added PHP Language-Specific Standards (line 108) with modern PSRs, type hints, PHP 8+ features, OOP, and effective error handling.
+
+Added CSS Language-Specific Standards (line 108) with modern CSS methodologies, naming conventions (BEM), and responsiveness.
+
+Added JavaScript Language-Specific Standards (line 108) with modern ECMAScript, const/let, arrow functions, async/await, and effective error handling.
+
+Added PHP Error Handling pattern (line 118) with throw new Exception() or Error object.
+
+Added CSS (Not directly applicable) for error handling.
+
+Added JavaScript Error Handling pattern (line 118) with throw new Error().
+
+Updated Code Quality Validation Requirements (line 132) to include:
+
+PHP: PHP_CodeSniffer (PSR-12) or PHPStan/Psalm for static analysis.
+
+CSS: Stylelint for linting.
+
+JavaScript: ESLint for linting and type checking (if TypeScript is used) via npm run type-check.
+
+Enhanced Verification Phase (line 228) with PHP, CSS, and JavaScript-specific validation commands.
+
+Updated Initialization section (line 256) to include PHP, CSS, and JavaScript in language identification.
+
+Key adaptation: The Agent is now fully configured to support PHP, CSS, and JavaScript development with comprehensive guidelines covering their idioms, formatting standards, error handling patterns, quality validation requirements, and development best practices. This ensures consistent development approaches aligned with the philosophies of these specific languages.

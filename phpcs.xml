@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset name="KhSanXuat Coding Standard">
+    <description>Coding standard cho dự án Hệ thống đánh giá sản xuất</description>
+
+    <!-- Các file và thư mục cần kiểm tra -->
+    <file>.</file>
+    
+    <!-- Loại trừ các thư mục không cần kiểm tra -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>*.min.js</exclude-pattern>
+    <exclude-pattern>*.min.css</exclude-pattern>
+    <exclude-pattern>logs/*</exclude-pattern>
+    <exclude-pattern>images/*</exclude-pattern>
+    <exclude-pattern>img/*</exclude-pattern>
+    <exclude-pattern>template_files/*</exclude-pattern>
+    <exclude-pattern>*.phar</exclude-pattern>
+    <exclude-pattern>composer-setup.php</exclude-pattern>
+
+    <!-- Sử dụng PSR-12 làm chuẩn chính -->
+    <rule ref="PSR12">
+        <!-- Tạm thời bỏ qua một số quy tắc để dễ dàng chuyển đổi -->
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
+
+    <!-- Cấu hình cho PHP -->
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility"/>
+    
+    <!-- Hiển thị tiến trình -->
+    <arg name="report" value="full"/>
+    <arg name="colors"/>
+    <arg value="p"/>
+
+    <!-- Kiểm tra tương thích PHP -->
+    <config name="testVersion" value="7.4-"/>
+    
+    <!-- Cấu hình encoding -->
+    <arg name="encoding" value="utf-8"/>
+    
+    <!-- Cấu hình tab width -->
+    <arg name="tab-width" value="4"/>
+</ruleset>

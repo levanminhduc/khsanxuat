@@ -5,14 +5,15 @@ require "contdb.php"; // Đảm bảo rằng bạn đã kết nối với cơ s�
 /**
  * Kiểm tra trạng thái hoàn thành của một bộ phận
  */
-function checkDeptStatus($connect, $id_sanxuat, $dept) {
+function checkDeptStatus($connect, $id_sanxuat, $dept)
+{
     $sql = "SELECT completed FROM dept_status WHERE id_sanxuat = ? AND dept = ?";
     $stmt = $connect->prepare($sql);
     $stmt->bind_param("is", $id_sanxuat, $dept);
     $stmt->execute();
     $result = $stmt->get_result();
     $status = $result->fetch_assoc();
-    
+
     return (!$status || $status['completed'] == 0) ? false : true;
 }
 
@@ -23,7 +24,8 @@ function checkDeptStatus($connect, $id_sanxuat, $dept) {
  * @param string $dept Mã bộ phận
  * @return string|null Ngày hạn xử lý thấp nhất dạng Y-m-d hoặc null nếu không có
  */
-function getEarliestDeadline($connect, $id_sanxuat, $dept) {
+function getEarliestDeadline($connect, $id_sanxuat, $dept)
+{
     // Truy vấn lấy ngày hạn xử lý thấp nhất của các tiêu chí
     $sql = "SELECT MIN(dg.han_xuly) AS earliest_deadline
             FROM danhgia_tieuchi dg
@@ -31,16 +33,16 @@ function getEarliestDeadline($connect, $id_sanxuat, $dept) {
             WHERE dg.id_sanxuat = ? 
             AND tc.dept = ?
             AND dg.han_xuly IS NOT NULL";
-            
+
     $stmt = $connect->prepare($sql);
     $stmt->bind_param("is", $id_sanxuat, $dept);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($row = $result->fetch_assoc()) {
         return $row['earliest_deadline'];
     }
-    
+
     // Trả về null nếu không có hạn xử lý nào
     return null;
 }
@@ -63,11 +65,11 @@ $search_params = [];
 if (isset($_GET['search_value']) && !empty($_GET['search_value'])) {
     $search_value = $_GET['search_value'];
     $search_type = isset($_GET['search_type']) ? $_GET['search_type'] : 'xuong';
-    
+
     // Kiểm tra nếu tìm kiếm là "all" (không phân biệt hoa thường)
     if (strtolower($search_value) !== "all") {
         // Xác định trường cần tìm kiếm
-        switch($search_type) {
+        switch ($search_type) {
             case 'xuong':
                 $search_condition = " AND xuong LIKE ?";
                 break;
@@ -115,7 +117,7 @@ $completed_kho = 0;
 foreach ($rows as $row) {
     $kehoach_done = checkDeptStatus($connect, $row['stt'], 'kehoach');
     $kho_done = checkDeptStatus($connect, $row['stt'], 'kho');
-    
+
     if ($kehoach_done && $kho_done) {
         $completed_tasks++;
     }
@@ -173,31 +175,32 @@ foreach ($dept_stats as $dept => $completed) {
 }
 
 // Hàm kiểm tra xem Style có tiêu chí chưa hoàn thành không
-function hasIncompleteCriteria($connect, $style, $stt = null) {
+function hasIncompleteCriteria($connect, $style, $stt = null)
+{
     $sql = "SELECT COUNT(*) as count
             FROM khsanxuat kh
             JOIN danhgia_tieuchi dg ON kh.stt = dg.id_sanxuat
             JOIN tieuchi_dept tc ON dg.id_tieuchi = tc.id
             WHERE kh.style = ?";
-    
+
     if ($stt !== null) {
         $sql .= " AND kh.stt = ?";
     }
-    
+
     $sql .= " AND (dg.diem_danhgia = 0 OR dg.diem_danhgia IS NULL)";
-    
+
     $stmt = $connect->prepare($sql);
-    
+
     if ($stt !== null) {
         $stmt->bind_param("si", $style, $stt);
     } else {
         $stmt->bind_param("s", $style);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-    
+
     return ($row['count'] > 0);
 }
 
@@ -2415,13 +2418,13 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
         $min_percent = min($completion_rates);
 
         // Tìm tất cả bộ phận có tỷ lệ cao nhất
-        $best_depts = array_filter($completion_rates, function($percent) use ($max_percent) {
+        $best_depts = array_filter($completion_rates, function ($percent) use ($max_percent) {
             return $percent == $max_percent;
         });
         $best_dept_names = array_keys($best_depts);
 
         // Tìm tất cả bộ phận có tỷ lệ thấp nhất
-        $worst_depts = array_filter($completion_rates, function($percent) use ($min_percent) {
+        $worst_depts = array_filter($completion_rates, function ($percent) use ($min_percent) {
             return $percent == $min_percent;
         });
         $worst_dept_names = array_keys($worst_depts);
@@ -2431,19 +2434,19 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
         $show_worst = !($min_percent > 0 && count($worst_depts) == count($completion_rates)); // Không hiển thị "cần cải thiện" nếu tất cả bộ phận có cùng tỷ lệ > 0
         ?>
         
-        <?php if ($show_best): ?>
+        <?php if ($show_best) : ?>
         <div class="best-performer">
             <div class="eval-icon success">✓</div>
             <div class="eval-content">
                 <h4><?php echo count($best_dept_names) > 1 ? 'Các bộ phận hoạt động tốt nhất:' : 'Bộ phận hoạt động tốt nhất:'; ?></h4>
                 <p>
-                    <?php foreach ($best_dept_names as $index => $dept): ?>
+                    <?php foreach ($best_dept_names as $index => $dept) : ?>
                         <strong>
                             <a href="dept_statistics.php?dept=<?php echo $chart_departments[$dept]['code']; ?>&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: underline;">
                                 <?php echo $dept; ?>
                             </a>
                         </strong>
-                        <?php if ($index < count($best_dept_names) - 1): ?>
+                        <?php if ($index < count($best_dept_names) - 1) : ?>
                             <?php echo $index == count($best_dept_names) - 2 ? ' và ' : ', '; ?>
                         <?php endif; ?>
                     <?php endforeach; ?>
@@ -2453,25 +2456,25 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
         </div>
         <?php endif; ?>
 
-        <?php if ($show_worst): ?>
+        <?php if ($show_worst) : ?>
         <div class="worst-performer">
             <div class="eval-icon warning">!</div>
             <div class="eval-content">
                 <h4><?php echo count($worst_dept_names) > 1 ? 'Các bộ phận cần cải thiện:' : 'Bộ phận cần cải thiện:'; ?></h4>
                 <p>
-                    <?php foreach ($worst_dept_names as $index => $dept): ?>
+                    <?php foreach ($worst_dept_names as $index => $dept) : ?>
                         <strong>
                             <a href="dept_statistics.php?dept=<?php echo $chart_departments[$dept]['code']; ?>&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: underline;">
                                 <?php echo $dept; ?>
                             </a>
                         </strong>
-                        <?php if ($index < count($worst_dept_names) - 1): ?>
+                        <?php if ($index < count($worst_dept_names) - 1) : ?>
                             <?php echo $index == count($worst_dept_names) - 2 ? ' và ' : ', '; ?>
                         <?php endif; ?>
                     <?php endforeach; ?>
                     chỉ đạt <strong><?php echo $min_percent; ?>%</strong> tiến độ
                 </p>
-                <?php if ($min_percent < 50): ?>
+                <?php if ($min_percent < 50) : ?>
                     <div class="alert-message">
                         ⚠️ Cảnh báo: Tiến độ chuẩn bị thấp, cần có biện pháp cải thiện ngay!
                     </div>
@@ -2509,8 +2512,8 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
                 <div class="select-wrapper">
                     <i class="calendar-icon">📅</i>
                     <select name="month" id="month-select" onchange="changeMonth(this)">
-                        <?php foreach ($available_months as $month): ?>
-                            <?php 
+                        <?php foreach ($available_months as $month) : ?>
+                            <?php
                                 $month_name = date('m/Y', mktime(0, 0, 0, $month['month'], 1, $month['year']));
                                 $selected = ($month['month'] == $selected_month && $month['year'] == $selected_year) ? 'selected' : '';
                             ?>
@@ -2651,10 +2654,10 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
         foreach ($rows as $row) {
             $ngayin_formatted = date('d/m/Y', strtotime($row['ngayin']));
             $ngayout_formatted = date('d/m/Y', strtotime($row['ngayout']));
-            
+
             // Lấy hạn xử lý thấp nhất của bộ phận kế hoạch
             $kehoach_deadline = getEarliestDeadline($connect, $row['stt'], 'kehoach');
-            
+
             // Nếu không có hạn xử lý, sử dụng cách tính mặc định
             if (!$kehoach_deadline) {
                 $ngayin = new DateTime($row['ngayin']);
@@ -2664,10 +2667,10 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
             } else {
                 $kehoach_formatted = date('d/m/Y', strtotime($kehoach_deadline));
             }
-            
+
             // Lấy hạn xử lý thấp nhất của bộ phận kho
             $kho_deadline = getEarliestDeadline($connect, $row['stt'], 'kho');
-            
+
             // Nếu không có hạn xử lý, sử dụng cách tính mặc định
             if (!$kho_deadline) {
                 $ngayin = new DateTime($row['ngayin']);
@@ -2689,15 +2692,15 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
             $kcs_completed = checkDeptStatus($connect, $row['stt'], 'kcs');
             $ui_completed = checkDeptStatus($connect, $row['stt'], 'ui_thanh_pham');
             $hoanthanh_completed = checkDeptStatus($connect, $row['stt'], 'hoan_thanh');
-            
+
             // Chỉ đổi màu xanh khi tất cả bộ phận đều hoàn thành
-            $all_completed = $kehoach_completed && $chuanbi_completed && $kho_completed && 
-                            $cat_completed && $epkeo_completed && $codien_completed && 
-                            $chuyenmay_completed && $kcs_completed && $ui_completed && 
+            $all_completed = $kehoach_completed && $chuanbi_completed && $kho_completed &&
+                            $cat_completed && $epkeo_completed && $codien_completed &&
+                            $chuyenmay_completed && $kcs_completed && $ui_completed &&
                             $hoanthanh_completed;
-            
+
             $row_class = $all_completed ? 'style="background-color:rgba(107, 243, 141, 0.95);"' : '';
-            
+
             echo "<tr {$row_class}>";
             echo "<td><input type='checkbox' name='selected_rows[]' value='{$row['stt']}'></td>";
             echo "<td><a href='danhgia_hethong.php?id={$row['stt']}' style='color: inherit; text-decoration: underline;'>{$stt}</a></td>";
@@ -2715,7 +2718,7 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
             echo "<td class='text-center'>{$row['qty']}</td>";
             echo "<td><a href='edit_date.php?id={$row['stt']}' title='Chỉnh sửa ngày in' style='color:inherit; text-decoration:underline;'>{$ngayin_formatted}</a></td>";
             echo "<td>{$ngayout_formatted}</td>";
-            
+
             // Kế hoạch
             echo "<td>";
             if (!$kehoach_completed) {
@@ -2735,10 +2738,10 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
             echo "<td>";
             // Lấy hạn xử lý thấp nhất của bộ phận chuẩn bị SX
             $chuanbi_deadline = getEarliestDeadline($connect, $row['stt'], 'chuanbi_sanxuat_phong_kt');
-            
+
             // Nếu không có hạn xử lý, sử dụng ngày của kehoach
             $chuanbi_formatted_date = !$chuanbi_deadline ? $kehoach_formatted : date('d/m/Y', strtotime($chuanbi_deadline));
-            
+
             if (!$chuanbi_completed) {
                 echo "<div style='display: flex; align-items: center; justify-content: center; gap: 5px;'>";
                 echo "<div style='width: 20px; height: 20px; background: #ef4444; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;'>X</div>";
@@ -2780,13 +2783,13 @@ function hasIncompleteCriteria($connect, $style, $stt = null) {
 
             foreach ($departments as $dept_code => $dept_name) {
                 $dept_completed = checkDeptStatus($connect, $row['stt'], $dept_code);
-                
+
                 // Lấy hạn xử lý thấp nhất của bộ phận
                 $dept_deadline = getEarliestDeadline($connect, $row['stt'], $dept_code);
-                
+
                 // Nếu không có hạn xử lý, sử dụng ngày của kehoach
                 $dept_formatted_date = !$dept_deadline ? $kehoach_formatted : date('d/m/Y', strtotime($dept_deadline));
-                
+
                 echo "<td>";
                 if (!$dept_completed) {
                     echo "<div style='display: flex; align-items: center; justify-content: center; gap: 5px;'>";

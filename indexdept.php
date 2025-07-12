@@ -85,7 +85,7 @@ try {
     $so_ngay_xuly = isset($row['so_ngay_xuly']) ? intval($row['so_ngay_xuly']) : 7;
 
     // Tính hạn xử lý
-    if(isset($row['han_xuly']) && !empty($row['han_xuly'])) {
+    if (isset($row['han_xuly']) && !empty($row['han_xuly'])) {
         $han_xuly = new DateTime($row['han_xuly']);
         $han_xuly_formatted = $han_xuly->format('d/m/Y');
     } else {
@@ -93,11 +93,11 @@ try {
         if (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra') {
             $han_xuly = clone $ngayout;
             $han_xuly->modify("+{$so_ngay_xuly} days");
-        } else if (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra_tru') {
+        } elseif (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra_tru') {
             // Trường hợp mới: Ngày ra - Số ngày nhập
             $han_xuly = clone $ngayout;
             $han_xuly->modify("-{$so_ngay_xuly} days");
-        } else if (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_vao_cong') {
+        } elseif (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_vao_cong') {
             // Trường hợp mới: Ngày vào + Số ngày nhập
             $han_xuly = clone $ngayin;
             $han_xuly->modify("+{$so_ngay_xuly} days");
@@ -127,7 +127,7 @@ try {
 if (isset($_GET['success'])) {
     if ($_GET['success'] === 'updated') {
         echo '<div class="success-message">Cập nhật hạn xử lý thành công!</div>';
-    } else if ($_GET['success'] === 'updated_deadline') {
+    } elseif ($_GET['success'] === 'updated_deadline') {
         echo '<div class="success-message">Cập nhật hạn xử lý cho tiêu chí thành công!</div>';
     } else {
         echo '<div class="success-message">Lưu đánh giá thành công!</div>';
@@ -136,11 +136,11 @@ if (isset($_GET['success'])) {
 if (isset($_GET['error'])) {
     if ($_GET['error'] === 'not_authorized') {
         echo '<div class="error-message">Bạn không có quyền thực hiện thao tác này!</div>';
-    } else if ($_GET['error'] === 'missing_data') {
+    } elseif ($_GET['error'] === 'missing_data') {
         echo '<div class="error-message">Thiếu dữ liệu cần thiết!</div>';
-    } else if ($_GET['error'] === 'record_not_found') {
+    } elseif ($_GET['error'] === 'record_not_found') {
         echo '<div class="error-message">Không tìm thấy bản ghi!</div>';
-    } else if ($_GET['error'] === 'not_updated') {
+    } elseif ($_GET['error'] === 'not_updated') {
         echo '<div class="error-message">Cập nhật không thành công!</div>';
     } else {
         echo '<div class="error-message">Có lỗi xảy ra: ' . htmlspecialchars($_GET['error']) . '</div>';
@@ -322,7 +322,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
     </div>
 
     <div class="container">
-        <?php if (isset($_REQUEST['autoselect_image']) && $_REQUEST['autoselect_image'] == 1 && isset($_REQUEST['tieuchi_id'])): ?>
+        <?php if (isset($_REQUEST['autoselect_image']) && $_REQUEST['autoselect_image'] == 1 && isset($_REQUEST['tieuchi_id'])) : ?>
         <script>
             // Biến lưu ID tiêu chí cần tự động chọn từ URL
             var autoSelectTieuchiId = <?php echo intval($_REQUEST['tieuchi_id']); ?>;
@@ -351,15 +351,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                 <form action="add_criteria.php" method="POST">
                     <input type="hidden" name="dept" value="<?php echo $dept; ?>">
                     <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
-                    <?php if ($dept == 'chuanbi_sanxuat_phong_kt' || $dept == 'kho'): ?>
+                    <?php if ($dept == 'chuanbi_sanxuat_phong_kt' || $dept == 'kho') : ?>
                     <div class="form-group">
                         <label for="nhom">Nhóm:</label>
                         <select id="nhom" name="nhom" required class="form-control">
-                            <?php if ($dept == 'chuanbi_sanxuat_phong_kt'): ?>
+                            <?php if ($dept == 'chuanbi_sanxuat_phong_kt') : ?>
                                 <option value="Nhóm Nghiệp Vụ">a. Nhóm Nghiệp Vụ</option>
                                 <option value="Nhóm May Mẫu">b. Nhóm May Mẫu</option>
                                 <option value="Nhóm Quy Trình">c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền</option>
-                            <?php elseif ($dept == 'kho'): ?>
+                            <?php elseif ($dept == 'kho') : ?>
                                 <option value="Kho Nguyên Liệu">a. Kho Nguyên Liệu</option>
                                 <option value="Kho Phụ Liệu">b. Kho Phụ Liệu</option>
                             <?php endif; ?>
@@ -469,7 +469,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
 
                                     echo '<option value="">-- Tất cả xưởng --</option>';
                                     if ($result_xuong && $result_xuong->num_rows > 0) {
-                                        while($row_xuong = $result_xuong->fetch_assoc()) {
+                                        while ($row_xuong = $result_xuong->fetch_assoc()) {
                                             $selected = ($row_xuong['xuong'] == $xuong) ? 'selected' : '';
                                             echo '<option value="' . $row_xuong['xuong'] . '" ' . $selected . '>' . $row_xuong['xuong'] . '</option>';
                                         }
@@ -591,7 +591,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
 
                                                 while ($staff = $result_staff->fetch_assoc()) {
                                                     $selected = ($nguoi_chiu_trachnhiem_default == $staff['id']) ? 'selected' : '';
-                                                    echo '<option value="'.$staff['id'].'" '.$selected.'>'.$staff['ten'].'</option>';
+                                                    echo '<option value="' . $staff['id'] . '" ' . $selected . '>' . $staff['ten'] . '</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -640,7 +640,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                     <td><?php echo $ngayout_formatted; ?></td>
                     <td>
                         <a href="image_handler.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn-upload-image">
-                            <?php if ($image_count > 0): ?>
+                            <?php if ($image_count > 0) : ?>
                             <i class="fas fa-exclamation-triangle warning-icon"></i>
                             <span class="image-count-badge"><?php echo $image_count; ?></span>
                             <?php endif; ?>
@@ -663,8 +663,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                                 $file_count = $result_count_files->fetch_assoc()['file_count'];
                             }
 
-                            if ($file_count > 0):
-                            ?>
+                            if ($file_count > 0) :
+                                ?>
                             <i class="fas fa-exclamation-triangle warning-icon"></i>
                             <span class="file-count-badge"><?php echo $file_count; ?></span>
                             <?php endif; ?>
@@ -676,7 +676,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
         </table>
 
         <!-- Thêm vào phần hiển thị form, trước khi hiển thị các tiêu chí -->
-        <?php if (isset($error_message)): ?>
+        <?php if (isset($error_message)) : ?>
         <div class="alert alert-error" style="padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; background-color: #f8d7da;">
             <?php echo $error_message; ?>
         </div>
@@ -790,7 +790,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                             }
 
                             // Xử lý hạn xử lý cho từng tiêu chí
-                            if(isset($row['han_xuly']) && !empty($row['han_xuly'])) {
+                            if (isset($row['han_xuly']) && !empty($row['han_xuly'])) {
                                 // Sử dụng hạn xử lý riêng của tiêu chí nếu có
                                 $han_tc = new DateTime($row['han_xuly']);
                                 $han_tc_formatted = $han_tc->format('d/m/Y');
@@ -852,7 +852,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                                         if ($result_staff->num_rows > 0) {
                                             while ($staff = $result_staff->fetch_assoc()) {
                                                 $selected = ($row['nguoi_thuchien'] == $staff['id']) ? 'selected' : '';
-                                                echo "<option value='".$staff['id']."' $selected>".htmlspecialchars($staff['ten'])."</option>";
+                                                echo "<option value='" . $staff['id'] . "' $selected>" . htmlspecialchars($staff['ten']) . "</option>";
                                             }
                                         } else {
                                             // Dùng danh sách mặc định nếu không có dữ liệu
@@ -862,7 +862,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
 
                                             foreach ($nguoi_thuchien as $nguoi) {
                                                 $selected = ($row['nguoi_thuchien'] == $nguoi) ? 'selected' : '';
-                                                echo "<option value='".htmlspecialchars($nguoi)."' $selected>".htmlspecialchars($nguoi)."</option>";
+                                                echo "<option value='" . htmlspecialchars($nguoi) . "' $selected>" . htmlspecialchars($nguoi) . "</option>";
                                             }
                                         }
                                         ?>
@@ -876,12 +876,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                                             class="diem-dropdown"
                                             data-tieuchi-id="<?php echo $row['id']; ?>"
                                             onchange="updateStatus(this)">
-                                        <?php if ($dept == 'kehoach' && ($row['thutu'] == 7 || $row['thutu'] == 8)): ?>
+                                        <?php if ($dept == 'kehoach' && ($row['thutu'] == 7 || $row['thutu'] == 8)) : ?>
                                             <!-- Mức điểm đặc biệt cho tiêu chí 7 và 8 của Kế Hoạch -->
                                             <option value="0" <?php echo (!isset($row['diem_danhgia']) || $row['diem_danhgia'] === null || $row['diem_danhgia'] == 0) ? 'selected' : ''; ?>>0</option>
                                             <option value="0.5" <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] == 0.5) ? 'selected' : ''; ?>>0.5</option>
                                             <option value="1.5" <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] == 1.5) ? 'selected' : ''; ?>>1.5</option>
-                                        <?php else: ?>
+                                        <?php else : ?>
                                             <!-- Mức điểm mặc định cho các tiêu chí khác -->
                                             <option value="0" <?php echo (!isset($row['diem_danhgia']) || $row['diem_danhgia'] === null || $row['diem_danhgia'] == 0) ? 'selected' : ''; ?>>0</option>
                                             <option value="1" <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] == 1) ? 'selected' : ''; ?>>1</option>
@@ -933,7 +933,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                                     // Thay đổi màu sắc dựa vào phần trăm hoàn thành
                                     if ($percent < 30) {
                                         $bar_color = "#F44336"; // Đỏ
-                                    } else if ($percent < 70) {
+                                    } elseif ($percent < 70) {
                                         $bar_color = "#FFC107"; // Vàng
                                     }
                                     ?>
@@ -1970,7 +1970,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTotalPoints();
 
     // Kiểm tra tiêu chí 131 (tiêu chí số 5 của Kho Phụ Liệu)
-    <?php if ($dept == 'kho'): ?>
+    <?php if ($dept == 'kho') : ?>
     // Lấy select box cho tiêu chí 131 - sửa lại selector cho chính xác
     const select131 = document.querySelector('select[data-tieuchi-id="131"]');
 

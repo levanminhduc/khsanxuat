@@ -1,0 +1,53 @@
+{
+    "name": "khsanxuat/production-evaluation-system",
+    "description": "Hệ thống đánh giá sản xuất nhà máy",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "ext-mysqli": "*",
+        "phpoffice/phpspreadsheet": "^1.29"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "KhSanXuat\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KhSanXuat\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "check-style": "php phpcs.phar --standard=PSR12 --report=summary",
+        "check-style-detailed": "php phpcs.phar --standard=PSR12",
+        "fix-style": "php phpcbf.phar --standard=PSR12",
+        "check-main-files": [
+            "php phpcs.phar --standard=PSR12 --report=summary index.php",
+            "php phpcs.phar --standard=PSR12 --report=summary indexdept.php",
+            "php phpcs.phar --standard=PSR12 --report=summary db_connect.php",
+            "php phpcs.phar --standard=PSR12 --report=summary contdb.php"
+        ],
+        "fix-main-files": [
+            "php phpcbf.phar --standard=PSR12 db_connect.php",
+            "php phpcbf.phar --standard=PSR12 contdb.php",
+            "php phpcbf.phar --standard=PSR12 index.php",
+            "php phpcbf.phar --standard=PSR12 indexdept.php"
+        ],
+        "test": "echo 'No tests configured yet'",
+        "quality": [
+            "@check-main-files"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
