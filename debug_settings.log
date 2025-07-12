@@ -1,0 +1,31 @@
+Thời gian: 2025-03-15 07:25:47
+POST data: Array
+(
+    [dept] => kehoach
+    [ngay_tinh_han] => ngay_vao
+    [so_ngay_xuly] => 7
+    [xuong] => DỆT KIM
+)
+
+Raw input: dept=kehoach&ngay_tinh_han=ngay_vao&so_ngay_xuly=7&xuong=D%E1%BB%86T%20KIM
+-------------------------
+Thời gian: 2025-03-15 07:25:47
+POST data: Array
+(
+    [dept] => kehoach
+    [ngay_tinh_han] => ngay_vao
+    [so_ngay_xuly] => 7
+    [xuong] => DỆT KIM
+)
+
+Raw input: dept=kehoach&ngay_tinh_han=ngay_vao&so_ngay_xuly=7&xuong=D%E1%BB%86T%20KIM
+-------------------------
+Thời gian: 2025-03-15 07:27:41
+POST data: Array
+(
+    [dept] => kehoach
+    [settings] => [{"id_tieuchi":"1","ngay_tinh_han":"ngay_ra_tru","so_ngay_xuly":"1","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"2","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"3","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"159","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"4","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"5","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"21","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"6","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"21","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"7","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"21","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"8","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"9","ngay_tinh_han":"ngay_ra_tru","so_ngay_xuly":"1","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"10","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"23","ngay_tinh_han":"ngay_ra_tru","so_ngay_xuly":"1","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"24","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"25","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"48","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"54","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"2"}]
+)
+
+Raw input: dept=kehoach&settings=[{"id_tieuchi":"1","ngay_tinh_han":"ngay_ra_tru","so_ngay_xuly":"1","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"2","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"3","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"159","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"4","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"5","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"21","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"6","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"21","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"7","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"21","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"8","ngay_tinh_han":"ngay_vao","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"9","ngay_tinh_han":"ngay_ra_tru","so_ngay_xuly":"1","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"10","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"23","ngay_tinh_han":"ngay_ra_tru","so_ngay_xuly":"1","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"24","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"4"},{"id_tieuchi":"25","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"48","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"7","nguoi_chiu_trachnhiem":"2"},{"id_tieuchi":"54","ngay_tinh_han":"ngay_ra","so_ngay_xuly":"14","nguoi_chiu_trachnhiem":"2"}]
+-------------------------

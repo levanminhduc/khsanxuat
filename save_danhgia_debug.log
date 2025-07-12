@@ -1,0 +1,856 @@
+[07-Mar-2025 19:05:44 Europe/Berlin] [2025-03-07 19:05:44] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:05:44 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 0
+    [da_thuchien_25] => 0
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:05:44 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:05:44 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 0, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:05:44 Europe/Berlin] Đã cập nhật trạng thái: Chưa hoàn thành
+[07-Mar-2025 19:05:44 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:05:44 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:05:46 Europe/Berlin] [2025-03-07 19:05:46] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:05:46 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 0
+    [da_thuchien_25] => 0
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:05:46 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:05:46 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 0, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:05:46 Europe/Berlin] Đã cập nhật trạng thái: Chưa hoàn thành
+[07-Mar-2025 19:05:46 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:05:46 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:05:48 Europe/Berlin] [2025-03-07 19:05:48] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:05:48 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 0
+    [da_thuchien_25] => 0
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:05:48 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:05:48 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 0, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:05:48 Europe/Berlin] Đã cập nhật trạng thái: Chưa hoàn thành
+[07-Mar-2025 19:05:48 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:05:48 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:05:55 Europe/Berlin] [2025-03-07 19:05:55] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:05:55 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 0
+    [da_thuchien_25] => 0
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:05:55 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:05:55 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 0, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:05:55 Europe/Berlin] Đã cập nhật trạng thái: Chưa hoàn thành
+[07-Mar-2025 19:05:55 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:05:55 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:06:04 Europe/Berlin] [2025-03-07 19:06:04] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:06:04 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 0
+    [da_thuchien_25] => 0
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:06:04 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:06:04 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 0, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:06:04 Europe/Berlin] Đã cập nhật trạng thái: Chưa hoàn thành
+[07-Mar-2025 19:06:04 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:06:04 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:06:15 Europe/Berlin] [2025-03-07 19:06:15] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:06:15 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 1
+    [da_thuchien_25] => 1
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:06:15 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:06:15 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:06:15 Europe/Berlin] Đã cập nhật trạng thái: Hoàn thành
+[07-Mar-2025 19:06:15 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:06:15 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:06:19 Europe/Berlin] [2025-03-07 19:06:19] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:06:19 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 1
+    [da_thuchien_25] => 1
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:06:19 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:06:19 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:06:19 Europe/Berlin] Đã cập nhật trạng thái: Hoàn thành
+[07-Mar-2025 19:06:19 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:06:19 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php
+[07-Mar-2025 19:06:29 Europe/Berlin] [2025-03-07 19:06:29] Bắt đầu lưu đánh giá
+[07-Mar-2025 19:06:29 Europe/Berlin] POST Data: Array
+(
+    [id_sanxuat] => 1
+    [dept] => kehoach
+    [tieuchi_ids] => Array
+        (
+            [0] => 1
+            [1] => 2
+            [2] => 3
+            [3] => 4
+            [4] => 5
+            [5] => 6
+            [6] => 7
+            [7] => 8
+            [8] => 9
+            [9] => 10
+            [10] => 23
+            [11] => 24
+            [12] => 25
+        )
+
+    [nguoi_thuchien_1] => Nguyễn Văn A
+    [diem_danhgia_1] => 3
+    [da_thuchien_1] => 1
+    [ghichu_1] => 12321
+    [nguoi_thuchien_2] => Nguyễn Văn A
+    [diem_danhgia_2] => 1
+    [da_thuchien_2] => 1
+    [ghichu_2] => 123
+    [nguoi_thuchien_3] => Nguyễn Văn A
+    [diem_danhgia_3] => 1
+    [da_thuchien_3] => 1
+    [ghichu_3] => 1231
+    [nguoi_thuchien_4] => Nguyễn Văn A
+    [diem_danhgia_4] => 1
+    [da_thuchien_4] => 1
+    [ghichu_4] => 23
+    [nguoi_thuchien_5] => Nguyễn Văn A
+    [diem_danhgia_5] => 1
+    [da_thuchien_5] => 1
+    [ghichu_5] => 31
+    [nguoi_thuchien_6] => Nguyễn Văn A
+    [diem_danhgia_6] => 1
+    [da_thuchien_6] => 1
+    [ghichu_6] => 23
+    [nguoi_thuchien_7] => Nguyễn Văn A
+    [diem_danhgia_7] => 1
+    [da_thuchien_7] => 1
+    [ghichu_7] => 321
+    [nguoi_thuchien_8] => Nguyễn Văn A
+    [diem_danhgia_8] => 1
+    [da_thuchien_8] => 1
+    [ghichu_8] => 13
+    [nguoi_thuchien_9] => Nguyễn Văn A
+    [diem_danhgia_9] => 1
+    [da_thuchien_9] => 1
+    [ghichu_9] => đâ
+    [nguoi_thuchien_10] => Nguyễn Văn A
+    [diem_danhgia_10] => 1
+    [da_thuchien_10] => 1
+    [ghichu_10] => acấcc
+    [nguoi_thuchien_23] => Nguyễn Văn A
+    [diem_danhgia_23] => 1
+    [da_thuchien_23] => 1
+    [ghichu_23] => 
+    [nguoi_thuchien_24] => Nguyễn Văn A
+    [diem_danhgia_24] => 1
+    [da_thuchien_24] => 1
+    [ghichu_24] => 
+    [nguoi_thuchien_25] => Nguyễn Văn A
+    [diem_danhgia_25] => 1
+    [da_thuchien_25] => 1
+    [ghichu_25] => 
+)
+
+[07-Mar-2025 19:06:29 Europe/Berlin] Bắt đầu transaction
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý 13 tiêu chí từ form
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 1, Điểm: 3, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 1
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 2, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 2
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 3, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 3
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 4, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 4
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 5, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 5
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 6, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 6
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 7, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 7
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 8, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 8
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 9, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 9
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 10, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 10
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 23, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 23
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 24, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 24
+[07-Mar-2025 19:06:29 Europe/Berlin] Xử lý tiêu chí ID: 25, Điểm: 1, Người thực hiện: Nguyễn Văn A
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật tiêu chí ID: 25
+[07-Mar-2025 19:06:29 Europe/Berlin] Đã cập nhật trạng thái: Hoàn thành
+[07-Mar-2025 19:06:29 Europe/Berlin] Transaction đã commit thành công
+[07-Mar-2025 19:06:29 Europe/Berlin] Hoàn tất lưu đánh giá thành công, chuyển hướng về trang indexdept.php

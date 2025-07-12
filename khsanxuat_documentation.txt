@@ -1,0 +1,193 @@
+=======================================================
+TÀI LIỆU HỆ THỐNG QUẢN LÝ KẾ HOẠCH SẢN XUẤT (KHSANXUAT)
+=======================================================
+
+Version: 1.1
+Ngày cập nhật: 09/03/2024
+
+MỤC LỤC
+-------
+1. TỔNG QUAN HỆ THỐNG
+2. CẤU TRÚC THƯ MỤC VÀ FILE
+3. CẤU TRÚC CƠ SỞ DỮ LIỆU
+4. LUỒNG HOẠT ĐỘNG CHÍNH
+5. HƯỚNG DẪN BẢO TRÌ
+6. HƯỚNG DẪN MỞ RỘNG
+7. LIÊN HỆ HỖ TRỢ
+
+1. TỔNG QUAN HỆ THỐNG
+---------------------
+Hệ thống Quản lý Kế hoạch Sản xuất (KHSANXUAT) là ứng dụng web được phát triển để theo dõi và quản lý quy trình sản xuất, đánh giá tiến độ của các bộ phận, và tạo báo cáo thống kê. Hệ thống cho phép đánh giá các tiêu chí cho từng bộ phận và hiển thị các tiêu chí chưa hoàn thành để dễ dàng theo dõi.
+
+Các chức năng chính:
+- Theo dõi tiến độ sản xuất theo bộ phận/phòng ban
+- Đánh giá và hiển thị tỷ lệ hoàn thành của các bộ phận
+- Hiển thị danh sách các tiêu chí chưa hoàn thành
+- Xuất/nhập dữ liệu
+- Kiểm tra trạng thái hoàn thành tự động
+
+2. CẤU TRÚC THƯ MỤC VÀ FILE
+---------------------------
+Thư mục gốc: /khsanxuat/
+
+Các file chính:
+- index.php: Trang chính hiển thị tổng quan các số liệu và danh sách sản phẩm
+- indexdept.php: Trang chi tiết theo bộ phận, hiển thị các tiêu chí và cho phép đánh giá
+- incomplete_criteria.php: Hiển thị danh sách các tiêu chí chưa hoàn thành cho một style cụ thể
+- save_danhgia.php: Lưu đánh giá cho từng tiêu chí
+- add_criteria.php: Thêm tiêu chí mới
+- import.php: Nhập dữ liệu từ file
+- export.php: Xuất dữ liệu ra file
+- check_completion_status.php: Kiểm tra và cập nhật trạng thái hoàn thành
+- update_deadline.php và các file liên quan: Cập nhật hạn xử lý cho các tiêu chí
+- db_connect.php: Kết nối cơ sở dữ liệu
+- contdb.php: File kết nối database phụ
+
+Thư mục phụ:
+- img/: Chứa các hình ảnh và biểu tượng
+- vendor/: Thư viện của bên thứ ba
+
+Style:
+- style.css: File CSS chính cho toàn bộ hệ thống
+
+3. CẤU TRÚC CƠ SỞ DỮ LIỆU
+-------------------------
+Hệ thống sử dụng cơ sở dữ liệu MySQL/MariaDB với các bảng chính sau:
+
+1. khsanxuat
+   - stt (INT, PRIMARY KEY): ID tự động tăng
+   - style (VARCHAR): Mã kiểu dáng sản phẩm
+   - po (VARCHAR): Mã đơn hàng
+   - line1 (VARCHAR): Dây chuyền sản xuất
+   - xuong (VARCHAR): Xưởng sản xuất
+   - qty (INT): Số lượng cần sản xuất
+   - ngayin (DATE): Ngày vào sản xuất
+   - ngayout (DATE): Ngày ra sản xuất
+
+2. tieuchi_dept
+   - id (INT, PRIMARY KEY): ID tiêu chí
+   - dept (VARCHAR): Mã bộ phận (kehoach, kho, cat, ...)
+   - noidung (TEXT): Nội dung tiêu chí
+   - thutu (INT): Thứ tự hiển thị
+   - nhom (VARCHAR): Nhóm tiêu chí (chỉ áp dụng cho một số bộ phận)
+
+3. danhgia_tieuchi
+   - id (INT, PRIMARY KEY): ID đánh giá
+   - id_sanxuat (INT, FOREIGN KEY): Liên kết đến bảng khsanxuat
+   - id_tieuchi (INT, FOREIGN KEY): Liên kết đến bảng tieuchi_dept
+   - nguoi_thuchien (VARCHAR): Người thực hiện đánh giá
+   - diem_danhgia (INT): Điểm đánh giá (0: chưa hoàn thành, 1 hoặc 3: đã hoàn thành)
+   - ghichu (TEXT): Ghi chú cho tiêu chí
+
+4. dept_status
+   - id (INT, PRIMARY KEY): ID trạng thái
+   - id_sanxuat (INT, FOREIGN KEY): Liên kết đến bảng khsanxuat
+   - dept (VARCHAR): Mã bộ phận
+   - completed (TINYINT): Trạng thái hoàn thành (0/1)
+   - completed_date (DATE): Ngày hoàn thành
+
+Mối quan hệ giữa các bảng:
+- khsanxuat (1) -> (n) danhgia_tieuchi: Một sản phẩm có nhiều đánh giá tiêu chí
+- tieuchi_dept (1) -> (n) danhgia_tieuchi: Một tiêu chí có thể được đánh giá nhiều lần cho nhiều sản phẩm
+- khsanxuat (1) -> (n) dept_status: Một sản phẩm có nhiều trạng thái bộ phận
+
+4. LUỒNG HOẠT ĐỘNG CHÍNH
+-----------------------
+1. Trang Chính (index.php)
+   - Hiển thị danh sách các sản phẩm đang sản xuất
+   - Hiển thị trạng thái hoàn thành của từng bộ phận cho mỗi sản phẩm
+   - Cung cấp liên kết đến trang đánh giá chi tiết (indexdept.php)
+   - Cung cấp liên kết đến trang hiển thị tiêu chí chưa hoàn thành (incomplete_criteria.php)
+   - Hiển thị thống kê tỷ lệ hoàn thành của các bộ phận
+
+2. Trang Đánh Giá Chi Tiết (indexdept.php)
+   - Hiển thị danh sách các tiêu chí cho một sản phẩm và bộ phận cụ thể
+   - Cho phép đánh giá từng tiêu chí (đã hoàn thành/chưa hoàn thành)
+   - Cho phép nhập người thực hiện và ghi chú
+   - Tính toán tổng điểm đánh giá và tỷ lệ hoàn thành
+   - Lưu đánh giá vào cơ sở dữ liệu thông qua save_danhgia.php
+
+3. Trang Tiêu Chí Chưa Hoàn Thành (incomplete_criteria.php)
+   - Hiển thị danh sách các tiêu chí chưa hoàn thành cho một style cụ thể
+   - Nhóm các tiêu chí theo bộ phận và nhóm (nếu có)
+   - Hiển thị thông tin chi tiết về tiêu chí, người chịu trách nhiệm và ghi chú
+   - Cung cấp tính năng cuộn nhanh đến từng bộ phận
+
+4. Cập Nhật Hạn Xử Lý
+   - Cho phép cài đặt hạn xử lý cho các tiêu chí
+   - Cập nhật hạn xử lý chung hoặc riêng cho từng tiêu chí
+   - Lưu log cập nhật để theo dõi và debug
+
+5. Kiểm Tra Hoàn Thành
+   - Tự động kiểm tra trạng thái hoàn thành của các bộ phận
+   - Cập nhật bảng dept_status dựa trên kết quả đánh giá tiêu chí
+   - Có thể chạy tự động thông qua cron job hoặc batch script
+
+5. HƯỚNG DẪN BẢO TRÌ
+-------------------
+1. Cấu Trúc Code
+   - Các file PHP sử dụng mô hình procedural
+   - Kết nối database được tách riêng trong db_connect.php
+   - Các hàm tiện ích được định nghĩa trong từng file
+   - Sử dụng prepared statements để tránh SQL injection
+
+2. Xử Lý Lỗi và Debug
+   - Các file log: update_deadline_debug.log, save_danhgia_debug.log, completion_check.log
+   - Kiểm tra các log này khi gặp lỗi
+   - Sử dụng debug.php để hiển thị thông tin debug khi cần
+
+3. Bảo Mật
+   - Luôn sử dụng prepared statements cho truy vấn SQL
+   - Kiểm tra và làm sạch dữ liệu đầu vào
+   - Xử lý lỗi và rollback transaction khi cần
+
+4. Cập Nhật Database
+   - Khi thêm bộ phận mới, cần thêm vào các mảng $dept_names và $dept_colors trong index.php và incomplete_criteria.php
+   - Khi thêm tiêu chí mới, sử dụng add_criteria.php hoặc thêm trực tiếp vào bảng tieuchi_dept
+   - Khi cần thay đổi cấu trúc bảng, đảm bảo cập nhật tất cả các file liên quan
+
+5. Tối Ưu Hiệu Suất
+   - Sử dụng AJAX để giảm tải trang khi cần
+   - Tối ưu truy vấn SQL bằng cách sử dụng index và join hợp lý
+   - Giới hạn số lượng bản ghi trả về khi cần
+
+6. HƯỚNG DẪN MỞ RỘNG
+-------------------
+1. Thêm Bộ Phận Mới
+   - Thêm mã bộ phận vào mảng $dept_order, $dept_names và $dept_colors trong index.php và incomplete_criteria.php
+   - Thêm các tiêu chí cho bộ phận mới vào bảng tieuchi_dept
+   - Cập nhật giao diện hiển thị trong index.php và indexdept.php
+
+2. Thêm Tính Năng Mới
+   - Tạo file PHP mới cho tính năng
+   - Cập nhật các file liên quan để thêm liên kết đến tính năng mới
+   - Cập nhật cơ sở dữ liệu nếu cần
+
+3. Thay Đổi Giao Diện
+   - Chỉnh sửa file style.css
+   - Cập nhật HTML trong các file PHP
+   - Thêm JavaScript nếu cần tương tác động
+
+4. Tích Hợp Với Hệ Thống Khác
+   - Tạo API endpoints nếu cần
+   - Sử dụng cURL hoặc file_get_contents để gọi API bên ngoài
+   - Xử lý dữ liệu JSON hoặc XML khi trao đổi với hệ thống khác
+
+7. LIÊN HỆ HỖ TRỢ
+----------------
+Khi cần hỗ trợ, vui lòng cung cấp các thông tin sau:
+1. Mô tả chi tiết vấn đề gặp phải
+2. Các bước để tái hiện vấn đề
+3. Ảnh chụp màn hình lỗi (nếu có)
+4. Nội dung file log liên quan
+5. Phiên bản PHP, MySQL và trình duyệt đang sử dụng
+
+Để được hỗ trợ, vui lòng tham khảo file này và cung cấp thông tin chi tiết về vấn đề. Điều này sẽ giúp chúng tôi hiểu rõ hơn về hệ thống và cung cấp giải pháp nhanh chóng.
+
+=======================================================
+LƯU Ý QUAN TRỌNG
+=======================================================
+1. Luôn sao lưu dữ liệu trước khi thực hiện các thay đổi lớn
+2. Kiểm tra kỹ các truy vấn SQL trước khi thực thi
+3. Đảm bảo bảo mật thông tin đăng nhập và dữ liệu
+4. Cập nhật tài liệu này khi có thay đổi quan trọng về cấu trúc hoặc chức năng 

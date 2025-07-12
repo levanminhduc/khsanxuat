@@ -1,0 +1,226 @@
+=======================================================
+TÀI LIỆU HỆ THỐNG QUẢN LÝ KẾ HOẠCH SẢN XUẤT (KHSANXUAT)
+=======================================================
+
+Version: 1.0
+Ngày cập nhật: 07/03/2025
+
+MỤC LỤC
+-------
+1. TỔNG QUAN HỆ THỐNG
+2. CẤU TRÚC THƯ MỤC VÀ FILE
+3. CẤU TRÚC CƠ SỞ DỮ LIỆU
+4. CHỨC NĂNG CHÍNH
+5. HƯỚNG DẪN SỬ DỤNG
+6. CÁC TIỆN ÍCH ĐƯỢC SỬ DỤNG
+7. TÀI LIỆU KỸ THUẬT CHO DEVELOPER
+
+1. TỔNG QUAN HỆ THỐNG
+---------------------
+Hệ thống Quản lý Kế hoạch Sản xuất (KHSANXUAT) là ứng dụng web được phát triển để theo dõi và quản lý quy trình sản xuất, đánh giá tiến độ của các bộ phận, và tạo báo cáo thống kê. Hệ thống cho phép cài đặt hạn xử lý cho từng tiêu chí và cho toàn bộ quy trình, giúp đảm bảo sản xuất đúng tiến độ.
+
+Các chức năng chính:
+- Theo dõi tiến độ sản xuất theo bộ phận/phòng ban
+- Cài đặt và cập nhật hạn xử lý cho từng tiêu chí và toàn bộ quy trình
+- Đánh giá và hiển thị tỷ lệ hoàn thành của các bộ phận
+- Hiển thị biểu đồ thống kê trực quan
+- Xuất/nhập dữ liệu
+- Kiểm tra trạng thái hoàn thành tự động
+
+2. CẤU TRÚC THƯ MỤC VÀ FILE
+---------------------------
+Thư mục gốc: /khsanxuat/
+
+Các file chính:
+- index.php: Trang chính hiển thị tổng quan các số liệu và biểu đồ
+- indexdept.php: Trang chi tiết theo bộ phận, hiển thị các tiêu chí và cho phép cập nhật hạn xử lý
+- update_deadline.php: Xử lý cập nhật hạn xử lý chung cho tất cả tiêu chí
+- update_deadline_tieuchi.php: Xử lý cập nhật hạn xử lý cho từng tiêu chí riêng lẻ
+- update_deadline_ajax.php: Xử lý cập nhật hạn xử lý chung với AJAX (không chuyển hướng trang)
+- save_danhgia.php: Lưu đánh giá cho từng tiêu chí
+- add_criteria.php: Thêm tiêu chí mới
+- import.php: Nhập dữ liệu từ file
+- export.php: Xuất dữ liệu ra file
+- check_completion_status.php: Kiểm tra và cập nhật trạng thái hoàn thành
+- danhgia_hethong.php: Đánh giá hệ thống
+
+Thư mục phụ:
+- img/: Chứa các hình ảnh và biểu tượng
+- vendor/: Thư viện của bên thứ ba
+- js/: Thư viện JavaScript, bao gồm Chart.js
+
+Style:
+- style.css: File CSS chính cho toàn bộ hệ thống
+
+3. CẤU TRÚC CƠ SỞ DỮ LIỆU
+-------------------------
+Hệ thống sử dụng cơ sở dữ liệu MySQL/MariaDB với các bảng chính sau:
+
+1. danhgia_sanxuat
+   - id (INT, PRIMARY KEY): ID sản xuất
+   - style (VARCHAR): Mã kiểu dáng sản phẩm
+   - po (VARCHAR): Mã đơn hàng
+   - line (VARCHAR): Dây chuyền sản xuất
+   - xuong (VARCHAR): Xưởng sản xuất
+   - soluong (INT): Số lượng cần sản xuất
+   - ngay_vao (DATE): Ngày vào sản xuất
+   - ngay_ra (DATE): Ngày ra sản xuất
+   - ngay_kehoach (DATE): Ngày kế hoạch (nếu có)
+   - ngay_kho (DATE): Ngày kho chuẩn bị (nếu có)
+   - so_ngay_xuly (INT): Số ngày xử lý chung cho tất cả tiêu chí
+
+2. danhgia_tieuchi
+   - id (INT, PRIMARY KEY): ID tiêu chí
+   - id_sanxuat (INT, FOREIGN KEY): Liên kết đến bảng danhgia_sanxuat
+   - id_tieuchi (INT): ID của tiêu chí
+   - ten_tieuchi (VARCHAR): Tên tiêu chí
+   - id_dept (VARCHAR): Mã bộ phận
+   - han_xuly (DATE): Hạn xử lý cho tiêu chí
+   - so_ngay_xuly (INT): Số ngày xử lý cho tiêu chí cụ thể
+   - trang_thai (INT): Trạng thái hoàn thành (0: Chưa hoàn thành, 1: Đã hoàn thành)
+   - ngay_hoanthanh (DATE): Ngày hoàn thành thực tế
+   - ghi_chu (TEXT): Ghi chú cho tiêu chí
+
+3. users
+   - user_id (INT, PRIMARY KEY): ID người dùng
+   - username (VARCHAR): Tên đăng nhập
+   - password (VARCHAR): Mật khẩu (đã mã hóa)
+   - fullname (VARCHAR): Tên đầy đủ
+   - role (VARCHAR): Vai trò (admin, manager, user)
+   - department (VARCHAR): Bộ phận
+
+4. dept_info
+   - dept_code (VARCHAR, PRIMARY KEY): Mã bộ phận
+   - dept_name (VARCHAR): Tên bộ phận
+   - dept_color (VARCHAR): Mã màu cho biểu đồ
+   - display_order (INT): Thứ tự hiển thị
+
+4. CHỨC NĂNG CHÍNH
+-----------------
+1. Quản lý Kế hoạch Sản xuất
+   - Hiển thị danh sách các sản phẩm đang sản xuất
+   - Lọc và tìm kiếm theo các tiêu chí khác nhau
+   - Biểu đồ hiển thị tỷ lệ hoàn thành của các bộ phận
+
+2. Quản lý Tiêu chí
+   - Thêm, sửa, xóa tiêu chí
+   - Cài đặt hạn xử lý cho từng tiêu chí
+   - Đánh dấu tiêu chí đã hoàn thành
+
+3. Cài đặt Hạn xử lý
+   - Cài đặt chung cho tất cả tiêu chí
+   - Cài đặt riêng cho từng tiêu chí
+   - Tự động tính toán hạn xử lý dựa trên ngày vào
+
+4. Thống kê và Báo cáo
+   - Biểu đồ cột hiển thị tỷ lệ hoàn thành của từng bộ phận
+   - Đánh giá bộ phận hoàn thành tốt nhất và yếu nhất
+   - Cảnh báo khi tỷ lệ hoàn thành dưới 50%
+
+5. HƯỚNG DẪN SỬ DỤNG
+-------------------
+1. Trang Tổng quan (index.php)
+   - Hiển thị biểu đồ cột với tỷ lệ hoàn thành của các bộ phận
+   - Hiển thị đánh giá bộ phận hoàn thành tốt nhất và yếu nhất
+   - Hiển thị danh sách sản phẩm đang sản xuất
+
+2. Trang Chi tiết bộ phận (indexdept.php)
+   - Chọn bộ phận cần xem từ menu
+   - Hiển thị danh sách tiêu chí cho từng sản phẩm
+   - Cập nhật trạng thái hoàn thành của từng tiêu chí
+   - Cài đặt hạn xử lý chung hoặc riêng
+
+3. Cài đặt hạn xử lý:
+   a. Cài đặt chung:
+      - Nhấn vào nút "Cài đặt chung"
+      - Nhập số ngày cần trừ từ ngày vào
+      - Nhấn "Lưu cài đặt"
+      - Hệ thống sẽ cập nhật hạn xử lý cho tất cả tiêu chí
+
+   b. Cài đặt riêng:
+      - Nhập số ngày cần trừ vào ô bên cạnh tiêu chí
+      - Nhấn "Cập nhật"
+      - Hệ thống sẽ cập nhật hạn xử lý riêng cho tiêu chí đó
+
+4. Đánh dấu hoàn thành:
+   - Chọn checkbox bên cạnh tiêu chí đã hoàn thành
+   - Hệ thống tự động lưu trạng thái và cập nhật biểu đồ
+
+6. CÁC TIỆN ÍCH ĐƯỢC SỬ DỤNG
+---------------------------
+1. Front-end:
+   - HTML5/CSS3: Xây dựng giao diện người dùng
+   - JavaScript/AJAX: Xử lý tương tác người dùng không chuyển trang
+   - Chart.js: Tạo biểu đồ cột hiển thị tỷ lệ hoàn thành
+   - CSS Grid/Flexbox: Layout hiện đại, responsive
+
+2. Back-end:
+   - PHP 8.2.12: Xử lý logic server-side
+   - MySQL/MariaDB: Lưu trữ dữ liệu
+   - PDO/MySQLi: Kết nối và truy vấn cơ sở dữ liệu
+   - Session: Quản lý đăng nhập và xác thực
+   - JSON: Phản hồi AJAX và API
+
+3. Bảo mật:
+   - Kiểm tra phiên làm việc
+   - Lọc dữ liệu đầu vào
+   - Prepared Statements: Chống SQL Injection
+   - Log lỗi và debug
+
+4. Tối ưu hóa:
+   - AJAX: Giảm thiểu tải trang
+   - Transaction: Đảm bảo tính toàn vẹn dữ liệu
+   - Logging: Ghi lại các hoạt động quan trọng để debug
+
+7. TÀI LIỆU KỸ THUẬT CHO DEVELOPER
+---------------------------------
+1. Luồng cập nhật hạn xử lý:
+   
+   a. Cập nhật hạn xử lý chung:
+      - Người dùng nhập số ngày trong modal "Cài đặt chung"
+      - Gọi hàm JavaScript updateDeadlineAll()
+      - Gửi AJAX request đến update_deadline_ajax.php
+      - update_deadline_ajax.php cập nhật số ngày xử lý vào bảng danhgia_sanxuat
+      - Cập nhật hạn xử lý cho tất cả tiêu chí trong bảng danhgia_tieuchi
+      - Trả về kết quả dưới dạng JSON
+      - JavaScript cập nhật giao diện hiển thị ngày mới với hiệu ứng
+
+   b. Cập nhật hạn xử lý riêng:
+      - Người dùng nhập số ngày cho tiêu chí cụ thể
+      - Gọi hàm JavaScript updateDeadline()
+      - Gửi AJAX request đến update_deadline_tieuchi.php
+      - update_deadline_tieuchi.php cập nhật số ngày và hạn xử lý cho tiêu chí
+      - Trả về kết quả dưới dạng JSON
+      - JavaScript cập nhật hiển thị ngày mới với hiệu ứng
+
+2. Các thao tác cơ sở dữ liệu chính:
+   - SELECT: Lấy dữ liệu sản xuất, tiêu chí theo điều kiện
+   - INSERT: Thêm sản phẩm mới, tiêu chí mới
+   - UPDATE: Cập nhật hạn xử lý, trạng thái hoàn thành
+   - Transaction: Đảm bảo tính nhất quán khi cập nhật nhiều bảng
+
+3. Cấu trúc AJAX:
+   - XMLHttpRequest: Gửi và nhận dữ liệu từ server
+   - JSON.parse(): Xử lý phản hồi từ server
+   - Try/Catch: Xử lý lỗi phản hồi
+   - Cập nhật DOM: Hiển thị kết quả và thông báo
+
+4. Debug và Logs:
+   - update_deadline_debug.log: Lưu log cập nhật hạn xử lý
+   - completion_check.log: Lưu log kiểm tra hoàn thành
+   - JSON response: Chứa thông tin success, message, và dữ liệu
+
+5. Lưu ý bảo trì:
+   - Kiểm tra kết nối database trước khi thực hiện thao tác
+   - Sử dụng prepared statements để tránh SQL injection
+   - Xử lý lỗi và log để dễ dàng debug
+   - Kiểm tra quyền truy cập để bảo mật
+   - Transaction để đảm bảo tính toàn vẹn dữ liệu
+   - Validations dữ liệu đầu vào để tránh lỗi không mong muốn
+
+6. Cải tiến trong tương lai:
+   - Thêm API để tích hợp với các hệ thống khác
+   - Cải thiện bảo mật với JWT hoặc OAuth
+   - Thêm tính năng báo cáo nâng cao
+   - Tích hợp thông báo email/SMS khi có tiêu chí quá hạn
+   - Tối ưu hóa hiệu suất cho dữ liệu lớn 

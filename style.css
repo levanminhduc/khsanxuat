@@ -1,0 +1,392 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 20px;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #003366;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 30px;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left .logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.navbar-left .title {
+  font-size: 1.5rem;
+}
+
+.navbar-right {
+  display: flex;
+}
+
+.navbar-right .btn-add {
+  /* .navbar-right .btn-export { */
+  background-color: #fffb00;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.navbar-right .btn-export {
+  background-color: #6ce608;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 5px;
+}
+
+.navbar-right .btn-add:hover,
+.navbar-right .btn-export:hover {
+  background-color: #00e60c;
+}
+
+/* Table */
+.container {
+  padding: 20px;
+}
+
+.data-table {
+  width: 100%;
+  margin-top: 30px;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.data-table th {
+  background-color: #003366;
+  color: white;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Form */
+form {
+  text-align: center;
+  margin-top: 20px;
+}
+
+form input[type="file"] {
+  padding: 10px;
+  margin-right: 10px;
+}
+
+form button {
+  padding: 10px 20px;
+  background-color: #003366;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #0057b8;
+}
+
+/* Buttons */
+.btn-save {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.btn-save:hover {
+  background-color: #45a049;
+}
+
+.btn-back {
+  background-color: #666;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.btn-back:hover {
+  background-color: #555;
+}
+
+/* Checkbox styles */
+.checkbox-input {
+  display: none;
+}
+
+.checkbox {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0 auto;
+  border: 2px solid #ddd;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.checkbox.checked {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+.checkbox.unchecked {
+  background-color: #f44336;
+  border-color: #f44336;
+}
+
+.checkbox .checkmark {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 1;
+}
+
+/* Form elements */
+select,
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 60px;
+  resize: vertical;
+}
+
+/* Messages */
+.success-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+}
+
+.error-message {
+  background-color: #f2dede;
+  color: #a94442;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ebccd1;
+  border-radius: 4px;
+}
+
+/* Table styles */
+.evaluation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  table-layout: fixed;
+}
+
+.evaluation-table th {
+  background-color: #f2f2f2;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.evaluation-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  vertical-align: middle;
+}
+
+.evaluation-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.evaluation-table .col-criteria {
+  width: 30%;
+}
+
+.evaluation-table .col-deadline,
+.evaluation-table .col-person,
+.evaluation-table .col-points {
+  width: 15%;
+}
+
+.evaluation-table .col-note {
+  width: 25%;
+}
+
+.evaluation-section .evaluation-table select,
+.evaluation-section .evaluation-table input[type="date"],
+.evaluation-section .evaluation-table textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+@media screen and (max-width: 1024px) {
+  .evaluation-section {
+    padding: 10px;
+  }
+
+  .evaluation-table {
+    min-width: 900px;
+  }
+}
+
+/* Container styles */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f8fafc;
+}
+
+/* Button group styles */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  padding: 20px 0;
+}
+
+.btn-save {
+  background-color: #2563eb;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-back {
+  background-color: #64748b;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background-color: #475569;
+  transform: translateY(-1px);
+}
+
+/* Title styles */
+h2 {
+  color: #1e293b;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.action-buttons {
+  margin: 10px 0;
+  text-align: right;
+}
+
+.btn-delete {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-delete:hover {
+  background-color: #b91c1c;
+}
+
+.data-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+#select-all {
+  margin: 0;
+  padding: 0;
+}
+
+.data-table tbody tr.selected-row {
+  background-color: #fee2e2 !important; /* Màu đỏ nhẹ */
+  transition: background-color 0.3s ease;
+}
+
+.data-table tbody tr.selected-row:hover {
+  background-color: #fecaca !important; /* Màu đỏ nhẹ hơn khi hover */
+}
+
+/* Đảm bảo màu nền mặc định của các dòng chẵn không ảnh hưởng đến dòng được chọn */
+.data-table tbody tr.selected-row:nth-child(even) {
+  background-color: #fee2e2 !important;
+}

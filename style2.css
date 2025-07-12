@@ -1,0 +1,686 @@
+/* CSS cho các thành phần chính */
+.diem-select {
+  width: 85px;
+  padding: 3px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+  height: 30px;
+}
+
+/* CSS cho modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 8px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: black;
+}
+
+.modal-title {
+  margin-top: 0;
+  color: #1e40af;
+  font-size: 1.2em;
+}
+
+/* CSS cho form */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* CSS cho buttons */
+.btn-add-criteria {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.btn-add-criteria:hover {
+  background-color: #1d4ed8;
+}
+
+/* CSS cho layout */
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* CSS cho deadline */
+.deadline-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.deadline-date {
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
+  width: 100%;
+  border-radius: 4px;
+  padding: 3px;
+  transition: background-color 0.3s ease;
+}
+
+.deadline-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+  background-color: #f8f9fa;
+  padding: 5px;
+  border-radius: 4px;
+  width: 100%;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.deadline-form:hover {
+  background-color: #e6f0ff;
+  border-color: #ffffff;
+}
+
+/* Thêm style cho container chứa input và button */
+.deadline-form > div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* Thêm style cho container chứa select */
+.deadline-form > div:last-child {
+  margin-bottom: 0;
+}
+
+/* CSS cho dropdown ngày tính hạn */
+.ngay-tinh-han-select {
+  width: 152px !important;
+  padding: 5px 25px 5px 10px !important;
+  font-size: 12px !important;
+  background-color: #edf2f7 !important;
+  border: 1px solid #2563eb !important;
+  border-radius: 4px !important;
+  color: #1e40af !important;
+  cursor: pointer !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%232563eb" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') !important;
+  background-repeat: no-repeat !important;
+  background-position: right 5px center !important;
+  background-size: 15px !important;
+}
+
+select[id^="ngay_tinh_han_"] {
+  width: 100% !important;
+  padding: 3px 5px !important;
+  font-size: 12px !important;
+  margin-top: 2px !important;
+  height: 28px !important;
+}
+
+.deadline-input {
+  width: 45px;
+  padding: 3px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-right: 5px;
+  transition: border-color 0.2s ease;
+  height: 28px;
+}
+
+.deadline-input:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.deadline-button {
+  font-size: 10px;
+  padding: 3px 8px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.deadline-button:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.deadline-button:active {
+  transform: translateY(0);
+}
+
+/* CSS cho tooltips */
+.tooltip-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: #e2e8f0;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 18px;
+  font-size: 12px;
+  color: #4b5563;
+  cursor: help;
+  margin-left: 4px;
+}
+
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  z-index: 100;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background-color: #333;
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* CSS cho buttons nhỏ */
+.small-btn {
+  font-size: 9px;
+  padding: 1px 3px;
+}
+
+.small-btn:hover {
+  background-color: #374151;
+}
+
+/* CSS cho ghi chú */
+.note {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* CSS cho trạng thái quá hạn */
+.overdue {
+  color: #e53e3e;
+  font-weight: bold;
+  animation: blink 1.5s infinite;
+  border: 1px solid #fed7d7;
+  background-color: #fff5f5;
+  padding: 3px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(229, 62, 62, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.overdue::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shine 2s infinite;
+}
+
+/* CSS cho animations */
+@keyframes shine {
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes flashSuccess {
+  0% {
+    background-color: #d4edda;
+  }
+  50% {
+    background-color: #c3e6cb;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* CSS cho thông báo thành công */
+.update-success {
+  animation: flashSuccess 2s;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+  position: relative;
+  overflow: hidden;
+}
+
+.update-success::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.8) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  animation: successPulse 1.5s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* CSS cho checkbox */
+.checkbox {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  cursor: default;
+  text-align: center;
+  line-height: 25px;
+}
+
+.checkbox.checked {
+  background-color: #4caf50;
+  border-color: #4caf50;
+  color: white;
+}
+
+.checkbox.unchecked {
+  background-color: #f44336;
+  border-color: #f44336;
+  color: white;
+}
+
+.checkmark {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.checkbox-input {
+  display: none;
+}
+
+/* CSS cho responsive */
+@media screen and (max-width: 1200px) {
+  .evaluation-table th,
+  .evaluation-table td {
+    font-size: 13px;
+  }
+
+  select[name^="nguoi_thuchien_"] {
+    width: 140px;
+    padding: 2px;
+    font-size: 12px;
+    height: 28px;
+  }
+
+  .diem-select {
+    width: 80px;
+    height: 28px;
+  }
+}
+
+/* CSS cho bảng đánh giá */
+.evaluation-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.evaluation-table th {
+  padding: 8px 4px;
+  background-color: #2563eb;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: normal;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: 600;
+}
+
+.evaluation-table th.resizable {
+  resize: horizontal;
+  overflow: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .evaluation-table th {
+    font-size: 12px;
+    padding: 4px 2px;
+  }
+}
+
+/* CSS cho nút upload */
+.btn-upload-image {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-upload-image:hover {
+  background-color: #218838;
+  text-decoration: none;
+  color: white;
+}
+
+/* CSS cho badges */
+.image-count-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* CSS cho icons */
+.warning-icon {
+  color: #ffc107;
+  animation: blink 1.5s infinite;
+}
+
+/* CSS cho file upload */
+.btn-upload-file {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #0275d8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-upload-file:hover {
+  background-color: #025aa5;
+  text-decoration: none;
+  color: white;
+}
+
+.file-count-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
+}
+
+/* CSS cho người thực hiện */
+.nguoi-thuchien-select {
+  width: 160px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+  height: 70px;
+}
+
+select[name^="nguoi_thuchien_"] {
+  width: 160px;
+  padding: 5px 25px 5px 10px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  font-size: 13px;
+  height: 30px;
+  background-color: white;
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+  background-size: 15px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* CSS cho dropdown điểm đánh giá */
+.diem-dropdown {
+  width: 80px !important;
+  padding: 5px 25px 5px 10px !important;
+  font-size: 14px !important;
+  text-align: left !important;
+  border: 1px solid #007bff !important;
+  border-radius: 4px !important;
+  background-color: white !important;
+  color: #333 !important;
+  height: 30px !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') !important;
+  background-repeat: no-repeat !important;
+  background-position: right 5px center !important;
+  background-size: 15px !important;
+  cursor: pointer !important;
+}
+
+/* CSS cho navbar layout */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+/* CSS cho nút trên navbar */
+.navbar-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #1976d2;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-button:hover {
+  background-color: #1565c0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-button i {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* CSS mới cho nút upload tiêu chí (sử dụng cho thông báo popup) */
+.btn-upload-tieuchi {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-upload-tieuchi:hover {
+  background-color: #0069d9;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-upload-tieuchi:active {
+  background-color: #0062cc;
+  transform: translateY(1px);
+}
+
+/* CSS cho liên kết upload hình ảnh trong thông báo tiêu chí */
+.image-upload-link {
+  display: inline-block;
+  color: #007bff;
+  font-weight: 500;
+  text-decoration: underline;
+  padding: 5px 10px;
+  border-radius: 3px;
+  background-color: rgba(0, 123, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.image-upload-link:hover {
+  color: #0056b3;
+  background-color: rgba(0, 123, 255, 0.2);
+  text-decoration: underline;
+}
+
+.image-upload-link:active {
+  transform: translateY(1px);
+}

@@ -1,0 +1,175 @@
+=======================================================
+HƯỚNG DẪN SỬ DỤNG TRANG QUẢN LÝ KẾ HOẠCH SẢN XUẤT
+=======================================================
+
+Phiên bản: 1.0
+Ngày cập nhật: 09/03/2024
+
+MỤC LỤC
+-------
+1. TỔNG QUAN GIAO DIỆN
+2. CHỨC NĂNG CHÍNH
+3. HƯỚNG DẪN CHI TIẾT
+4. XUẤT DỮ LIỆU RA EXCEL
+5. XỬ LÝ SỰ CỐ
+
+1. TỔNG QUAN GIAO DIỆN
+---------------------
+Trang quản lý kế hoạch sản xuất (index.php) là trang chính của hệ thống, hiển thị tổng quan về tiến độ sản xuất của các bộ phận và danh sách chi tiết các sản phẩm đang sản xuất. Giao diện chính bao gồm:
+
+- Phần đầu trang: Hiển thị logo và tiêu đề hệ thống
+- Phần thống kê: Hiển thị biểu đồ tỷ lệ hoàn thành của các bộ phận
+- Phần đánh giá: Hiển thị bộ phận hoạt động tốt nhất và yếu nhất
+- Phần lọc dữ liệu: Cho phép chọn tháng/năm để xem dữ liệu
+- Bảng dữ liệu: Hiển thị danh sách chi tiết các sản phẩm và trạng thái của từng bộ phận
+
+2. CHỨC NĂNG CHÍNH
+-----------------
+Trang index.php cung cấp các chức năng chính sau:
+
+1. Xem tổng quan tiến độ sản xuất
+   - Biểu đồ cột hiển thị tỷ lệ hoàn thành của từng bộ phận
+   - Đánh giá bộ phận hoạt động tốt nhất và yếu nhất
+
+2. Lọc và xem dữ liệu theo tháng
+   - Chọn tháng/năm từ dropdown để xem dữ liệu tương ứng
+   - Hiển thị số lượng sản phẩm trong tháng đã chọn
+
+3. Xem danh sách sản phẩm
+   - Hiển thị thông tin chi tiết về từng sản phẩm
+   - Hiển thị trạng thái hoàn thành của từng bộ phận
+
+4. Truy cập trang đánh giá chi tiết
+   - Nhấp vào STT để xem trang đánh giá tổng thể
+   - Nhấp vào trạng thái của từng bộ phận để đánh giá chi tiết
+
+5. Xem tiêu chí chưa hoàn thành
+   - Nhấp vào Style để xem danh sách các tiêu chí chưa hoàn thành
+   - Biểu tượng cảnh báo (⚠️) hiển thị bên cạnh Style có tiêu chí chưa hoàn thành
+
+6. Xuất dữ liệu ra Excel
+   - Xuất toàn bộ dữ liệu hoặc dữ liệu đã lọc ra file Excel
+
+3. HƯỚNG DẪN CHI TIẾT
+--------------------
+### 3.1. Xem tổng quan tiến độ sản xuất
+
+1. Truy cập trang chủ (index.php)
+   - Mở trình duyệt và nhập địa chỉ: http://[tên-miền]/khsanxuat/index.php
+   - Hoặc nhấp vào logo ở góc trên bên trái từ bất kỳ trang nào
+
+2. Xem biểu đồ tỷ lệ hoàn thành
+   - Biểu đồ cột hiển thị tỷ lệ hoàn thành của từng bộ phận
+   - Di chuột qua từng cột để xem tỷ lệ chính xác
+
+3. Xem đánh giá bộ phận
+   - Phần "Bộ phận hoạt động tốt nhất" hiển thị bộ phận có tỷ lệ hoàn thành cao nhất
+   - Phần "Bộ phận cần cải thiện" hiển thị bộ phận có tỷ lệ hoàn thành thấp nhất
+
+### 3.2. Lọc và xem dữ liệu theo tháng
+
+1. Chọn tháng/năm từ dropdown
+   - Nhấp vào dropdown "Tháng" ở phía trên bảng dữ liệu
+   - Chọn tháng/năm muốn xem từ danh sách
+
+2. Xem dữ liệu đã lọc
+   - Hệ thống sẽ tự động tải lại trang và hiển thị dữ liệu của tháng đã chọn
+   - Biểu đồ và thống kê cũng sẽ được cập nhật theo dữ liệu mới
+
+### 3.3. Xem danh sách sản phẩm
+
+1. Cuộn xuống phần bảng dữ liệu
+   - Bảng hiển thị danh sách các sản phẩm với các thông tin: STT, Xưởng, LINE, PO, Style, Qty, In, Out
+   - Các cột tiếp theo hiển thị trạng thái hoàn thành của từng bộ phận
+
+2. Xem trạng thái hoàn thành
+   - Biểu tượng ✓ (màu xanh): Bộ phận đã hoàn thành
+   - Biểu tượng X (màu đỏ): Bộ phận chưa hoàn thành
+   - Dòng có nền xanh nhạt: Tất cả bộ phận đã hoàn thành
+
+### 3.4. Truy cập trang đánh giá chi tiết
+
+1. Xem đánh giá tổng thể
+   - Nhấp vào số STT của sản phẩm để mở trang đánh giá tổng thể (danhgia_hethong.php)
+   - Trang này hiển thị tổng quan về tất cả các bộ phận
+
+2. Xem và đánh giá chi tiết từng bộ phận
+   - Nhấp vào ngày bên cạnh trạng thái của bộ phận để mở trang đánh giá chi tiết (indexdept.php)
+   - Chọn bộ phận từ dropdown nếu muốn chuyển sang bộ phận khác
+   - Đánh giá từng tiêu chí và lưu kết quả
+
+### 3.5. Xem tiêu chí chưa hoàn thành
+
+1. Nhận diện Style có tiêu chí chưa hoàn thành
+   - Style có tiêu chí chưa hoàn thành sẽ có biểu tượng cảnh báo (⚠️) bên cạnh
+
+2. Xem danh sách tiêu chí chưa hoàn thành
+   - Nhấp vào Style để mở trang danh sách tiêu chí chưa hoàn thành (incomplete_criteria.php)
+   - Trang này hiển thị tất cả các tiêu chí chưa hoàn thành, được nhóm theo bộ phận
+   - Nhấp vào thẻ bộ phận ở phía trên để cuộn nhanh đến bộ phận tương ứng
+
+4. XUẤT DỮ LIỆU RA EXCEL
+-----------------------
+### 4.1. Xuất toàn bộ dữ liệu
+
+1. Truy cập trang chủ (index.php)
+   - Đảm bảo bạn đang ở trang chính của hệ thống
+
+2. Nhấp vào nút "Xuất Excel"
+   - Nút này nằm ở phía trên bảng dữ liệu, bên cạnh dropdown chọn tháng
+   - Hệ thống sẽ tạo file Excel chứa toàn bộ dữ liệu hiện tại
+
+3. Lưu file Excel
+   - Trình duyệt sẽ tự động tải xuống file Excel
+   - Tên file có định dạng: KH_RaiChuyen_[ngày]_[giờ].xlsx
+
+### 4.2. Xuất dữ liệu đã lọc
+
+1. Lọc dữ liệu theo tháng
+   - Chọn tháng/năm từ dropdown như đã hướng dẫn ở mục 3.2
+
+2. Nhấp vào nút "Xuất Excel"
+   - Hệ thống sẽ tạo file Excel chứa dữ liệu của tháng đã chọn
+
+3. Lưu file Excel
+   - Trình duyệt sẽ tự động tải xuống file Excel
+   - File Excel bao gồm các cột: STT, XƯỞNG, LINE, PO, STYLE, QTY, NGÀY VÀO, NGÀY RA, NGÀY KẾ HOẠCH, NGÀY KHO
+
+### 4.3. Cấu trúc file Excel xuất ra
+
+File Excel xuất ra có cấu trúc như sau:
+- Dòng 1: Tiêu đề các cột (STT, XƯỞNG, LINE, PO, STYLE, QTY, NGÀY VÀO, NGÀY RA, NGÀY KẾ HOẠCH, NGÀY KHO)
+- Dòng 2 trở đi: Dữ liệu của từng sản phẩm
+- Định dạng ngày: DD/MM/YYYY
+- Các ô được định dạng với viền và căn chỉnh phù hợp
+
+5. XỬ LÝ SỰ CỐ
+-------------
+### 5.1. Không thể xuất Excel
+
+Nếu bạn gặp vấn đề khi xuất Excel, hãy kiểm tra:
+- Đảm bảo thư viện PhpSpreadsheet đã được cài đặt đúng cách
+- Kiểm tra quyền ghi file trong thư mục tạm của server
+- Thử làm mới trang và xuất lại
+
+### 5.2. Dữ liệu không hiển thị đúng
+
+Nếu dữ liệu không hiển thị đúng, hãy kiểm tra:
+- Đảm bảo kết nối database hoạt động bình thường
+- Kiểm tra xem có dữ liệu trong tháng đã chọn không
+- Thử chọn tháng khác để xem dữ liệu có hiển thị không
+
+### 5.3. Biểu đồ không hiển thị
+
+Nếu biểu đồ không hiển thị, hãy kiểm tra:
+- Đảm bảo JavaScript được bật trong trình duyệt
+- Kiểm tra console của trình duyệt để xem có lỗi JavaScript không
+- Thử làm mới trang hoặc sử dụng trình duyệt khác
+
+=======================================================
+LƯU Ý QUAN TRỌNG
+=======================================================
+1. Đảm bảo đăng nhập vào hệ thống trước khi sử dụng các chức năng
+2. Không đóng trình duyệt khi đang trong quá trình xuất dữ liệu
+3. Nên sử dụng các trình duyệt hiện đại như Chrome, Firefox, Edge để có trải nghiệm tốt nhất
+4. Liên hệ quản trị viên nếu gặp vấn đề không thể tự khắc phục 

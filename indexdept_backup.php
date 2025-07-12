@@ -1,0 +1,2353 @@
+<?php
+// Bật hiển thị lỗi để dễ debug
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+// Kết nối database
+include 'db_connect.php';
+
+// Kiểm tra kết nối
+if (!$connect) {
+    die("Lỗi kết nối database");
+}
+
+// Khởi tạo phiên làm việc nếu chưa có
+session_start();
+
+// Lấy thông tin từ URL
+$dept = isset($_GET['dept']) ? $_GET['dept'] : '';
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
+
+// Tạm thời bỏ kiểm tra user
+// $is_admin = isset($_SESSION['username']) && $_SESSION['username'] === 'admin';
+$is_admin = true; // Để test, tạm thời coi như tất cả người dùng là admin
+
+// Ánh xạ tên hiển thị cho từng bộ phận
+$dept_names = [
+    'kehoach' => 'BỘ PHẬN KẾ HOẠCH',
+    'chuanbi_sanxuat_phong_kt' => 'BỘ PHẬN CHUẨN BỊ SẢN XUẤT (PHÒNG KT)',
+    'kho' => 'KHO NGUYÊN, PHỤ LIỆU',
+    'cat' => 'BỘ PHẬN CẮT',
+    'ep_keo' => 'BỘ PHẬN ÉP KEO',
+    'co_dien' => 'BỘ PHẬN CƠ ĐIỆN',
+    'chuyen_may' => 'BỘ PHẬN CHUYỀN MAY',
+    'kcs' => 'BỘ PHẬN KCS',
+    'ui_thanh_pham' => 'BỘ PHẬN ỦI THÀNH PHẨM',
+    'hoan_thanh' => 'BỘ PHẬN HOÀN THÀNH'
+];
+
+// Lấy tên hiển thị của bộ phận
+$dept_display_name = isset($dept_names[$dept]) ? $dept_names[$dept] : 'KHÔNG XÁC ĐỊNH';
+
+try {
+    // Query để lấy dữ liệu từ database dựa trên STT
+    $sql = "SELECT line1, xuong, po, style, qty, ngayin, ngayout, han_xuly, so_ngay_xuly FROM khsanxuat WHERE stt = ?";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        die("Không tìm thấy dữ liệu");
+    }
+    
+    $row = $result->fetch_assoc();
+
+    // Gán giá trị từ database
+    $line = $row['line1'];
+    $xuong = $row['xuong'];
+    $po = $row['po'];
+    $style = $row['style'];
+    $qty = $row['qty'];
+
+    // Xử lý định dạng ngày
+    $ngayin = new DateTime($row['ngayin']);
+    $ngayout = new DateTime($row['ngayout']);
+    $ngayin_formatted = $ngayin->format('d/m/Y');
+    $ngayout_formatted = $ngayout->format('d/m/Y');
+
+    // Lấy số ngày xử lý từ database hoặc mặc định
+    $so_ngay_xuly = isset($row['so_ngay_xuly']) ? intval($row['so_ngay_xuly']) : 7;
+    
+    // Tính hạn xử lý
+    if(isset($row['han_xuly']) && !empty($row['han_xuly'])) {
+        $han_xuly = new DateTime($row['han_xuly']);
+        $han_xuly_formatted = $han_xuly->format('d/m/Y');
+    } else {
+        // Kiểm tra phương thức tính hạn xử lý
+        if (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra') {
+            $han_xuly = clone $ngayout;
+            $han_xuly->modify("+{$so_ngay_xuly} days");
+        } else if (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra_tru') {
+            // Trường hợp mới: Ngày ra - Số ngày nhập
+            $han_xuly = clone $ngayout;
+            $han_xuly->modify("-{$so_ngay_xuly} days");
+        } else {
+            $han_xuly = clone $ngayin;
+            $han_xuly->modify("-{$so_ngay_xuly} days");
+        }
+        $han_xuly_formatted = $han_xuly->format('d/m/Y');
+    }
+
+    // Xử lý ngày kế hoạch nếu là bộ phận kế hoạch
+    if ($dept == 'kehoach') {
+        $plan_date = clone $ngayin;
+        $plan_date->modify('-7 days');
+        $plan_date_formatted = $plan_date->format('d/m/Y');
+    }
+    if ($dept == 'kho') {
+        $plan_date = clone $ngayin;
+        $plan_date->modify('-14 days');
+        $khochuanbi_formatted = $plan_date->format('d/m/Y');
+    }
+} catch (Exception $e) {
+    die("Lỗi truy vấn: " . $e->getMessage());
+}
+
+// Hiển thị thông báo thành công/lỗi nếu có
+if (isset($_GET['success'])) {
+    if ($_GET['success'] === 'updated') {
+        echo '<div class="success-message">Cập nhật hạn xử lý thành công!</div>';
+    } else if ($_GET['success'] === 'updated_deadline') {
+        echo '<div class="success-message">Cập nhật hạn xử lý cho tiêu chí thành công!</div>';
+    } else {
+        echo '<div class="success-message">Lưu đánh giá thành công!</div>';
+    }
+}
+if (isset($_GET['error'])) {
+    if ($_GET['error'] === 'not_authorized') {
+        echo '<div class="error-message">Bạn không có quyền thực hiện thao tác này!</div>';
+    } else if ($_GET['error'] === 'missing_data') {
+        echo '<div class="error-message">Thiếu dữ liệu cần thiết!</div>';
+    } else if ($_GET['error'] === 'record_not_found') {
+        echo '<div class="error-message">Không tìm thấy bản ghi!</div>';
+    } else if ($_GET['error'] === 'not_updated') {
+        echo '<div class="error-message">Cập nhật không thành công!</div>';
+    } else {
+        echo '<div class="error-message">Có lỗi xảy ra: ' . htmlspecialchars($_GET['error']) . '</div>';
+    }
+}
+
+// Thêm kiểm tra tồn tại của các file xử lý
+$required_files = [
+    'save_default_setting.php',
+    'save_all_default_settings.php',
+    'apply_default_settings.php'
+];
+
+$missing_files = [];
+foreach ($required_files as $file) {
+    if (!file_exists($file)) {
+        $missing_files[] = $file;
+    }
+}
+
+if (!empty($missing_files)) {
+    echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+    echo '<strong>Cảnh báo:</strong> Không tìm thấy các file sau: ' . implode(', ', $missing_files);
+    echo '</div>';
+}
+
+// Kiểm tra bảng default_settings
+$check_table = $connect->query("SHOW TABLES LIKE 'default_settings'");
+if ($check_table->num_rows === 0) {
+    // Tạo bảng default_settings
+    $sql_create_table = "CREATE TABLE IF NOT EXISTS default_settings (
+        id INT(11) NOT NULL AUTO_INCREMENT,
+        dept VARCHAR(50) NOT NULL,
+        id_tieuchi INT(11) NOT NULL,
+        ngay_tinh_han VARCHAR(30) NOT NULL DEFAULT 'ngay_vao',
+        so_ngay_xuly INT(11) NOT NULL DEFAULT 7,
+        ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+        ngay_capnhat DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY unique_dept_tieuchi (dept, id_tieuchi)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    
+    if (!$connect->query($sql_create_table)) {
+        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<strong>Lỗi:</strong> Không thể tạo bảng default_settings: ' . $connect->error;
+        echo '</div>';
+    }
+}
+
+// Kiểm tra cột ngay_tinh_han trong bảng danhgia_tieuchi
+$check_column = $connect->query("SHOW COLUMNS FROM danhgia_tieuchi LIKE 'ngay_tinh_han'");
+if ($check_column->num_rows === 0) {
+    // Thêm cột ngay_tinh_han vào bảng danhgia_tieuchi
+    $sql_add_column = "ALTER TABLE danhgia_tieuchi ADD COLUMN ngay_tinh_han VARCHAR(20) DEFAULT 'ngay_vao' AFTER so_ngay_xuly";
+    
+    if (!$connect->query($sql_add_column)) {
+        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<strong>Lỗi:</strong> Không thể thêm cột ngay_tinh_han vào bảng danhgia_tieuchi: ' . $connect->error;
+        echo '</div>';
+    }
+}
+?>  
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kế Hoạch Rải Chuyền</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    .diem-select {
+        width: 85px;
+        padding: 3px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 13px;
+        height: 30px;
+    }
+
+    /* CSS cho modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: black;
+    }
+
+    .modal-title {
+        margin-top: 0;
+        color: #1e40af;
+        font-size: 1.2em;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .btn-add-criteria {
+        background-color: #2563eb;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .btn-add-criteria:hover {
+        background-color: #1d4ed8;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .deadline-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .deadline-date {
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .deadline-form {
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+        background-color: #f8f9fa;
+        padding: 3px;
+        border-radius: 4px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .deadline-input {
+        width: 40px;
+        padding: 3px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+
+    .deadline-button {
+        font-size: 10px;
+        padding: 3px 5px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .deadline-button:hover {
+        background-color: #1d4ed8;
+    }
+
+    .tooltip-icon {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background-color: #e2e8f0;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 18px;
+        font-size: 12px;
+        color: #4b5563;
+        cursor: help;
+        margin-left: 4px;
+    }
+
+    [title] {
+        position: relative;
+    }
+
+    [title]:hover::after {
+        content: attr(title);
+        position: absolute;
+        z-index: 100;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px 12px;
+        background-color: #333;
+        color: white;
+        font-size: 12px;
+        border-radius: 4px;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    .small-btn {
+        font-size: 9px;
+        padding: 1px 3px;
+    }
+
+    .small-btn:hover {
+        background-color: #374151;
+    }
+
+    .note {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    .overdue {
+        color: #e53e3e;
+        font-weight: bold;
+        animation: blink 1s infinite;
+        border: 1px solid #fed7d7;
+        background-color: #fff5f5;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .update-success {
+        animation: flashSuccess 2s;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    @keyframes flashSuccess {
+        0% { background-color: #d4edda; }
+        50% { background-color: #c3e6cb; }
+        100% { background-color: transparent; }
+    }
+
+    /* Style cho các nút gợi ý */
+    .quick-suggestion {
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .quick-btn {
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .quick-btn:hover {
+        background-color: #e0e0e0;
+    }
+    
+    .quick-btn.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #0056b3;
+    }
+
+    .nguoi-thuchien-select {
+        width: 160px;
+        padding: 3px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font-size: 13px;
+        height: 30px;
+    }
+
+    .checkbox {
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        position: relative;
+        cursor: default;
+        text-align: center;
+        line-height: 25px;
+    }
+
+    .checkbox.checked {
+        background-color: #4CAF50;
+        border-color: #4CAF50;
+        color: white;
+    }
+
+    .checkbox.unchecked {
+        background-color: #F44336;
+        border-color: #F44336;
+        color: white;
+    }
+
+    .checkmark {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .checkbox-input {
+        display: none;
+    }
+
+    @media screen and (max-width: 1200px) {
+        .evaluation-table th, .evaluation-table td {
+            font-size: 13px;
+        }
+        
+        select[name^="nguoi_thuchien_"] {
+            width: 140px;
+            padding: 2px;
+            font-size: 12px;
+            height: 28px;
+        }
+        
+        .diem-select {
+            width: 80px;
+            height: 28px;
+        }
+    }
+
+    /* Style cho dropdown điểm đánh giá */
+    .diem-dropdown {
+        width: 80px !important;
+        padding: 5px 25px 5px 10px !important;
+        font-size: 14px !important;
+        text-align: left !important;
+        border: 1px solid #007bff !important;
+        border-radius: 4px !important;
+        background-color: white !important;
+        color: #333 !important;
+        height: 30px !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') !important;
+        background-repeat: no-repeat !important;
+        background-position: right 5px center !important;
+        background-size: 15px !important;
+        cursor: pointer !important;
+    }
+
+    /* Style cho dropdown người chịu trách nhiệm */
+    .nguoi-thuchien-select {
+        width: 160px;
+        padding: 5px 25px 5px 10px;
+        border: 1px solid #007bff;
+        border-radius: 4px;
+        font-size: 13px;
+        height: 30px;
+        background-color: white;
+        cursor: pointer;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 5px center;
+        background-size: 15px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    select[name^="nguoi_thuchien_"] {
+        width: 160px;
+        padding: 5px 25px 5px 10px;
+        border: 1px solid #007bff;
+        border-radius: 4px;
+        font-size: 13px;
+        height: 30px;
+        background-color: white;
+        cursor: pointer;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 5px center;
+        background-size: 15px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    @media screen and (max-width: 1200px) {
+        .diem-dropdown {
+            width: 70px !important;
+            padding: 2px 20px 2px 5px !important;
+            font-size: 12px !important;
+            height: 28px !important;
+        }
+        
+        .nguoi-thuchien-select, select[name^="nguoi_thuchien_"] {
+            width: 140px;
+            padding: 2px 20px 2px 5px;
+            font-size: 12px;
+            height: 28px;
+        }
+    }
+
+    /* Các style cho modal cài đặt mặc định */
+    .btn-default-setting {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-default-setting:hover {
+        background-color: #2980b9;
+    }
+
+    /* Style cho form trong modal */
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    /* Style cho danh sách cài đặt */
+    #default_settings_tbody td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    #default_settings_tbody .text-left {
+        text-align: left;
+    }
+
+    /* Style cho thông báo trạng thái */
+    #default_settings_status {
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+
+    /* Thêm CSS cho modal cài đặt mặc định */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .table-container {
+        max-height: calc(80vh - 200px);
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+
+    .table-container thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa;
+        z-index: 10;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    }
+
+    /* Style cho danh sách cài đặt */
+    #default_settings_tbody td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    #default_settings_tbody .text-left {
+        text-align: left;
+    }
+
+    /* Style cho thông báo trạng thái */
+    #default_settings_status {
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+    </style>
+</head>
+<body>
+    <!-- Thanh điều hướng -->
+    <div class="navbar">
+        <div class="navbar-left">
+            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" /></a>
+        </div>
+        <div class="navbar-center" style="display: flex; justify-content: center; width: 100%;">
+            <h1 style="font-size: 24px; margin: 0;">KẾ HOẠCH RẢI CHUYỀN TOÀN NHÀ MÁY</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="action-buttons">
+            <h2>Thông tin chi tiết - <?php echo $dept_display_name; ?></h2>
+            <div>
+                <button type="button" class="btn-add-criteria" onclick="openModal()">Thêm tiêu chí</button>
+                <button type="button" class="btn-add-criteria" onclick="openDefaultSettingModal()">Cài đặt mặc định</button>
+            </div>
+        </div>
+
+        <!-- Modal thêm tiêu chí -->
+        <div id="addCriteriaModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3 class="modal-title">Thêm tiêu chí mới cho <?php echo $dept_display_name; ?></h3>
+                <form action="add_criteria.php" method="POST">
+                    <input type="hidden" name="dept" value="<?php echo $dept; ?>">
+                    <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
+                    <?php if ($dept == 'chuanbi_sanxuat_phong_kt' || $dept == 'kho'): ?>
+                    <div class="form-group">
+                        <label for="nhom">Nhóm:</label>
+                        <select id="nhom" name="nhom" required class="form-control">
+                            <?php if ($dept == 'chuanbi_sanxuat_phong_kt'): ?>
+                                <option value="Nhóm Nghiệp Vụ">a. Nhóm Nghiệp Vụ</option>
+                                <option value="Nhóm May Mẫu">b. Nhóm May Mẫu</option>
+                                <option value="Nhóm Quy Trình">c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền</option>
+                            <?php elseif ($dept == 'kho'): ?>
+                                <option value="Kho Nguyên Liệu">a. Kho Nguyên Liệu</option>
+                                <option value="Kho Phụ Liệu">b. Kho Phụ Liệu</option>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                    <?php endif; ?>
+                    <div class="form-group">
+                        <label for="thutu">Thứ tự:</label>
+                        <input type="number" id="thutu" name="thutu" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="noidung">Nội dung tiêu chí:</label>
+                        <textarea id="noidung" name="noidung" required rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-add-criteria">Lưu tiêu chí</button>
+                        <button type="button" onclick="closeModal()" class="btn-back">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal cài đặt hạn xử lý -->
+        <div id="deadlineModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeDeadlineModal()">&times;</span>
+                <h3 class="modal-title">Cài đặt hạn xử lý chung cho tất cả tiêu chí</h3>
+                <div class="form-group">
+                    <label for="so_ngay_xuly_chung">Số ngày cần trừ từ ngày vào:</label>
+                    <input type="number" id="so_ngay_xuly_chung" value="<?php echo $so_ngay_xuly; ?>" min="1" max="30" required>
+                    <!-- Thêm các nút gợi ý nhập nhanh -->
+                    <div class="quick-suggestion">
+                        <span>Gợi ý: </span>
+                        <button type="button" onclick="setQuickDays(7)" class="quick-btn">7 ngày</button>
+                        <button type="button" onclick="setQuickDays(14)" class="quick-btn">14 ngày</button>
+                    </div>
+                    <p class="note">Ví dụ: Nếu nhập 7, "Hạn Xử Lý" sẽ là "Ngày Vào" - 7 ngày</p>
+                </div>
+                
+                <!-- Thêm phần chọn ngày tính hạn xử lý -->
+                <div class="form-group">
+                    <label for="ngay_tinh_han">Chọn ngày tính hạn xử lý:</label>
+                    <select id="ngay_tinh_han" onchange="changeNgayTinhHan()">
+                        <option value="ngay_vao" selected>Ngày vào</option>
+                        <option value="ngay_ra">Ngày ra</option>
+                        <option value="ngay_ra_tru">Ngày ra trừ số ngày</option>
+                    </select>
+                    <p class="note-ngay-tinh" id="note-ngay-tinh">Ví dụ: Nếu nhập 7, "Hạn Xử Lý" sẽ là "Ngày Vào" - 7 ngày</p>
+                </div>
+                
+                <!-- Thêm phần chọn tiêu chí áp dụng -->
+                <div class="form-group">
+                    <label>Áp dụng cho tiêu chí:</label>
+                    <div id="tieuchi_list" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-top: 5px;">
+                        <?php
+                        // Lấy danh sách các tiêu chí để hiển thị checkbox
+                        $sql_tieuchi = "SELECT id, thutu, noidung FROM tieuchi_dept WHERE dept = ?";
+                        $stmt_tieuchi = $connect->prepare($sql_tieuchi);
+                        $stmt_tieuchi->bind_param("s", $dept);
+                        $stmt_tieuchi->execute();
+                        $result_tieuchi = $stmt_tieuchi->get_result();
+                        
+                        while ($tieuchi = $result_tieuchi->fetch_assoc()) {
+                            echo '<div style="margin-bottom: 5px;">';
+                            echo '<input type="checkbox" id="tieuchi_' . $tieuchi['id'] . '" class="tieuchi-checkbox" value="' . $tieuchi['id'] . '">';
+                            echo '<label for="tieuchi_' . $tieuchi['id'] . '"> ' . $tieuchi['thutu'] . '. ' . substr($tieuchi['noidung'], 0, 50) . (strlen($tieuchi['noidung']) > 50 ? '...' : '') . '</label>';
+                            echo '</div>';
+                        }
+                        ?>
+                        <div style="margin-top: 10px;">
+                            <button type="button" onclick="selectAllTieuchi(true)" class="small-btn">Chọn tất cả</button>
+                            <button type="button" onclick="selectAllTieuchi(false)" class="small-btn">Bỏ chọn tất cả</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="button" onclick="updateDeadlineAll(<?php echo $id; ?>, '<?php echo $dept; ?>')" class="btn-add-criteria">Lưu cài đặt</button>
+                    <button type="button" onclick="closeDeadlineModal()" class="btn-add-criteria">Hủy</button>
+                </div>
+                <!-- Thêm div để hiển thị trạng thái -->
+                <div id="update_status" style="margin-top: 10px; text-align: center; display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Modal cài đặt hạn xử lý mặc định -->
+        <div id="defaultSettingModal" class="modal">
+            <div class="modal-content" style="width: 70%; max-width: 900px; max-height: 80vh; overflow: hidden; margin: 5% auto;">
+                <span class="close" onclick="closeDefaultSettingModal()">&times;</span>
+                <h3 class="modal-title">Cài đặt hạn xử lý mặc định cho <?php echo $dept_display_name; ?></h3>
+                <p style="color: #666; margin-bottom: 15px;">Các cài đặt này sẽ được áp dụng tự động cho tất cả đơn hàng mới được import vào hệ thống.</p>
+                
+                <div id="default_settings_status" style="margin-bottom: 15px; display: none;"></div>
+                
+                <div style="display: flex; flex-direction: column; height: calc(80vh - 150px);">
+                    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; position: sticky; top: 0; background-color: white; padding: 10px 0; z-index: 100;">
+                        <div>
+                            <button type="button" onclick="saveAllDefaultSettings('<?php echo $dept; ?>')" class="btn-add-criteria">Lưu tất cả cài đặt</button>
+                            <button type="button" onclick="openStaffModal('<?php echo $dept; ?>')" class="btn-add-criteria" style="background-color: #28a745;">Quản lý người thực hiện</button>
+                        </div>
+                        <button type="button" onclick="closeDefaultSettingModal()" class="btn-add-criteria" style="background-color: #6c757d;">Đóng</button>
+                    </div>
+                    
+                    <div class="table-container" style="flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
+                        <table class="evaluation-table" style="width: 100%;">
+                            <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 10;">
+                                <tr>
+                                    <th style="width: 5%;">STT</th>
+                                    <th style="width: 30%;">Tiêu chí đánh giá</th>
+                                    <th style="width: 15%;">Loại tính hạn</th>
+                                    <th style="width: 10%;">Số ngày</th>
+                                    <th style="width: 20%;">Người chịu trách nhiệm</th>
+                                    <th style="width: 20%;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="default_settings_tbody">
+                                <?php
+                                // Lấy danh sách tiêu chí
+                                $sql = "SELECT tc.*, kds.ngay_tinh_han, kds.so_ngay_xuly, kds.nguoi_chiu_trachnhiem_default, nv.ten as ten_nguoi_thuchien 
+                                       FROM tieuchi_dept tc 
+                                       LEFT JOIN khsanxuat_default_settings kds ON tc.id = kds.id_tieuchi AND kds.dept = ?
+                                       LEFT JOIN nhan_vien nv ON kds.nguoi_chiu_trachnhiem_default = nv.id
+                                       WHERE tc.dept = ?
+                                       ORDER BY tc.ten_tieuchi";
+                                
+                                $stmt = $connect->prepare($sql);
+                                $stmt->bind_param("ss", $dept, $dept);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                
+                                $current_nhom = '';
+                                
+                                while ($row = $result->fetch_assoc()) {
+                                    if ($current_nhom != $row['nhom']) {
+                                        $current_nhom = $row['nhom'];
+                                        
+                                        // Hiển thị tên nhóm
+                                        $nhom_display = '';
+                                        if ($dept == 'chuanbi_sanxuat_phong_kt') {
+                                            switch ($row['nhom']) {
+                                                case 'Nhóm Nghiệp Vụ':
+                                                    $nhom_display = 'a. Nhóm Nghiệp Vụ';
+                                                    break;
+                                                case 'Nhóm May Mẫu':
+                                                    $nhom_display = 'b. Nhóm May Mẫu';
+                                                    break;
+                                                case 'Nhóm Quy Trình':
+                                                    $nhom_display = 'c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền';
+                                                    break;
+                                            }
+                                        } elseif ($dept == 'kho') {
+                                            switch ($row['nhom']) {
+                                                case 'Kho Nguyên Liệu':
+                                                    $nhom_display = 'a. Kho Nguyên Liệu';
+                                                    break;
+                                                case 'Kho Phụ Liệu':
+                                                    $nhom_display = 'b. Kho Phụ Liệu';
+                                                    break;
+                                            }
+                                        }
+                                        ?>
+                                        <tr>
+                                            <td colspan="5" style="background-color: #f3f4f6; color: #1e40af; font-weight: bold; text-align: left; padding: 10px;">
+                                                <?php echo $nhom_display; ?>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    
+                                    // Giá trị mặc định
+                                    $ngay_tinh_han = isset($row['ngay_tinh_han']) ? $row['ngay_tinh_han'] : 'ngay_vao';
+                                    $so_ngay_xuly = isset($row['so_ngay_xuly']) ? intval($row['so_ngay_xuly']) : 7;
+                                    $nguoi_chiu_trachnhiem_default = isset($row['nguoi_chiu_trachnhiem_default']) ? intval($row['nguoi_chiu_trachnhiem_default']) : 0;
+                                    ?>
+                                    <tr id="ds_row_<?php echo $row['id']; ?>">
+                                        <td><?php echo $row['thutu']; ?></td>
+                                        <td class="text-left"><?php echo htmlspecialchars($row['noidung']); ?></td>
+                                        <td>
+                                            <select id="ds_ngay_tinh_han_<?php echo $row['id']; ?>" class="form-control" style="width: 100%;">
+                                                <option value="ngay_vao" <?php echo ($ngay_tinh_han == 'ngay_vao') ? 'selected' : ''; ?>>Ngày vào</option>
+                                                <option value="ngay_ra" <?php echo ($ngay_tinh_han == 'ngay_ra') ? 'selected' : ''; ?>>Ngày ra</option>
+                                                <option value="ngay_ra_tru" <?php echo ($ngay_tinh_han == 'ngay_ra_tru') ? 'selected' : ''; ?>>Ngày ra trừ số ngày</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" id="ds_so_ngay_xuly_<?php echo $row['id']; ?>" class="form-control" style="width: 100%;" value="<?php echo $so_ngay_xuly; ?>" min="0" max="365">
+                                        </td>
+                                        <td>
+                                            <select id="ds_nguoi_chiu_trachnhiem_<?php echo $row['id']; ?>" class="form-control" style="width: 100%;">
+                                                <option value="0">-- Chọn người chịu trách nhiệm --</option>
+                                                <?php
+                                                // Lấy danh sách người thuộc bộ phận
+                                                // Lấy danh sách người thực hiện thuộc bộ phận
+                                                $sql_staff = "SELECT id, ten FROM nhan_vien WHERE phong_ban = ? AND active = 1 ORDER BY ten";
+                                                $stmt_staff = $connect->prepare($sql_staff);
+                                                $stmt_staff->bind_param("s", $dept);
+                                                $stmt_staff->execute();
+                                                $result_staff = $stmt_staff->get_result();
+                                                
+                                                while ($staff = $result_staff->fetch_assoc()) {
+                                                    $selected = ($nguoi_chiu_trachnhiem_default == $staff['id']) ? 'selected' : '';
+                                                    echo '<option value="'.$staff['id'].'" '.$selected.'>'.$staff['ten'].'</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="button" onclick="saveDefaultSetting(<?php echo $row['id']; ?>, '<?php echo $dept; ?>')" class="btn-default-setting">Lưu cài đặt</button>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; position: sticky; bottom: 0; background-color: white; padding: 10px 0; z-index: 100;">
+                        <button type="button" onclick="saveAllDefaultSettings('<?php echo $dept; ?>')" class="btn-add-criteria">Lưu tất cả cài đặt</button>
+                        <button type="button" onclick="closeDefaultSettingModal()" class="btn-add-criteria" style="background-color: #6c757d;">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Xưởng</th>
+                    <th>Line</th>
+                    <th>PO</th>
+                    <th>Style</th>
+                    <th>Số lượng</th>
+                    <th>Ngày vào</th>
+                    <th>Ngày ra</th>
+                    <?php if ($dept == 'kehoach'): ?>
+                    <th>Ngày kế hoạch</th>
+                    <?php endif; ?>
+                    <?php if ($dept == 'kho'): ?>
+                    <th>Ngày kho chuẩn bị</th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><?php echo htmlspecialchars($xuong); ?></td>
+                    <td><?php echo htmlspecialchars($line); ?></td>
+                    <td><?php echo htmlspecialchars($po); ?></td>
+                    <td><?php echo htmlspecialchars($style); ?></td>
+                    <td><?php echo htmlspecialchars($qty); ?></td>
+                    <td><?php echo $ngayin_formatted; ?></td>
+                    <td><?php echo $ngayout_formatted; ?></td>
+                    <?php if ($dept == 'kehoach'): ?>
+                    <td><?php echo $plan_date_formatted; ?></td>
+                    <?php endif; ?>
+                    <?php if ($dept == 'kho'): ?>
+                    <td><?php echo $khochuanbi_formatted; ?></td>
+                    <?php endif; ?>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="evaluation-section">
+            <h2>Tiêu chí đánh giá</h2>
+            <form action="save_danhgia.php" method="POST">
+                <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
+                <input type="hidden" name="dept" value="<?php echo $dept; ?>">
+                
+                <table class="evaluation-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">STT</th>
+                            <th style="width: 360px;">Tiêu chí đánh giá</th>
+                            <th style="width: 130px;">
+                                Hạn Xử Lý
+                                <span class="tooltip-icon" title="Thời hạn đã được tính toán tự động">ⓘ</span>
+                                <?php /* if($is_admin): */ ?>
+                                <button type="button" onclick="openDeadlineModal()" class="small-btn">Cài đặt</button>
+                                <?php /* endif; */ ?>
+                            </th>
+                            <th style="width: 200px;">Người chịu trách nhiệm</th>
+                            <th style="width: 120px;">Điểm đánh giá</th>
+                            <th style="width: 80px;">Đã thực hiện</th>
+                            <th style="width: 150px;">Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Lấy danh sách tiêu chí và trạng thái đánh giá
+                        $sql = "SELECT tc.*, dg.nguoi_thuchien, dg.da_thuchien, dg.diem_danhgia, dg.ghichu, dg.han_xuly, dg.so_ngay_xuly AS so_ngay_xuly_tieuchi  
+                               FROM tieuchi_dept tc 
+                               LEFT JOIN danhgia_tieuchi dg ON tc.id = dg.id_tieuchi 
+                                    AND dg.id_sanxuat = ?
+                               WHERE tc.dept = ?
+                               ORDER BY 
+                                   CASE tc.nhom 
+                                       WHEN 'Nhóm Nghiệp Vụ' THEN 1 
+                                       WHEN 'Nhóm May Mẫu' THEN 2 
+                                       WHEN 'Nhóm Quy Trình' THEN 3
+                                       WHEN 'Kho Nguyên Liệu' THEN 1
+                                       WHEN 'Kho Phụ Liệu' THEN 2
+                                       ELSE 4 
+                                   END,
+                                   tc.thutu";
+                        
+                        $stmt = $connect->prepare($sql);
+                        $stmt->bind_param("is", $id, $dept);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        
+                        $total_tieuchi = 0;
+                        $completed_tieuchi = 0;
+                        $current_nhom = '';
+                        $total_points = 0; // Biến lưu tổng điểm
+                        $max_possible_points = 0; // Biến lưu tổng điểm tối đa có thể đạt được
+                        
+                        while ($row = $result->fetch_assoc()) {
+                            if ($current_nhom != $row['nhom']) {
+                                $current_nhom = $row['nhom'];
+                                
+                                // Hiển thị tên nhóm
+                                $nhom_display = '';
+                                if ($dept == 'chuanbi_sanxuat_phong_kt') {
+                                    switch ($row['nhom']) {
+                                        case 'Nhóm Nghiệp Vụ':
+                                            $nhom_display = 'a. Nhóm Nghiệp Vụ';
+                                            break;
+                                        case 'Nhóm May Mẫu':
+                                            $nhom_display = 'b. Nhóm May Mẫu';
+                                            break;
+                                        case 'Nhóm Quy Trình':
+                                            $nhom_display = 'c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền';
+                                            break;
+                                    }
+                                } elseif ($dept == 'kho') {
+                                    switch ($row['nhom']) {
+                                        case 'Kho Nguyên Liệu':
+                                            $nhom_display = 'a. Kho Nguyên Liệu';
+                                            break;
+                                        case 'Kho Phụ Liệu':
+                                            $nhom_display = 'b. Kho Phụ Liệu';
+                                            break;
+                                    }
+                                }
+                                ?>
+                                <tr>
+                                    <td colspan="6" style="background-color: #f3f4f6; color: #1e40af; font-weight: bold; text-align: left; padding: 10px;">
+                                        <?php echo $nhom_display; ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            $total_tieuchi++;
+                            if ($row['da_thuchien'] == 1) {
+                                $completed_tieuchi++;
+                            }
+                            
+                            // Cộng điểm vào tổng
+                            $diem_hien_tai = isset($row['diem_danhgia']) ? intval($row['diem_danhgia']) : 0;
+                            $total_points += $diem_hien_tai;
+                            $max_possible_points += 3; // Điểm tối đa cho mỗi tiêu chí là 3
+                            
+                            // Xử lý hạn xử lý cho từng tiêu chí
+                            if(isset($row['han_xuly']) && !empty($row['han_xuly'])) {
+                                // Sử dụng hạn xử lý riêng của tiêu chí nếu có
+                                $han_tc = new DateTime($row['han_xuly']);
+                                $han_tc_formatted = $han_tc->format('d/m/Y');
+                                $tc_so_ngay_xuly = isset($row['so_ngay_xuly_tieuchi']) ? intval($row['so_ngay_xuly_tieuchi']) : $so_ngay_xuly;
+                            } else {
+                                // Nếu chưa có hạn xử lý riêng, sử dụng hạn xử lý chung
+                                $han_tc = clone $han_xuly;
+                                $han_tc_formatted = $han_xuly_formatted;
+                                $tc_so_ngay_xuly = $so_ngay_xuly;
+                            }
+                            
+                            // Kiểm tra nếu đã quá hạn (chỉ hiển thị cảnh báo nếu chưa hoàn thành)
+                            $now = new DateTime();
+                            $is_overdue = ($han_tc < $now && $row['da_thuchien'] != 1);
+                            $deadline_class = $is_overdue ? 'overdue' : '';
+                            
+                            // Biến kiểm tra tiêu chí đã hoàn thành hay chưa (để hiển thị khác nhau)
+                            $is_completed = (!empty($row['diem_danhgia']) && $row['diem_danhgia'] > 0);
+                            ?>
+                            <tr>
+                                <td><?php echo $row['thutu']; ?></td>
+                                <td class="text-left;"><?php echo htmlspecialchars($row['noidung']); ?></td>
+                                <td class="deadline-info">
+                                    <span class="deadline-date <?php echo $deadline_class; ?>" id="date_display_<?php echo $row['id']; ?>"><?php echo $han_tc_formatted; ?></span>
+                                    <?php /* if($is_admin): */ ?>
+                                    <div class="deadline-form">
+                                        <div style="display: flex; align-items: center;">
+                                            <input type="number" id="so_ngay_xuly_<?php echo $row['id']; ?>" value="<?php echo $tc_so_ngay_xuly; ?>" min="1" max="30" class="deadline-input">
+                                            <button type="button" onclick="updateDeadline(<?php echo $id; ?>, <?php echo $row['id']; ?>, '<?php echo $dept; ?>')" class="deadline-button">Cập nhật</button>
+                                        </div>
+                                        <!-- Thêm select để chọn ngày tính hạn xử lý cho từng tiêu chí -->
+                                        <div style="display: flex; align-items: center; margin-top: 3px;">
+                                            <select id="ngay_tinh_han_<?php echo $row['id']; ?>" class="deadline-input" style="width: auto;" onchange="updateDeadline(<?php echo $id; ?>, <?php echo $row['id']; ?>, '<?php echo $dept; ?>')">
+                                                <option value="ngay_vao" <?php echo (!isset($row['ngay_tinh_han']) || $row['ngay_tinh_han'] == 'ngay_vao') ? 'selected' : ''; ?>>Ngày vào</option>
+                                                <option value="ngay_ra" <?php echo (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra') ? 'selected' : ''; ?>>Ngày ra</option>
+                                                <option value="ngay_ra_tru" <?php echo (isset($row['ngay_tinh_han']) && $row['ngay_tinh_han'] == 'ngay_ra_tru') ? 'selected' : ''; ?>>Ngày ra trừ số ngày</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <?php /* endif; */ ?>
+                                </td>
+                                <td>
+                                    <select name="nguoi_thuchien_<?php echo $row['id']; ?>" required class="nguoi-thuchien-select">
+                                        <?php
+                                        // Danh sách người thực hiện theo bộ phận
+                                        $nguoi_thuchien = ($dept == 'kehoach') 
+                                            ? ['Nguyễn Văn A', 'Trần Thị B'] 
+                                            : ['Phạm Văn X', 'Lê Thị Y'];
+                                        
+                                        foreach ($nguoi_thuchien as $nguoi) {
+                                            $selected = ($row['nguoi_thuchien'] == $nguoi) ? 'selected' : '';
+                                            echo "<option value='".htmlspecialchars($nguoi)."' $selected>".htmlspecialchars($nguoi)."</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="diem_danhgia_<?php echo $row['id']; ?>" 
+                                            class="diem-dropdown"
+                                            data-tieuchi-id="<?php echo $row['id']; ?>"
+                                            onchange="updateStatus(this)">
+                                        <option value="0" <?php echo (!isset($row['diem_danhgia']) || $row['diem_danhgia'] === null || $row['diem_danhgia'] == 0) ? 'selected' : ''; ?>>0</option>
+                                        <option value="1" <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] == 1) ? 'selected' : ''; ?>>1</option>
+                                        <option value="3" <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] == 3) ? 'selected' : ''; ?>>3</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="checkbox" 
+                                           class="checkbox-input" 
+                                           id="checkbox_<?php echo $row['id']; ?>"
+                                           data-tieuchi-id="<?php echo $row['id']; ?>"
+                                           <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] > 0) ? 'checked' : ''; ?>
+                                           disabled>
+                                    <label class="checkbox <?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] > 0) ? 'checked' : 'unchecked'; ?>" 
+                                           for="checkbox_<?php echo $row['id']; ?>"
+                                           id="checkbox_label_<?php echo $row['id']; ?>">
+                                        <span class="checkmark"><?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] > 0) ? '✓' : 'X'; ?></span>
+                                    </label>
+                                    <input type="hidden" name="da_thuchien_<?php echo $row['id']; ?>" 
+                                           value="<?php echo (isset($row['diem_danhgia']) && $row['diem_danhgia'] > 0) ? 1 : 0; ?>" 
+                                           id="da_thuchien_<?php echo $row['id']; ?>">
+                                </td>
+                                <td>
+                                    <textarea name="ghichu_<?php echo $row['id']; ?>" 
+                                              style="width: 150px; height: 10px;"
+                                              placeholder="Ghi chú"><?php echo htmlspecialchars($row['ghichu'] ?? ''); ?></textarea>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Tổng điểm đánh giá:</td>
+                            <td style="font-weight: bold; text-align: right;" id="total_points">
+                                <?php echo $total_points; ?>/<?php echo $max_possible_points; ?>
+                            </td>
+                            <td colspan="3">
+                                <div class="progress-bar-container" style="width: 100%; background-color: #eee; height: 20px; border-radius: 10px; overflow: hidden;">
+                                    <?php 
+                                    $percent = ($max_possible_points > 0) ? ($total_points / $max_possible_points) * 100 : 0;
+                                    $bar_color = "#4CAF50"; // Màu xanh lá mặc định
+                                    
+                                    // Thay đổi màu sắc dựa vào phần trăm hoàn thành
+                                    if ($percent < 30) {
+                                        $bar_color = "#F44336"; // Đỏ
+                                    } else if ($percent < 70) {
+                                        $bar_color = "#FFC107"; // Vàng
+                                    }
+                                    ?>
+                                    <div class="progress-bar" style="width: <?php echo $percent; ?>%; background-color: <?php echo $bar_color; ?>; height: 100%; text-align: center; line-height: 20px; color: white; font-weight: bold;">
+                                        <?php echo round($percent); ?>%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-save">Lưu đánh giá</button>
+                    <a href="index.php" class="btn-back">Quay lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add global error handler
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error("JavaScript Error:", message, "at", source, "line:", lineno);
+    alert("Đã xảy ra lỗi JavaScript: " + message + " tại dòng " + lineno);
+    return true;
+};
+
+// Monitor and log all AJAX requests
+(function() {
+    var oldXHR = window.XMLHttpRequest;
+    function newXHR() {
+        var realXHR = new oldXHR();
+        
+        realXHR.addEventListener('error', function(e) {
+            console.error('XHR Error:', this.status, this.statusText, this.responseURL);
+            alert('Lỗi kết nối AJAX: ' + this.status + ' ' + this.statusText);
+        }, false);
+        
+        realXHR.addEventListener('load', function() {
+            if (this.status >= 400) {
+                console.error('XHR Error:', this.status, this.statusText, this.responseURL);
+                alert('Lỗi AJAX: ' + this.status + ' ' + this.statusText);
+            }
+            
+            try {
+                // Thử parse JSON response
+                if (this.responseText && this.responseText.trim().startsWith('{')) {
+                    JSON.parse(this.responseText);
+                }
+            } catch (e) {
+                console.error('JSON Parse Error in response:', e, this.responseText);
+                alert('Lỗi parse JSON: ' + e.message);
+            }
+        });
+        
+        return realXHR;
+    }
+    window.XMLHttpRequest = newXHR;
+})();
+
+// Original code
+let completedCount = <?php echo $completed_tieuchi; ?>;
+const totalCriteria = <?php echo $total_tieuchi; ?>;
+
+function updateStatus(element) {
+    const tieuchi_id = element.getAttribute('data-tieuchi-id');
+    const checkbox = document.getElementById('checkbox_' + tieuchi_id);
+    const hiddenField = document.getElementById('da_thuchien_' + tieuchi_id);
+    const label = document.getElementById('checkbox_label_' + tieuchi_id);
+    const diem = parseInt(element.value);
+
+    // Cập nhật trạng thái checkbox và label
+    if (diem > 0) {
+        checkbox.checked = true;
+        label.classList.remove('unchecked');
+        label.classList.add('checked');
+        label.querySelector('.checkmark').innerHTML = '✓';
+        label.style.backgroundColor = '#4CAF50';
+        label.style.borderColor = '#4CAF50';
+        hiddenField.value = "1";
+        if (!checkbox.checked) completedCount++;
+    } else {
+        checkbox.checked = false;
+        label.classList.remove('checked');
+        label.classList.add('unchecked');
+        label.querySelector('.checkmark').innerHTML = 'X';
+        label.style.backgroundColor = '#F44336';
+        label.style.borderColor = '#F44336';
+        hiddenField.value = "0";
+        if (checkbox.checked) completedCount--;
+    }
+
+    // Kiểm tra nếu tất cả tiêu chí đã hoàn thành
+    const form = element.closest('form');
+    if (completedCount === totalCriteria) {
+        if (!document.getElementById('all_completed')) {
+            const allCompleted = document.createElement('input');
+            allCompleted.type = 'hidden';
+            allCompleted.name = 'all_completed';
+            allCompleted.id = 'all_completed';
+            allCompleted.value = '1';
+            form.appendChild(allCompleted);
+        }
+        const notCompleted = document.getElementById('not_completed');
+        if (notCompleted) notCompleted.remove();
+    } else {
+        const allCompleted = document.getElementById('all_completed');
+        if (allCompleted) allCompleted.remove();
+        if (!document.getElementById('not_completed')) {
+            const notCompleted = document.createElement('input');
+            notCompleted.type = 'hidden';
+            notCompleted.name = 'not_completed';
+            notCompleted.id = 'not_completed';
+            notCompleted.value = '1';
+            form.appendChild(notCompleted);
+        }
+    }
+    
+    // Cập nhật tổng điểm
+    updateTotalPoints();
+}
+
+// Hàm cập nhật tổng điểm
+function updateTotalPoints() {
+    let totalPoints = 0;
+    const maxPoints = <?php echo $max_possible_points; ?>;
+    
+    // Tính tổng điểm từ tất cả các dropdown
+    document.querySelectorAll('.diem-dropdown').forEach(function(select) {
+        totalPoints += parseInt(select.value);
+    });
+    
+    // Cập nhật hiển thị tổng điểm
+    const totalPointsElement = document.getElementById('total_points');
+    totalPointsElement.innerHTML = totalPoints + '/' + maxPoints;
+    
+    // Cập nhật thanh tiến trình
+    const percent = (maxPoints > 0) ? (totalPoints / maxPoints) * 100 : 0;
+    const progressBar = document.querySelector('.progress-bar');
+    progressBar.style.width = percent + '%';
+    progressBar.innerHTML = Math.round(percent) + '%';
+    
+    // Thay đổi màu sắc dựa vào phần trăm hoàn thành
+    if (percent < 30) {
+        progressBar.style.backgroundColor = "#F44336"; // Đỏ
+    } else if (percent < 70) {
+        progressBar.style.backgroundColor = "#FFC107"; // Vàng
+    } else {
+        progressBar.style.backgroundColor = "#4CAF50"; // Xanh lá
+    }
+}
+
+// Thêm code xử lý modal
+function openModal() {
+    document.getElementById('addCriteriaModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('addCriteriaModal').style.display = 'none';
+}
+
+// Đóng modal khi click bên ngoài
+window.onclick = function(event) {
+    var addCriteriaModal = document.getElementById('addCriteriaModal');
+    var deadlineModal = document.getElementById('deadlineModal');
+    var defaultSettingModal = document.getElementById('defaultSettingModal');
+    
+    if (event.target == addCriteriaModal) {
+        addCriteriaModal.style.display = 'none';
+    }
+    
+    if (event.target == deadlineModal) {
+        deadlineModal.style.display = 'none';
+    }
+    
+    if (event.target == defaultSettingModal) {
+        defaultSettingModal.style.display = 'none';
+    }
+}
+
+// Thêm code xử lý modal cho hạn xử lý
+function openDeadlineModal() {
+    document.getElementById('deadlineModal').style.display = 'block';
+}
+
+function closeDeadlineModal() {
+    document.getElementById('deadlineModal').style.display = 'none';
+}
+
+// Hàm thay đổi thông tin gợi ý khi thay đổi ngày tính hạn
+function changeNgayTinhHan() {
+    const ngayTinhHan = document.getElementById('ngay_tinh_han').value;
+    const noteElement = document.getElementById('note-ngay-tinh');
+    const soNgay = document.getElementById('so_ngay_xuly_chung').value;
+    
+    if (ngayTinhHan === 'ngay_vao') {
+        noteElement.innerHTML = 'Hạn xử lý sẽ được tính từ ngày vào trừ đi số ngày';
+    } else if (ngayTinhHan === 'ngay_ra') {
+        noteElement.innerHTML = 'Hạn xử lý sẽ được tính từ ngày ra cộng với số ngày';
+    } else if (ngayTinhHan === 'ngay_ra_tru') {
+        noteElement.innerHTML = 'Hạn xử lý sẽ được tính từ ngày ra trừ đi số ngày';
+    }
+}
+
+// Hàm JavaScript để cập nhật hạn xử lý chung bằng AJAX
+function updateDeadlineAll(idSanxuat, dept) {
+    // Lấy giá trị số ngày xử lý chung
+    const soNgayXulyChung = document.getElementById('so_ngay_xuly_chung').value;
+    const ngayTinhHan = document.getElementById('ngay_tinh_han').value;
+    const updateStatus = document.getElementById('update_status');
+    
+    // Lấy danh sách các tiêu chí được chọn
+    const selectedTieuchi = [];
+    document.querySelectorAll('.tieuchi-checkbox:checked').forEach(function(checkbox) {
+        selectedTieuchi.push(checkbox.value);
+    });
+    
+    // Kiểm tra xem có tiêu chí nào được chọn không
+    if (selectedTieuchi.length === 0) {
+        updateStatus.innerHTML = '<div style="color: #dc3545;"><strong>❌ Vui lòng chọn ít nhất một tiêu chí</strong></div>';
+        updateStatus.style.display = 'block';
+        setTimeout(function() {
+            updateStatus.style.display = 'none';
+        }, 3000);
+        return;
+    }
+    
+    // Hiển thị thông báo đang cập nhật
+    updateStatus.innerHTML = '<div style="color: #007bff;"><i>Đang cập nhật, vui lòng đợi...</i></div>';
+    updateStatus.style.display = 'block';
+    
+    // Tạo đối tượng XMLHttpRequest
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'update_deadline_ajax.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+    // Xử lý kết quả trả về
+    xhr.onload = function() {
+        if (this.status === 200) {
+            try {
+                const response = JSON.parse(this.responseText);
+                if (response.success) {
+                    // Cập nhật thành công
+                    updateStatus.innerHTML = '<div style="color: #28a745;"><strong>✓ Cập nhật thành công!</strong></div>';
+                    
+                    // Reload trang để hiển thị dữ liệu mới nhất
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    // Có lỗi
+                    updateStatus.innerHTML = '<div style="color: #dc3545;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                }
+            } catch (e) {
+                // Lỗi khi parse JSON
+                updateStatus.innerHTML = '<div style="color: #dc3545;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                console.error('Lỗi xử lý phản hồi: ', e);
+            }
+        } else {
+            // Lỗi khi gửi request
+            updateStatus.innerHTML = '<div style="color: #dc3545;"><strong>❌ Lỗi kết nối: ' + this.status + '</strong></div>';
+            console.error('Lỗi kết nối: ' + this.status);
+        }
+    };
+    
+    // Xử lý lỗi network
+    xhr.onerror = function() {
+        updateStatus.innerHTML = '<div style="color: #dc3545;"><strong>❌ Lỗi kết nối mạng</strong></div>';
+        console.error('Lỗi kết nối mạng');
+    };
+    
+    // Gửi request
+    xhr.send('id_sanxuat=' + encodeURIComponent(idSanxuat) + 
+             '&dept=' + encodeURIComponent(dept) + 
+             '&so_ngay_xuly=' + encodeURIComponent(soNgayXulyChung) + 
+             '&ngay_tinh_han=' + encodeURIComponent(ngayTinhHan) + 
+             '&tieuchi_ids=' + encodeURIComponent(JSON.stringify(selectedTieuchi)));
+}
+
+// Hàm JavaScript mới để cập nhật hạn xử lý bằng AJAX
+function updateDeadline(idSanxuat, idTieuchi, dept) {
+    // Lấy giá trị số ngày xử lý
+    const soNgayXuly = document.getElementById('so_ngay_xuly_' + idTieuchi).value;
+    const ngayTinhHan = document.getElementById('ngay_tinh_han_' + idTieuchi).value;
+    
+    // Hiển thị thông báo đang cập nhật
+    const dateDisplay = document.getElementById('date_display_' + idTieuchi);
+    const originalText = dateDisplay.innerHTML;
+    dateDisplay.innerHTML = '<small>Đang cập nhật...</small>';
+    
+    // Tạo đối tượng XMLHttpRequest
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'update_deadline_tieuchi.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+    // Xử lý kết quả trả về
+    xhr.onload = function() {
+        if (this.status === 200) {
+            try {
+                const response = JSON.parse(this.responseText);
+                if (response.success) {
+                    // Cập nhật thành công, hiển thị ngày mới
+                    dateDisplay.innerHTML = response.new_date;
+                    // Thêm class thành công và xóa sau 2 giây
+                    dateDisplay.classList.add('update-success');
+                    
+                    setTimeout(function() {
+                        dateDisplay.classList.remove('update-success');
+                    }, 2000);
+                } else {
+                    // Có lỗi, hiển thị lại ngày cũ và thông báo lỗi
+                    dateDisplay.innerHTML = originalText;
+                    alert('Lỗi: ' + response.message);
+                }
+            } catch (e) {
+                // Lỗi khi parse JSON
+                dateDisplay.innerHTML = originalText;
+                console.error('Lỗi xử lý phản hồi: ', e);
+                alert('Có lỗi xảy ra khi cập nhật. Vui lòng thử lại sau.');
+            }
+        } else {
+            // Lỗi khi gửi request
+            dateDisplay.innerHTML = originalText;
+            console.error('Lỗi kết nối: ' + this.status);
+            alert('Có lỗi xảy ra khi cập nhật. Vui lòng thử lại sau.');
+        }
+    };
+    
+    // Xử lý lỗi network
+    xhr.onerror = function() {
+        dateDisplay.innerHTML = originalText;
+        console.error('Lỗi kết nối mạng');
+        alert('Có lỗi kết nối mạng. Vui lòng kiểm tra kết nối và thử lại.');
+    };
+    
+    // Gửi request
+    xhr.send('id_sanxuat=' + encodeURIComponent(idSanxuat) + 
+             '&id_tieuchi=' + encodeURIComponent(idTieuchi) + 
+             '&dept=' + encodeURIComponent(dept) + 
+             '&so_ngay_xuly=' + encodeURIComponent(soNgayXuly) + 
+             '&ngay_tinh_han=' + encodeURIComponent(ngayTinhHan));
+}
+
+// Hàm để đặt nhanh số ngày xử lý từ các nút gợi ý
+function setQuickDays(days) {
+    // Đặt giá trị cho ô input
+    document.getElementById('so_ngay_xuly_chung').value = days;
+    
+    // Cập nhật trạng thái active cho các nút
+    const quickButtons = document.querySelectorAll('.quick-btn');
+    quickButtons.forEach(btn => {
+        if (btn.innerText.includes(days.toString())) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+// Hàm chọn/bỏ chọn tất cả tiêu chí
+function selectAllTieuchi(isSelect) {
+    document.querySelectorAll('.tieuchi-checkbox').forEach(function(checkbox) {
+        checkbox.checked = isSelect;
+    });
+}
+
+// Sau khi trang đã tải xong, đảm bảo các ô checkbox đã có màu đúng
+document.addEventListener('DOMContentLoaded', function() {
+    // Khởi tạo các màu sắc cho các ô checkbox
+    document.querySelectorAll('.diem-dropdown').forEach(function(select) {
+        const tieuchi_id = select.getAttribute('data-tieuchi-id');
+        const diem = parseInt(select.value);
+        const label = document.getElementById('checkbox_label_' + tieuchi_id);
+        
+        if (diem > 0) {
+            label.style.backgroundColor = '#4CAF50';
+            label.style.borderColor = '#4CAF50';
+        } else {
+            label.style.backgroundColor = '#F44336';
+            label.style.borderColor = '#F44336';
+        }
+    });
+    
+    // Các khởi tạo khác...
+    const diemSelects = document.querySelectorAll('.diem-dropdown');
+    let allCompleted = true;
+    
+    diemSelects.forEach(function(select) {
+        const diem = parseInt(select.value);
+        if (diem === 0) {
+            allCompleted = false;
+        }
+    });
+
+    const form = document.querySelector('form');
+    if (allCompleted && totalCriteria > 0) {
+        const allCompleted = document.createElement('input');
+        allCompleted.type = 'hidden';
+        allCompleted.name = 'all_completed';
+        allCompleted.id = 'all_completed';
+        allCompleted.value = '1';
+        form.appendChild(allCompleted);
+    } else if (totalCriteria > 0) {
+        const notCompleted = document.createElement('input');
+        notCompleted.type = 'hidden';
+        notCompleted.name = 'not_completed';
+        notCompleted.id = 'not_completed';
+        notCompleted.value = '1';
+        form.appendChild(notCompleted);
+    }
+    
+    // Tính toán tổng điểm ban đầu
+    updateTotalPoints();
+    
+    // Các khởi tạo khác...
+    const inputValue = parseInt(document.getElementById('so_ngay_xuly_chung').value);
+    if (inputValue === 7 || inputValue === 14) {
+        setQuickDays(inputValue);
+    }
+    
+    // Cập nhật gợi ý ban đầu cho ngày tính hạn
+    changeNgayTinhHan();
+    
+    // Chọn tất cả tiêu chí mặc định
+    selectAllTieuchi(true);
+});
+
+// JavaScript cho modal cài đặt mặc định
+function openDefaultSettingModal() {
+    document.getElementById('defaultSettingModal').style.display = 'block';
+}
+
+function closeDefaultSettingModal() {
+    document.getElementById('defaultSettingModal').style.display = 'none';
+}
+
+// Cập nhật hàm saveDefaultSetting để bao gồm người chịu trách nhiệm
+function saveDefaultSetting(id_tieuchi, dept) {
+    const ngayTinhHan = document.getElementById('ds_ngay_tinh_han_' + id_tieuchi).value;
+    const soNgayXuly = document.getElementById('ds_so_ngay_xuly_' + id_tieuchi).value;
+    const nguoiChiuTrachnhiem = document.getElementById('ds_nguoi_chiu_trachnhiem_' + id_tieuchi).value;
+    const statusDiv = document.getElementById('default_settings_status');
+    
+    // Hiển thị thông báo đang lưu
+    statusDiv.innerHTML = '<div style="color: #007bff; text-align: center;"><i>Đang lưu cài đặt...</i></div>';
+    statusDiv.style.display = 'block';
+    
+    // Sử dụng AJAX để lưu cài đặt
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'save_default_setting.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+    xhr.onload = function() {
+        if (this.status === 200) {
+            try {
+                const response = JSON.parse(this.responseText);
+                if (response.success) {
+                    // Hiển thị thông báo thành công
+                    statusDiv.innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Lưu cài đặt thành công!</strong></div>';
+                    
+                    // Highlight hàng vừa cập nhật
+                    const row = document.getElementById('ds_row_' + id_tieuchi);
+                    row.style.backgroundColor = '#d4edda';
+                    setTimeout(function() {
+                        row.style.backgroundColor = '';
+                    }, 2000);
+                } else {
+                    // Hiển thị thông báo lỗi
+                    statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                }
+                
+                // Ẩn thông báo sau 3 giây
+                setTimeout(function() {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            } catch (e) {
+                console.error('Lỗi xử lý phản hồi: ', e);
+                statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+            }
+        } else {
+            console.error('Lỗi kết nối: ' + this.status);
+            statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối: ' + this.status + '</strong></div>';
+        }
+    };
+    
+    xhr.onerror = function() {
+        console.error('Lỗi kết nối mạng');
+        statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối mạng</strong></div>';
+    };
+    
+    // Gửi request
+    xhr.send(
+        'id_tieuchi=' + encodeURIComponent(id_tieuchi) + 
+        '&dept=' + encodeURIComponent(dept) + 
+        '&ngay_tinh_han=' + encodeURIComponent(ngayTinhHan) + 
+        '&so_ngay_xuly=' + encodeURIComponent(soNgayXuly) +
+        '&nguoi_chiu_trachnhiem=' + encodeURIComponent(nguoiChiuTrachnhiem)
+    );
+}
+
+// Hàm lưu tất cả cài đặt mặc định
+function saveAllDefaultSettings(dept) {
+    const statusDiv = document.getElementById('default_settings_status');
+    const rows = document.querySelectorAll("#default_settings_tbody tr[id^='ds_row_']");
+    
+    // Hiển thị thông báo đang lưu
+    statusDiv.innerHTML = '<div style="color: #007bff; text-align: center;"><i>Đang lưu tất cả cài đặt...</i></div>';
+    statusDiv.style.display = 'block';
+    
+    // Tạo mảng lưu tất cả các cài đặt
+    const settings = [];
+    rows.forEach(function(row) {
+        const id_tieuchi = row.id.replace('ds_row_', '');
+        const ngayTinhHan = document.getElementById('ds_ngay_tinh_han_' + id_tieuchi).value;
+        const soNgayXuly = document.getElementById('ds_so_ngay_xuly_' + id_tieuchi).value;
+        const nguoiChiuTrachnhiem = document.getElementById('ds_nguoi_chiu_trachnhiem_' + id_tieuchi).value;
+        
+        settings.push({
+            id_tieuchi: id_tieuchi,
+            ngay_tinh_han: ngayTinhHan,
+            so_ngay_xuly: soNgayXuly,
+            nguoi_chiu_trachnhiem: nguoiChiuTrachnhiem
+        });
+    });
+    
+    // Sử dụng AJAX để lưu tất cả cài đặt
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'save_all_default_settings.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+    xhr.onload = function() {
+        if (this.status === 200) {
+            try {
+                const response = JSON.parse(this.responseText);
+                if (response.success) {
+                    // Hiển thị thông báo thành công
+                    statusDiv.innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Đã lưu thành công tất cả ' + response.count + ' cài đặt!</strong></div>';
+                    
+                    // Highlight tất cả các hàng
+                    rows.forEach(function(row) {
+                        row.style.backgroundColor = '#d4edda';
+                        setTimeout(function() {
+                            row.style.backgroundColor = '';
+                        }, 2000);
+                    });
+                } else {
+                    // Hiển thị thông báo lỗi
+                    statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                }
+                
+                // Ẩn thông báo sau 3 giây
+                setTimeout(function() {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            } catch (e) {
+                console.error('Lỗi xử lý phản hồi: ', e);
+                statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+            }
+        } else {
+            console.error('Lỗi kết nối: ' + this.status);
+            statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối: ' + this.status + '</strong></div>';
+        }
+    };
+    
+    xhr.onerror = function() {
+        console.error('Lỗi kết nối mạng');
+        statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối mạng</strong></div>';
+    };
+    
+    // Gửi request
+    xhr.send(
+        'dept=' + encodeURIComponent(dept) + 
+        '&settings=' + encodeURIComponent(JSON.stringify(settings))
+    );
+}
+
+// Xóa phiên bản trùng lặp của các hàm JavaScript
+// Biến toàn cục cho các cài đặt mặc định
+let defaultSettingsData = [];
+
+// Hàm hiển thị modal cài đặt mặc định
+function showDefaultSettingModal(dept, dept_name) {
+    // ... existing code ...
+}
+
+function showIncompleteItems(id_sanxuat) {
+    // ... existing code ...
+}
+</script>
+
+<style>
+.diem-select {
+    width: 85px;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 13px;
+    height: 30px;
+}
+
+.nguoi-thuchien-select {
+    width: 160px;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    height: 30px;
+}
+
+select[name^="nguoi_thuchien_"] {
+    width: 160px;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    height: 30px;
+}
+
+.checkbox {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+    cursor: default;
+    text-align: center;
+    line-height: 25px;
+}
+
+.checkbox.checked {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+}
+
+.checkbox.unchecked {
+    background-color: #F44336;
+    border-color: #F44336;
+    color: white;
+}
+
+.checkmark {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.checkbox-input {
+    display: none;
+}
+
+.small-btn {
+    font-size: 9px;
+    padding: 1px 3px;
+}
+
+@media screen and (max-width: 1200px) {
+    .evaluation-table th, .evaluation-table td {
+        font-size: 13px;
+    }
+    
+    select[name^="nguoi_thuchien_"] {
+        width: 140px;
+        padding: 2px;
+        font-size: 12px;
+        height: 28px;
+    }
+    
+    .diem-select {
+        width: 80px;
+        height: 28px;
+    }
+}
+
+/* Các style cho modal cài đặt mặc định */
+.btn-default-setting {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.btn-default-setting:hover {
+    background-color: #2980b9;
+}
+
+/* Style cho form trong modal */
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Style cho danh sách cài đặt */
+#default_settings_tbody td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+#default_settings_tbody .text-left {
+    text-align: left;
+}
+
+/* Style cho thông báo trạng thái */
+#default_settings_status {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+/* Thêm CSS cho modal cài đặt mặc định */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    position: relative;
+}
+
+.table-container {
+    max-height: calc(80vh - 200px);
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+}
+
+/* Style cho danh sách cài đặt */
+#default_settings_tbody td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+#default_settings_tbody .text-left {
+    text-align: left;
+}
+
+/* Style cho thông báo trạng thái */
+#default_settings_status {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+</style>
+
+    <!-- Modal Quản lý người thực hiện -->
+    <div id="staffModal" class="modal">
+        <div class="modal-content" style="width: 60%; max-width: 800px; max-height: 80vh; overflow: hidden; margin: 5% auto;">
+            <span class="close" onclick="closeStaffModal()">&times;</span>
+            <h3 class="modal-title">Quản lý người chịu trách nhiệm - <span id="dept_display_name"></span></h3>
+            
+            <div id="staff_status" style="margin-bottom: 15px; display: none;"></div>
+            
+            <div style="display: flex; flex-direction: column; height: calc(80vh - 150px);">
+                <div style="margin-bottom: 15px;">
+                    <h4>Thêm người chịu trách nhiệm mới</h4>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="new_staff_name" class="form-control" placeholder="Tên người chịu trách nhiệm" style="flex: 3;">
+                        <input type="text" id="new_staff_position" class="form-control" placeholder="Chức vụ (không bắt buộc)" style="flex: 2;">
+                        <input type="hidden" id="current_dept" value="">
+                        <button type="button" onclick="addNewStaff()" class="btn-add-criteria" style="flex: 1;">Thêm</button>
+                    </div>
+                </div>
+                
+                <div class="table-container" style="flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
+                    <table class="evaluation-table" style="width: 100%;">
+                        <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 10;">
+                            <tr>
+                                <th style="width: 5%;">STT</th>
+                                <th style="width: 40%;">Tên</th>
+                                <th style="width: 30%;">Chức vụ</th>
+                                <th style="width: 25%;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff_tbody">
+                            <!-- Danh sách người thực hiện sẽ được load bằng JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
+                    <button type="button" onclick="closeStaffModal()" class="btn-add-criteria" style="background-color: #6c757d;">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // Hàm mở modal quản lý người thực hiện
+    function openStaffModal(dept) {
+        document.getElementById('staffModal').style.display = 'block';
+        document.getElementById('current_dept').value = dept;
+        
+        // Hiển thị tên bộ phận
+        let deptDisplayName = '';
+        switch(dept) {
+            case 'kehoach': deptDisplayName = 'Kế Hoạch'; break;
+            case 'chuanbi_sanxuat_phong_kt': deptDisplayName = 'Chuẩn Bị Sản Xuất / Phòng KT'; break;
+            case 'kho': deptDisplayName = 'Kho'; break;
+            case 'cat': deptDisplayName = 'Cắt'; break;
+            case 'ep_keo': deptDisplayName = 'Ép Keo'; break;
+            case 'co_dien': deptDisplayName = 'Cơ Điện'; break;
+            case 'chuyen_may': deptDisplayName = 'Chuyền May'; break;
+            case 'kcs': deptDisplayName = 'KCS'; break;
+            case 'ui_thanh_pham': deptDisplayName = 'Ủi Thành Phẩm'; break;
+            case 'hoan_thanh': deptDisplayName = 'Hoàn Thành'; break;
+            default: deptDisplayName = dept;
+        }
+        document.getElementById('dept_display_name').textContent = deptDisplayName;
+        
+        // Load danh sách người thực hiện
+        loadStaffList(dept);
+    }
+    
+    // Đóng modal quản lý người thực hiện
+    function closeStaffModal() {
+        document.getElementById('staffModal').style.display = 'none';
+    }
+    
+    // Load danh sách người thực hiện
+    function loadStaffList(dept) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'get_staff_list.php?dept=' + encodeURIComponent(dept), true);
+        
+        xhr.onload = function() {
+            if (this.status === 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    if (response.success) {
+                        const staffList = response.data;
+                        let html = '';
+                        
+                        staffList.forEach(function(staff, index) {
+                            html += `
+                            <tr id="staff_row_${staff.id}">
+                                <td>${index + 1}</td>
+                                <td><input type="text" id="staff_name_${staff.id}" class="form-control" value="${staff.ten}" style="width: 100%;"></td>
+                                <td><input type="text" id="staff_position_${staff.id}" class="form-control" value="${staff.chuc_vu || ''}" style="width: 100%;"></td>
+                                <td>
+                                    <button type="button" onclick="updateStaff(${staff.id})" class="btn-default-setting">Cập nhật</button>
+                                    <button type="button" onclick="deleteStaff(${staff.id})" class="btn-default-setting" style="background-color: #dc3545;">Xóa</button>
+                                </td>
+                            </tr>`;
+                        });
+                        
+                        document.getElementById('staff_tbody').innerHTML = html;
+                    } else {
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                        
+                        setTimeout(function() {
+                            document.getElementById('staff_status').style.display = 'none';
+                        }, 3000);
+                    }
+                } catch (e) {
+                    console.error('Lỗi xử lý phản hồi: ', e);
+                    document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                    document.getElementById('staff_status').style.display = 'block';
+                }
+            }
+        };
+        
+        xhr.send();
+    }
+    
+    // Thêm người thực hiện mới
+    function addNewStaff() {
+        const staffName = document.getElementById('new_staff_name').value.trim();
+        const staffPosition = document.getElementById('new_staff_position').value.trim();
+        const dept = document.getElementById('current_dept').value;
+        
+        if (!staffName) {
+            alert('Vui lòng nhập tên người thực hiện!');
+            return;
+        }
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'manage_staff.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+            if (this.status === 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Đã thêm người thực hiện thành công!</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                        
+                        // Xóa form
+                        document.getElementById('new_staff_name').value = '';
+                        document.getElementById('new_staff_position').value = '';
+                        
+                        // Tải lại danh sách
+                        loadStaffList(dept);
+                        
+                        // Ẩn thông báo sau 3 giây
+                        setTimeout(function() {
+                            document.getElementById('staff_status').style.display = 'none';
+                        }, 3000);
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                    }
+                } catch (e) {
+                    console.error('Lỗi xử lý phản hồi: ', e);
+                    document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                    document.getElementById('staff_status').style.display = 'block';
+                }
+            }
+        };
+        
+        xhr.send(
+            'action=add' +
+            '&ten=' + encodeURIComponent(staffName) +
+            '&phong_ban=' + encodeURIComponent(dept) +
+            '&chuc_vu=' + encodeURIComponent(staffPosition)
+        );
+    }
+    
+    // Cập nhật thông tin người thực hiện
+    function updateStaff(staffId) {
+        const staffName = document.getElementById('staff_name_' + staffId).value.trim();
+        const staffPosition = document.getElementById('staff_position_' + staffId).value.trim();
+        const dept = document.getElementById('current_dept').value;
+        
+        if (!staffName) {
+            alert('Vui lòng nhập tên người thực hiện!');
+            return;
+        }
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'manage_staff.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+            if (this.status === 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Đã cập nhật thành công!</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                        
+                        // Highlight dòng vừa cập nhật
+                        const row = document.getElementById('staff_row_' + staffId);
+                        row.style.backgroundColor = '#d4edda';
+                        setTimeout(function() {
+                            row.style.backgroundColor = '';
+                        }, 2000);
+                        
+                        // Ẩn thông báo sau 3 giây
+                        setTimeout(function() {
+                            document.getElementById('staff_status').style.display = 'none';
+                        }, 3000);
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                    }
+                } catch (e) {
+                    console.error('Lỗi xử lý phản hồi: ', e);
+                    document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                    document.getElementById('staff_status').style.display = 'block';
+                }
+            }
+        };
+        
+        xhr.send(
+            'action=update' +
+            '&id=' + encodeURIComponent(staffId) +
+            '&ten=' + encodeURIComponent(staffName) +
+            '&chuc_vu=' + encodeURIComponent(staffPosition)
+        );
+    }
+    
+    // Xóa người thực hiện
+    function deleteStaff(staffId) {
+        if (!confirm('Bạn có chắc chắn muốn xóa người thực hiện này?')) {
+            return;
+        }
+        
+        const dept = document.getElementById('current_dept').value;
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'manage_staff.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+            if (this.status === 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Đã xóa người thực hiện thành công!</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                        
+                        // Tải lại danh sách
+                        loadStaffList(dept);
+                        
+                        // Ẩn thông báo sau 3 giây
+                        setTimeout(function() {
+                            document.getElementById('staff_status').style.display = 'none';
+                        }, 3000);
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                        document.getElementById('staff_status').style.display = 'block';
+                    }
+                } catch (e) {
+                    console.error('Lỗi xử lý phản hồi: ', e);
+                    document.getElementById('staff_status').innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                    document.getElementById('staff_status').style.display = 'block';
+                }
+            }
+        };
+        
+        xhr.send('action=delete&id=' + encodeURIComponent(staffId));
+    }
+    
+    // Cập nhật hàm saveDefaultSetting để bao gồm người thực hiện
+    function saveDefaultSetting(id_tieuchi, dept) {
+        const ngayTinhHan = document.getElementById('ds_ngay_tinh_han_' + id_tieuchi).value;
+        const soNgayXuly = document.getElementById('ds_so_ngay_xuly_' + id_tieuchi).value;
+        const nguoiChiuTrachnhiem = document.getElementById('ds_nguoi_chiu_trachnhiem_' + id_tieuchi).value;
+        const statusDiv = document.getElementById('default_settings_status');
+        
+        // Hiển thị thông báo đang lưu
+        statusDiv.innerHTML = '<div style="color: #007bff; text-align: center;"><i>Đang lưu cài đặt...</i></div>';
+        statusDiv.style.display = 'block';
+        
+        // Sử dụng AJAX để lưu cài đặt
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'save_default_setting.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+            if (this.status === 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        statusDiv.innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Lưu cài đặt thành công!</strong></div>';
+                        
+                        // Highlight hàng vừa cập nhật
+                        const row = document.getElementById('ds_row_' + id_tieuchi);
+                        row.style.backgroundColor = '#d4edda';
+                        setTimeout(function() {
+                            row.style.backgroundColor = '';
+                        }, 2000);
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                    }
+                    
+                    // Ẩn thông báo sau 3 giây
+                    setTimeout(function() {
+                        statusDiv.style.display = 'none';
+                    }, 3000);
+                } catch (e) {
+                    console.error('Lỗi xử lý phản hồi: ', e);
+                    statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                }
+            } else {
+                console.error('Lỗi kết nối: ' + this.status);
+                statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối: ' + this.status + '</strong></div>';
+            }
+        };
+        
+        xhr.onerror = function() {
+            console.error('Lỗi kết nối mạng');
+            statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối mạng</strong></div>';
+        };
+        
+        // Gửi request
+        xhr.send(
+            'id_tieuchi=' + encodeURIComponent(id_tieuchi) + 
+            '&dept=' + encodeURIComponent(dept) + 
+            '&ngay_tinh_han=' + encodeURIComponent(ngayTinhHan) + 
+            '&so_ngay_xuly=' + encodeURIComponent(soNgayXuly) +
+            '&nguoi_chiu_trachnhiem=' + encodeURIComponent(nguoiChiuTrachnhiem)
+        );
+    }
+    
+    // Cập nhật hàm saveAllDefaultSettings để bao gồm người thực hiện
+    function saveAllDefaultSettings(dept) {
+        const statusDiv = document.getElementById('default_settings_status');
+        const rows = document.querySelectorAll("#default_settings_tbody tr[id^='ds_row_']");
+        
+        // Hiển thị thông báo đang lưu
+        statusDiv.innerHTML = '<div style="color: #007bff; text-align: center;"><i>Đang lưu tất cả cài đặt...</i></div>';
+        statusDiv.style.display = 'block';
+        
+        // Tạo mảng lưu tất cả các cài đặt
+        const settings = [];
+        rows.forEach(function(row) {
+            const id_tieuchi = row.id.replace('ds_row_', '');
+            const ngayTinhHan = document.getElementById('ds_ngay_tinh_han_' + id_tieuchi).value;
+            const soNgayXuly = document.getElementById('ds_so_ngay_xuly_' + id_tieuchi).value;
+            const nguoiChiuTrachnhiem = document.getElementById('ds_nguoi_chiu_trachnhiem_' + id_tieuchi).value;
+            
+            settings.push({
+                id_tieuchi: id_tieuchi,
+                ngay_tinh_han: ngayTinhHan,
+                so_ngay_xuly: soNgayXuly,
+                nguoi_chiu_trachnhiem: nguoiChiuTrachnhiem
+            });
+        });
+        
+        // Sử dụng AJAX để lưu tất cả cài đặt
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'save_all_default_settings.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+            if (this.status === 200) {
+                try {
+                    const response = JSON.parse(this.responseText);
+                    if (response.success) {
+                        // Hiển thị thông báo thành công
+                        statusDiv.innerHTML = '<div style="color: #28a745; text-align: center;"><strong>✓ Đã lưu thành công tất cả ' + response.count + ' cài đặt!</strong></div>';
+                        
+                        // Highlight tất cả các hàng
+                        rows.forEach(function(row) {
+                            row.style.backgroundColor = '#d4edda';
+                            setTimeout(function() {
+                                row.style.backgroundColor = '';
+                            }, 2000);
+                        });
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi: ' + response.message + '</strong></div>';
+                    }
+                    
+                    // Ẩn thông báo sau 3 giây
+                    setTimeout(function() {
+                        statusDiv.style.display = 'none';
+                    }, 3000);
+                } catch (e) {
+                    console.error('Lỗi xử lý phản hồi: ', e);
+                    statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi xử lý phản hồi</strong></div>';
+                }
+            } else {
+                console.error('Lỗi kết nối: ' + this.status);
+                statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối: ' + this.status + '</strong></div>';
+            }
+        };
+        
+        xhr.onerror = function() {
+            console.error('Lỗi kết nối mạng');
+            statusDiv.innerHTML = '<div style="color: #dc3545; text-align: center;"><strong>❌ Lỗi kết nối mạng</strong></div>';
+        };
+        
+        // Gửi request
+        xhr.send(
+            'dept=' + encodeURIComponent(dept) + 
+            '&settings=' + encodeURIComponent(JSON.stringify(settings))
+        );
+    }
+    </script>
+</body>
+</html>
