@@ -2716,7 +2716,7 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
                 </td>";
             echo "<td>" . htmlspecialchars($row['model']) . "</td>";
             echo "<td class='text-center'>{$row['qty']}</td>";
-            echo "<td><a href='edit_date.php?id={$row['stt']}' title='Chỉnh sửa ngày in' style='color:inherit; text-decoration:underline;'>{$ngayin_formatted}</a></td>";
+            echo "<td><a href='edit_date_clone.php?id={$row['stt']}' title='Chỉnh sửa ngày in' style='color:inherit; text-decoration:underline;'>{$ngayin_formatted}</a></td>";
             echo "<td>{$ngayout_formatted}</td>";
 
             // Kế hoạch

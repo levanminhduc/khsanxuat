@@ -390,3 +390,468 @@ h2 {
 .data-table tbody tr.selected-row:nth-child(even) {
   background-color: #fee2e2 !important;
 }
+
+/* Edit Date Page Styles */
+.edit-date-container {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.edit-date-container h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.edit-date-form-group {
+    margin-bottom: 15px;
+}
+
+.edit-date-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.edit-date-form-group input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.edit-date-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.edit-date-btn:hover {
+    background: #45a049;
+}
+
+.edit-date-btn-secondary {
+    background: #f0ad4e;
+}
+
+.edit-date-btn-secondary:hover {
+    background: #ec971f;
+}
+
+.edit-date-alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.edit-date-alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.edit-date-alert-danger {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.edit-date-info-table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+.edit-date-info-table th,
+.edit-date-info-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.edit-date-info-table th {
+    background-color: #f2f2f2;
+}
+
+.edit-date-format {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.edit-date-input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#date_input {
+    width: 100%;
+    padding: 8px 30px 8px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    pointer-events: auto;
+}
+
+.edit-date-notice {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    color: #31708f;
+    border-radius: 4px;
+}
+
+/* Hide default date picker */
+.edit-date-container input[type="date"] {
+    display: none;
+}
+
+/* jQuery UI Datepicker Customization */
+.ui-datepicker {
+    font-size: 14px;
+}
+
+.ui-datepicker .ui-datepicker-header {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.ui-datepicker .ui-datepicker-calendar .ui-state-default {
+    background: #f6f6f6;
+    color: #333;
+}
+
+.ui-datepicker .ui-datepicker-calendar .ui-state-active {
+    background: #4CAF50;
+    color: white;
+}
+
+/* Edit Date Modal Styles */
+.edit-date-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.edit-date-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    animation: editDateModalOpen 0.3s ease-out;
+}
+
+@keyframes editDateModalOpen {
+    from {opacity: 0; transform: translateY(-30px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.edit-date-modal-header {
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-date-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.edit-date-modal .close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit-date-modal .close:hover {
+    color: #eee;
+}
+
+.edit-date-modal-body {
+    padding: 20px;
+    font-size: 16px;
+}
+
+.edit-date-modal-footer {
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    text-align: right;
+}
+
+.edit-date-modal #countdown {
+    font-weight: bold;
+    font-size: 18px;
+    color: #4CAF50;
+}
+
+/* Original CSS classes for edit_date.php compatibility */
+.edit-date-page .container {
+    width: 80%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.edit-date-page .container h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background: #45a049;
+}
+
+.btn-secondary {
+    background: #f0ad4e;
+}
+
+.btn-secondary:hover {
+    background: #ec971f;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.alert-danger {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.info-table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+.info-table th,
+.info-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.info-table th {
+    background-color: #f2f2f2;
+}
+
+.date-format {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.date-input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#date_input {
+    width: 100%;
+    padding: 8px 30px 8px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    pointer-events: auto;
+}
+
+/* Hide default date picker */
+input[type="date"] {
+    display: none;
+}
+
+/* jQuery UI Datepicker Customization */
+.ui-datepicker {
+    font-size: 14px;
+}
+
+.ui-datepicker .ui-datepicker-header {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.ui-datepicker .ui-datepicker-calendar .ui-state-default {
+    background: #f6f6f6;
+    color: #333;
+}
+
+.ui-datepicker .ui-datepicker-calendar .ui-state-active {
+    background: #4CAF50;
+    color: white;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    animation: modalOpen 0.3s ease-out;
+}
+
+@keyframes modalOpen {
+    from {opacity: 0; transform: translateY(-30px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.modal-header {
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #eee;
+}
+
+.modal-body {
+    padding: 20px;
+    font-size: 16px;
+}
+
+.modal-footer {
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    text-align: right;
+}
+
+#countdown {
+    font-weight: bold;
+    font-size: 18px;
+    color: #4CAF50;
+}
