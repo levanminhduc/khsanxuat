@@ -154,9 +154,19 @@ if ($id <= 0) {
 // Xử lý form submit
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_data) {
     $new_date = $_POST['new_date'];
+    $new_qty = isset($_POST['new_qty']) ? $_POST['new_qty'] : '';
+    $new_line = isset($_POST['new_line']) ? trim($_POST['new_line']) : '';
 
     // Validate ngày
-    if (DateTime::createFromFormat('Y-m-d', $new_date) !== false) {
+    $date_valid = DateTime::createFromFormat('Y-m-d', $new_date) !== false;
+
+    // Validate số lượng
+    $qty_valid = is_numeric($new_qty) && $new_qty > 0 && $new_qty == (int)$new_qty;
+
+    // Validate LINE
+    $line_valid = is_numeric($new_line) && $new_line >= 1 && $new_line <= 10 && $new_line == (int)$new_line; // Giới hạn số nguyên từ 1-10
+
+    if ($date_valid && $qty_valid && $line_valid) {
         // Tính toán ngày ra mới dựa trên khoảng thời gian hiện tại
         $current_ngay_vao = new DateTime($item_data['ngayin']);
         $current_ngay_ra = new DateTime($item_data['ngayout']);
@@ -169,17 +179,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
         // Lưu định dạng ngày thành chuỗi trước khi truyền vào bind_param
         $ngayin_string = $new_date;
         $ngayout_string = $new_ngay_ra->format('Y-m-d');
+        $qty_int = (int)$new_qty;
+        $line_int = (int)$new_line;
 
         // Cập nhật database
-        $update_sql = "UPDATE khsanxuat SET ngayin = ?, ngayout = ? WHERE stt = ?";
+        $update_sql = "UPDATE khsanxuat SET ngayin = ?, ngayout = ?, qty = ?, line1 = ? WHERE stt = ?";
         $update_stmt = $connect->prepare($update_sql);
-        $update_stmt->bind_param("ssi", $ngayin_string, $ngayout_string, $id);
+        $update_stmt->bind_param("ssiii", $ngayin_string, $ngayout_string, $qty_int, $line_int, $id);
 
         if ($update_stmt->execute()) {
             // Cập nhật các ngày hạn của các bộ phận
             $updated_deadlines = updateDeptDeadlines($connect, $id, $ngayin_string, $ngayout_string);
 
-            $message = "Đã cập nhật ngày thành công!" . ($updated_deadlines > 0 ? " Cập nhật {$updated_deadlines} hạn xử lý của các bộ phận." : "");
+            $message = "Đã cập nhật ngày, số lượng và LINE thành công!" . ($updated_deadlines > 0 ? " Cập nhật {$updated_deadlines} hạn xử lý của các bộ phận." : "");
 
             // Cập nhật lại dữ liệu để hiển thị
             $stmt->execute();
@@ -189,7 +201,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
             $error = "Có lỗi xảy ra khi cập nhật: " . $connect->error;
         }
     } else {
-        $error = "Định dạng ngày không hợp lệ.";
+        if (!$date_valid) {
+            $error = "Định dạng ngày không hợp lệ.";
+        } elseif (!$qty_valid) {
+            $error = "Số lượng phải là số nguyên dương.";
+        } elseif (!$line_valid) {
+            $error = "LINE phải là số nguyên từ 1 đến 10.";
+        }
     }
 }
 ?>
@@ -262,17 +280,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
                     <label for="date_input">Ngày vào mới (Ngày/Tháng/Năm):</label>
 
                     <!-- Sử dụng một ô input duy nhất -->
-                    <div class="date-input-container">
-                        <input type="text" id="date_input" name="date_display" value="<?php echo date('d/m/Y', strtotime($item_data['ngayin'])); ?>" placeholder="DD/MM/YYYY" autocomplete="off">
-                        <span class="calendar-icon" id="calendar_icon">📅</span>
+                    <div class="date-input-container" style="position: relative; display: inline-block; width: 43%;">
+                        <input type="text" id="date_input" name="date_display" value="<?php echo date('d/m/Y', strtotime($item_data['ngayin'])); ?>" placeholder="DD/MM/YYYY" autocomplete="off" style="width: 100%; padding: 8px 35px 8px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; text-align: center;">
+                        <span class="calendar-icon" id="calendar_icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px; color: #666;">📅</span>
                         <input type="hidden" id="new_date" name="new_date" value="<?php echo date('Y-m-d', strtotime($item_data['ngayin'])); ?>">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="qty_input">Số lượng mới:</label>
+                    <input type="number" id="qty_input" name="new_qty" value="<?php echo $item_data['qty']; ?>" min="1" step="1" required style="width: 40%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; text-align: center;">
+                </div>
+                <div class="form-group">
+                    <label for="line_input">Line mới (1-10):</label>
+                    <input type="number" id="line_input" name="new_line" value="<?php echo htmlspecialchars($item_data['line1']); ?>" placeholder="Nhập Line từ 1-10" min="1" max="10" step="1" required style="width: 40%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; text-align: center;">
+                </div>
                 <div style="margin-bottom: 15px; padding: 10px; background-color: #d9edf7; border: 1px solid #bce8f1; color: #31708f; border-radius: 4px;">
-                    <strong>Lưu ý:</strong> Khi thay đổi ngày in, các ngày sau sẽ được tự động điều chỉnh:
+                    <strong>Lưu ý:</strong> Khi thay đổi thông tin:
                     <ul>
                         <li>Ngày ra sẽ điều chỉnh theo cùng khoảng thời gian với ngày vào</li>
-                        <!-- <li>Ngày hạn xử lý của các bộ phận sẽ được tính toán lại</li> -->
+                        <li>Số lượng phải là số nguyên dương</li>
+                        <li>Line từ 1 đến 10</li>
                     </ul>
                     <br>Định dạng ngày: <span class="date-format">Ngày/Tháng/Năm</span>
                 </div>
@@ -362,9 +389,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
             // Xử lý submit form
             dateForm.addEventListener('submit', function(e) {
                 const dateValue = hiddenDateInput.value;
+                const lineValue = document.getElementById('line_input').value.trim();
+                const qtyValue = document.getElementById('qty_input').value;
+                
                 if (!dateValue) {
                     e.preventDefault();
                     alert('Vui lòng chọn ngày hợp lệ.');
+                    return false;
+                }
+                
+                if (!lineValue || isNaN(lineValue) || lineValue < 1 || lineValue > 10 || lineValue != parseInt(lineValue)) {
+                    e.preventDefault();
+                    alert('Line phải là số nguyên từ 1 đến 10.');
+                    document.getElementById('line_input').focus();
+                    return false;
+                }
+                
+                if (!qtyValue || qtyValue <= 0) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập số lượng hợp lệ.');
+                    document.getElementById('qty_input').focus();
                     return false;
                 }
             });

@@ -487,12 +487,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                         <table class="evaluation-table" style="width: 100%;">
                             <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 10;">
                                 <tr>
-                                    <th style="width: 5%;">STT</th>
-                                    <th style="width: 30%;">Tiêu chí đánh giá</th>
-                                    <th style="width: 15%;">Loại tính hạn</th>
-                                    <th style="width: 10%;">Số ngày</th>
-                                    <th style="width: 20%; height: 50px;">Người chịu trách nhiệm</th>
-                                    <th style="width: 20%;">Thao tác</th>
+                                    <th style="width: 5%; color: #1e40af;">STT</th>
+                                    <th style="width: 30%; color: #1e40af;">Tiêu chí đánh giá</th>
+                                    <th style="width: 15%; color: #1e40af;">Loại tính hạn</th>
+                                    <th style="width: 10%; color: #1e40af;">Số ngày</th>
+                                    <th style="width: 20%; height: 50px; color: #1e40af;">Người chịu trách nhiệm</th>
+                                    <th style="width: 20%; color: #1e40af;">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="default_settings_tbody">
@@ -1308,10 +1308,10 @@ select[name^="nguoi_thuchien_"] {
                     <table class="evaluation-table" style="width: 100%;">
                         <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 10;">
                             <tr>
-                                <th style="width: 5%;">STT</th>
-                                <th style="width: 40%;">Tên</th>
-                                <th style="width: 30%;">Chức vụ</th>
-                                <th style="width: 25%;">Thao tác</th>
+                                <th style="width: 5%; color: blue;">STT</th>
+                                <th style="width: 40%; color: blue;">Tên</th>
+                                <th style="width: 30%; color: blue;">Chức vụ</th>
+                                <th style="width: 25%; color: blue;">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="staff_tbody">

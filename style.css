@@ -232,6 +232,7 @@ textarea {
 
 .evaluation-table th {
   background-color: #f2f2f2;
+  color: #1e40af;
   text-align: center;
   padding: 10px;
   border: 1px solid #ddd;
@@ -854,4 +855,18 @@ input[type="date"] {
     font-weight: bold;
     font-size: 18px;
     color: #4CAF50;
+}
+
+/* Calendar icon hover effects */
+.calendar-icon:hover {
+    color: #007cba !important;
+    transform: translateY(-50%) scale(1.1) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Date input focus effects */
+.date-input-container input:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 5px rgba(0, 124, 186, 0.3);
 }
