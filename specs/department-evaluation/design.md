@@ -4,6 +4,8 @@
 
 The Department Evaluation System follows a traditional PHP multi-page application (MPA) architecture with server-side rendering, MySQL database, and session-based state management.
 
+**Department Visibility**: All 10 departments are supported in the backend. The main production tracking dashboard (`index.php`) temporarily shows only 4 departments (kehoach, chuanbi_sanxuat_phong_kt, kho, cat) for improved UI clarity, but all department-specific evaluation pages remain fully functional.
+
 ---
 
 ## System Components
@@ -430,6 +432,9 @@ ORDER BY CASE tc.nhom ... END, tc.thutu
 1. Add department code to `$dept_names` array in indexdept.php:33-44
 2. Add criteria records to `tieuchi_dept` table for new dept
 3. Update dept ordering in incomplete_criteria.php:109-125
+4. To make visible on dashboard: Uncomment or add department to `$chart_departments` and `$departments` arrays in index.php (lines 2392-2884)
+
+**Current Dashboard Configuration**: Only 4 departments visible on main dashboard. To restore hidden departments, uncomment sections marked with `// HIDDEN TEMPORARILY` in index.php.
 
 ### Adding New Score Values
 
@@ -456,6 +461,9 @@ ORDER BY CASE tc.nhom ... END, tc.thutu
 ## Implementation Notes
 
 **Status**: Synced from existing implementation  
-**Sync Date**: 2026-01-29
+**Sync Date**: 2026-01-30 (Updated for department visibility changes)
 
 This design reflects the CURRENT state of the codebase. All diagrams, schemas, and logic descriptions are extracted from existing code, not planned features.
+
+**Recent Changes**:
+- 2026-01-30: Added documentation about temporary dashboard department visibility reduction (10 departments → 4 visible on dashboard, all 10 remain in backend)

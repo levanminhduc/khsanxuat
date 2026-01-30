@@ -125,12 +125,14 @@ erDiagram
 - PRIMARY KEY (`id`)
 - INDEX on (`id_sanxuat`, `dept`) for fast status lookups
 
-**Department codes**:
+**Department codes** (all 13 departments supported in backend):
 ```
 kehoach, kho, cat, ep_keo, chuanbi_sanxuat_phong_kt, may, 
 hoan_thanh, co_dien, kcs, ui_thanh_pham, chuyen_may, 
 quan_ly_sx, quan_ly_cl
 ```
+
+**Dashboard visibility**: Only 4 departments currently visible on main dashboard (kehoach, chuanbi_sanxuat_phong_kt, kho, cat). See `index.php:2392-2884` for implementation.
 
 #### default_settings (Deadline Configuration)
 

@@ -194,10 +194,59 @@ Stores default deadline calculation settings per department and criteria.
 | Line sorting | Numeric cast | Sorts lines numerically (1, 2, 10) not alphabetically (1, 10, 2) (`index.php:94`) |
 | Execution timeout | 300 seconds | Prevents timeout on large Excel imports (`import.php:516`) |
 
+## Dashboard Department Visibility Configuration
+
+**Current Status**: Temporarily showing only 4 departments on the main dashboard
+
+### Visible Departments on Dashboard (4)
+
+The main production tracking dashboard (`index.php`) currently displays only these departments:
+
+| Department | Vietnamese Name | Code | Chart Color |
+|------------|----------------|------|-------------|
+| Kế Hoạch | Kế Hoạch | kehoach | #FF6384 |
+| Kỹ Thuật | Chuẩn Bị SX - Phòng KT | chuanbi_sanxuat_phong_kt | #36A2EB |
+| Kho | Kho Nguyên, Phụ Liệu | kho | #FFCE56 |
+| Cắt | Cắt | cat | #4BC0C0 |
+
+### Hidden Departments (6)
+
+The following departments are **temporarily hidden** from the dashboard UI but remain fully functional in the backend and on department-specific pages (`indexdept.php`):
+
+| Department | Vietnamese Name | Code | Status |
+|------------|----------------|------|--------|
+| Ép Keo | Ép Keo | ep_keo | Backend active |
+| Cơ Điện | Cơ Điện | co_dien | Backend active |
+| Chuyền May | Chuyền May | chuyen_may | Backend active |
+| KCS | KCS | kcs | Backend active |
+| Ủi TP | Ủi Thành Phẩm | ui_thanh_pham | Backend active |
+| Hoàn Thành | Hoàn Thành | hoan_thanh | Backend active |
+
+### Implementation Details
+
+**Modified sections in `index.php`**:
+- Lines 2392-2405: `$chart_departments` array (evaluation container) - reduced to 4 departments
+- Lines 2621-2654: Table header columns - 6 `<th>` elements commented out
+- Lines 2780-2790: `$departments` array (table body loop) - reduced to 1 department (cat)
+- Lines 2871-2884: `$departments` array (Chart.js data) - reduced to 4 departments
+
+All hidden sections are marked with `// HIDDEN TEMPORARILY` comments for easy restoration.
+
+**Backend Impact**: 
+- ✅ All 10 departments still work in department-specific evaluation pages
+- ✅ Database tables (`dept_status`, `danhgia_tieuchi`) support all 10 departments
+- ✅ Completion status tracking continues for all departments
+- ⚠️ Main dashboard now shows fewer columns, improving mobile responsiveness
+- ⚠️ Department evaluation chart shows only 4 departments instead of 10
+
+**Restoration**: To restore hidden departments, uncomment the sections marked with `// HIDDEN TEMPORARILY` in the four locations listed above.
+
+---
+
 ## Implementation Notes
 
 **Status**: Synced from existing implementation
-**Sync Date**: 2026-01-29
+**Sync Date**: 2026-01-30 (Updated for department visibility changes)
 
 All acceptance criteria marked complete [x] reflect the current state of the codebase as analyzed from:
 - `index.php` (dashboard and search)
@@ -206,3 +255,6 @@ All acceptance criteria marked complete [x] reflect the current state of the cod
 - `edit_date.php` (date editing and deadline recalculation)
 - `check_completion_status.php` (completion status verification)
 - Database schema from documentation files
+
+**Recent Changes**:
+- 2026-01-30: Updated spec to document temporary reduction of dashboard department columns from 10 to 4 for improved UI clarity

@@ -2393,13 +2393,15 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
             'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
             'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
             'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
-            'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
-            'Ép Keo' => ['code' => 'ep_keo', 'color' => '#9966FF'],
-            'Cơ Điện' => ['code' => 'co_dien', 'color' => '#FF9F40'],
-            'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#FF6384'],
-            'KCS' => ['code' => 'kcs', 'color' => '#36A2EB'],
-            'Ủi TP' => ['code' => 'ui_thanh_pham', 'color' => '#4BC0C0'],
-            'Hoàn Thành' => ['code' => 'hoan_thanh', 'color' => '#9966FF']
+            'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0']
+            // HIDDEN TEMPORARILY - Start
+            // 'Ép Keo' => ['code' => 'ep_keo', 'color' => '#9966FF'],
+            // 'Cơ Điện' => ['code' => 'co_dien', 'color' => '#FF9F40'],
+            // 'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#FF6384'],
+            // 'KCS' => ['code' => 'kcs', 'color' => '#36A2EB'],
+            // 'Ủi TP' => ['code' => 'ui_thanh_pham', 'color' => '#4BC0C0'],
+            // 'Hoàn Thành' => ['code' => 'hoan_thanh', 'color' => '#9966FF']
+            // HIDDEN TEMPORARILY - End
         ];
 
         $completion_rates = [];
@@ -2616,6 +2618,8 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
                                 Cắt
                             </a>
                         </th>
+                        <!-- HIDDEN TEMPORARILY - Start -->
+                        <!--
                         <th style="width: 110px;">
                             <a href="dept_statistics.php?dept=ep_keo&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Ép Keo
@@ -2646,6 +2650,8 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
                                 Hoàn Thành
                             </a>
                         </th>
+                        -->
+                        <!-- HIDDEN TEMPORARILY - End -->
                     </tr>
                 </thead>
                 <tbody>
@@ -2772,13 +2778,15 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
 
             // Các bộ phận còn lại
             $departments = [
-                'cat' => 'Cắt',
-                'ep_keo' => 'Ép Keo',
-                'co_dien' => 'Cơ Điện',
-                'chuyen_may' => 'Chuyền May',
-                'kcs' => 'KCS',
-                'ui_thanh_pham' => 'Ủi TP',
-                'hoan_thanh' => 'Hoàn Thành'
+                'cat' => 'Cắt'
+                // HIDDEN TEMPORARILY - Start
+                // 'ep_keo' => 'Ép Keo',
+                // 'co_dien' => 'Cơ Điện',
+                // 'chuyen_may' => 'Chuyền May',
+                // 'kcs' => 'KCS',
+                // 'ui_thanh_pham' => 'Ủi TP',
+                // 'hoan_thanh' => 'Hoàn Thành'
+                // HIDDEN TEMPORARILY - End
             ];
 
             foreach ($departments as $dept_code => $dept_name) {
@@ -2864,13 +2872,15 @@ document.addEventListener('DOMContentLoaded', function() {
         'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
         'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
         'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
-        'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
-        'Ép Keo' => ['code' => 'ep_keo', 'color' => '#9966FF'],
-        'Cơ Điện' => ['code' => 'co_dien', 'color' => '#FF9F40'],
-        'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#FF6384'],
-        'KCS' => ['code' => 'kcs', 'color' => '#36A2EB'],
-        'Ủi TP' => ['code' => 'ui_thanh_pham', 'color' => '#4BC0C0'],
-        'Hoàn Thành' => ['code' => 'hoan_thanh', 'color' => '#9966FF']
+        'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0']
+        // HIDDEN TEMPORARILY - Start
+        // 'Ép Keo' => ['code' => 'ep_keo', 'color' => '#9966FF'],
+        // 'Cơ Điện' => ['code' => 'co_dien', 'color' => '#FF9F40'],
+        // 'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#FF6384'],
+        // 'KCS' => ['code' => 'kcs', 'color' => '#36A2EB'],
+        // 'Ủi TP' => ['code' => 'ui_thanh_pham', 'color' => '#4BC0C0'],
+        // 'Hoàn Thành' => ['code' => 'hoan_thanh', 'color' => '#9966FF']
+        // HIDDEN TEMPORARILY - End
     ];
 
     $dept_stats = [];

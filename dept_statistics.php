@@ -202,7 +202,8 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
         }
         
         .evaluation-table th {
-            background-color: #f4f4f4;
+            background-color: #003366;
+            color: white;
         }
         
         /* Responsive cho điện thoại */

@@ -96,7 +96,8 @@ $sanxuat = $result->fetch_assoc();
             text-align: center;
         }
         .evaluation-table th {
-            background-color: #f4f4f4;
+            background-color: #003366;
+            color: white;
         }
         .score-info {
             margin: 20px 0;

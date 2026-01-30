@@ -242,31 +242,51 @@ As a **department administrator**, I want to **add, update, and remove staff mem
 
 ## Department Codes and Names
 
-| Code | Vietnamese Name | English |
-|------|-----------------|---------|
-| kehoach | Kế Hoạch | Planning |
-| chuanbi_sanxuat_phong_kt | Chuẩn Bị SX - Phòng KT | Production Prep - Engineering Dept |
-| kho | Kho Nguyên, Phụ Liệu | Materials & Accessories Warehouse |
-| cat | Cắt | Cutting |
-| ep_keo | Ép Keo | Glue Pressing |
-| co_dien | Cơ Điện | Mechanics & Electronics |
-| chuyen_may | Chuyền May | Sewing Line |
-| kcs | KCS | Quality Control |
-| ui_thanh_pham | Ủi Thành Phẩm | Finished Product Ironing |
-| hoan_thanh | Hoàn Thành | Completion |
+**Note**: All 10 departments remain fully functional in the backend. The main dashboard (`index.php`) currently shows only 4 departments for improved UI clarity, but all departments can be accessed directly via department-specific evaluation pages.
+
+### Visible on Main Dashboard (4)
+
+| Code | Vietnamese Name | English | Dashboard Visibility |
+|------|-----------------|---------|---------------------|
+| kehoach | Kế Hoạch | Planning | ✅ Visible |
+| chuanbi_sanxuat_phong_kt | Chuẩn Bị SX - Phòng KT | Production Prep - Engineering Dept | ✅ Visible |
+| kho | Kho Nguyên, Phụ Liệu | Materials & Accessories Warehouse | ✅ Visible |
+| cat | Cắt | Cutting | ✅ Visible |
+
+### Hidden from Main Dashboard (6)
+
+| Code | Vietnamese Name | English | Dashboard Visibility |
+|------|-----------------|---------|---------------------|
+| ep_keo | Ép Keo | Glue Pressing | ⚠️ Temporarily hidden (backend active) |
+| co_dien | Cơ Điện | Mechanics & Electronics | ⚠️ Temporarily hidden (backend active) |
+| chuyen_may | Chuyền May | Sewing Line | ⚠️ Temporarily hidden (backend active) |
+| kcs | KCS | Quality Control | ⚠️ Temporarily hidden (backend active) |
+| ui_thanh_pham | Ủi Thành Phẩm | Finished Product Ironing | ⚠️ Temporarily hidden (backend active) |
+| hoan_thanh | Hoàn Thành | Completion | ⚠️ Temporarily hidden (backend active) |
+
+**Access**: All departments remain accessible via:
+- Direct URL: `indexdept.php?dept=[dept_code]&id=[order_id]`
+- Department-specific statistics pages
+- Backend evaluation system
+- Database tables (`dept_status`, `danhgia_tieuchi`)
+
+**Implementation Reference**: `index.php:2392-2884` (sections marked with `// HIDDEN TEMPORARILY` comments)
 
 ---
 
 ## Implementation Notes
 
 **Status**: Synced from existing implementation  
-**Sync Date**: 2026-01-29  
+**Sync Date**: 2026-01-30 (Updated for department visibility changes)
 **Implementation Location**: `C:\xampp\htdocs\khsanxuat`
 
 All acceptance criteria document EXISTING functionality. The system is fully operational with:
-- 10 departments supported
+- 10 departments supported (4 visible on dashboard, 6 hidden temporarily)
 - Scoring system with standard (0/1/3) and alternative (0/0.5/1.5) scales
 - Image upload and validation
 - Activity logging for audit trail
 - Personnel management
 - Incomplete criteria tracking
+
+**Recent Changes**:
+- 2026-01-30: Updated spec to document that only 4 departments are currently visible on the main production tracking dashboard, while all 10 departments remain fully functional in backend systems

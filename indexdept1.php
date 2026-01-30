@@ -485,14 +485,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
                     
                     <div class="table-container" style="flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
                         <table class="evaluation-table" style="width: 100%;">
-                            <thead style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 10;">
+                            <thead style="position: sticky; top: 0; background-color: #003366; z-index: 10;">
                                 <tr>
-                                    <th style="width: 5%;">STT</th>
-                                    <th style="width: 30%;">Tiêu chí đánh giá</th>
-                                    <th style="width: 15%;">Loại tính hạn</th>
-                                    <th style="width: 10%;">Số ngày</th>
-                                    <th style="width: 20%;">Người chịu trách nhiệm</th>
-                                    <th style="width: 20%;">Thao tác</th>
+                                    <th style="width: 5%; color: white;">STT</th>
+                                    <th style="width: 30%; color: white;">Tiêu chí đánh giá</th>
+                                    <th style="width: 15%; color: white;">Loại tính hạn</th>
+                                    <th style="width: 10%; color: white;">Số ngày</th>
+                                    <th style="width: 20%; color: white;">Người chịu trách nhiệm</th>
+                                    <th style="width: 20%; color: white;">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="default_settings_tbody">

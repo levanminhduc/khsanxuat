@@ -425,8 +425,8 @@ select[id^="ngay_tinh_han_"] {
 
 .evaluation-table th {
   padding: 8px 4px;
-  background-color: #2563eb;
-  color: #1e40af;
+  background-color: #003366;
+  color: white;
   position: sticky;
   top: 0;
   z-index: 10;

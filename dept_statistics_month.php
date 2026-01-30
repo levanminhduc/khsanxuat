@@ -209,8 +209,8 @@ if ($total_avg_score < 267) {
         }
         
         .evaluation-table th {
-            background-color: #f4f4f4;
-            color: #1e40af;
+            background-color: #003366;
+            color: white;
             font-weight: bold;
         }
         
