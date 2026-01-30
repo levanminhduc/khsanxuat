@@ -141,6 +141,7 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thống Kê Điểm Trung Bình - <?php echo $dept_display_name; ?></title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         /* CSS từ danhgia_hethong.php để tối ưu hiển thị trên điện thoại */
         .navbar {
@@ -431,15 +432,19 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
     </style>
 </head>
 <body>
-    <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center" style="display: flex; justify-content: center; width: 100%;">
-            <h1 style="font-size: 35px; margin: 0;">ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY</h1>
-        </div>
-    </div>
+    <!-- Thanh điều hướng - Shared Header Component -->
+    <?php
+    $header_config = [
+        'title' => 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY',
+        'title_short' => 'Đánh Giá SX',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => 'index.php',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    include 'components/header.php';
+    ?>
 
     <div class="container">
         <div class="header">
@@ -552,5 +557,6 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
             </div>
         <?php endif; ?>
     </div>
+    <script src="assets/js/header.js"></script>
 </body>
-</html> 
+</html>

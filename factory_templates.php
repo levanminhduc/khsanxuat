@@ -221,6 +221,7 @@ while ($month_row = $result_months->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biểu Mẫu Xưởng <?php echo htmlspecialchars($xuong); ?> - Tháng <?php echo $selected_month; ?>/<?php echo $selected_year; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -725,14 +726,18 @@ while ($month_row = $result_months->fetch_assoc()) {
 </head>
 <body>
     <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" alt="Logo"></a>
-        </div>
-        <div class="navbar-center">
-            <h1 style="font-size: 20px; margin: 0;">Biểu Mẫu Xưởng <?php echo htmlspecialchars($xuong); ?> - Tháng <?php echo $selected_month; ?>/<?php echo $selected_year; ?></h1>
-        </div>
-    </div>
+<?php
+$header_config = [
+    'title' => 'Biểu Mẫu Xưởng ' . htmlspecialchars($xuong) . ' - Tháng ' . $selected_month . '/' . $selected_year,
+    'title_short' => 'Biểu mẫu',
+    'logo_path' => 'img/logoht.png',
+    'logo_link' => '/trangchu/',
+    'show_search' => false,
+    'show_mobile_menu' => true,
+    'actions' => []
+];
+?>
+<?php include 'components/header.php'; ?>
     
     <div class="container">
         <a href="index.php?month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" class="back-link">
@@ -1046,5 +1051,6 @@ while ($month_row = $result_months->fetch_assoc()) {
             }
         });
     </script>
+<script src="assets/js/header.js"></script>
 </body>
-</html> 
+</html>

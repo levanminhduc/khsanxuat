@@ -214,9 +214,20 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
     <title>ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleindex.css">
+    <!-- Shared Header Component CSS -->
+    <link rel="stylesheet" href="assets/css/header.css">
     <!-- Thêm thư viện Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+    /* ========================================
+       LEGACY CSS - Phase 7 Cleanup Target
+       ========================================
+       NOTE: The navbar styles below are now handled by assets/css/header.css
+       using the .header-component wrapper for CSS isolation.
+       These legacy styles can be removed in Phase 7 cleanup.
+       The header component uses more specific selectors, so these won't conflict.
+       ======================================== */
+
     /* Điều chỉnh body và html để tránh tràn nội dung */
     html, body {
         width: 100%;
@@ -2176,206 +2187,48 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
     </style>
 </head>
 <body>
-    <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/trangchu/"><img src="img/logoht.png" alt="Logo"></a>
-        </div>
-        
-        <div class="navbar-center">
-            <h1>ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY</h1>
-        </div>
-        
-        <!-- Nút hamburger cho mobile -->
-        <button class="navbar-toggle" id="navbar-toggle" aria-label="Menu">
-            <div class="hamburger-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </button>
-        
-        <!-- Menu cho desktop -->
-        <div class="navbar-right">
-            <div class="search-container">
-                <form class="search-form" action="" method="GET">
-                    <input type="hidden" name="month" value="<?php echo $selected_month; ?>">
-                    <input type="hidden" name="year" value="<?php echo $selected_year; ?>">
-                    <div class="search-group">
-                        <select name="search_type" class="search-select">
-                            <option value="xuong" <?php echo (!isset($_GET['search_type']) || $_GET['search_type'] == 'xuong') ? 'selected' : ''; ?>>Xưởng</option>
-                            <option value="line" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'line') ? 'selected' : ''; ?>>Line</option>
-                            <option value="po" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'po') ? 'selected' : ''; ?>>PO</option>
-                            <option value="style" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'style') ? 'selected' : ''; ?>>Style</option>
-                            <option value="model" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'model') ? 'selected' : ''; ?>>Model</option>
-                        </select>
-                        <input type="text" name="search_value" placeholder="Nhập từ khóa tìm kiếm..." 
-                               value="<?php echo isset($_GET['search_value']) ? htmlspecialchars($_GET['search_value']) : ''; ?>"
-                               class="search-input">
-                        <button type="submit" class="search-button">🔍</button>
-                    </div>
-                </form>
-            </div>
-            <a href="dept_statistics_month.php" title="Thống kê"><img src="img/thongke.png" alt="Thống kê"></a>
-            <a href="import.php" title="Nhập dữ liệu"><img src="img/add.png" alt="Nhập dữ liệu"></a>
-            <a href="export.php?month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" title="Xuất dữ liệu"><img src="img/export.jpg" alt="Xuất dữ liệu"></a>
-        </div>
-    </div>
+    <?php
+    // Header component configuration
+    $header_config = [
+        'title' => 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY',
+        'title_short' => 'ĐÁNH GIÁ SẢN XUẤT',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/trangchu/',
+        'show_search' => true,
+        'show_mobile_menu' => true,
+        'search_params' => [
+            'action' => 'index.php',
+            'month' => $selected_month,
+            'year' => $selected_year,
+            'search_type' => isset($_GET['search_type']) ? $_GET['search_type'] : 'xuong',
+            'search_value' => isset($_GET['search_value']) ? $_GET['search_value'] : ''
+        ],
+        'actions' => [
+            [
+                'url' => 'dept_statistics_month.php',
+                'icon' => 'img/thongke.png',
+                'title' => 'Thống kê',
+                'tooltip' => 'Xem thống kê'
+            ],
+            [
+                'url' => 'import.php',
+                'icon' => 'img/add.png',
+                'title' => 'Nhập dữ liệu',
+                'tooltip' => 'Nhập dữ liệu mới'
+            ],
+            [
+                'url' => 'export.php?month=' . $selected_month . '&year=' . $selected_year,
+                'icon' => 'img/export.jpg',
+                'title' => 'Xuất dữ liệu',
+                'tooltip' => 'Xuất dữ liệu'
+            ]
+        ]
+    ];
+    include 'components/header.php';
+    ?>
 
-    <!-- Dropdown menu cho mobile -->
-    <div class="navbar-dropdown" id="navbar-dropdown">
-        <div class="dropdown-search-container">
-            <form class="search-form" action="" method="GET">
-                <input type="hidden" name="month" value="<?php echo $selected_month; ?>">
-                <input type="hidden" name="year" value="<?php echo $selected_year; ?>">
-                <div class="mobile-search-group">
-                    <select name="search_type" class="mobile-search-select">
-                        <option value="xuong" <?php echo (!isset($_GET['search_type']) || $_GET['search_type'] == 'xuong') ? 'selected' : ''; ?>>Xưởng</option>
-                        <option value="line" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'line') ? 'selected' : ''; ?>>Line</option>
-                        <option value="po" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'po') ? 'selected' : ''; ?>>PO</option>
-                        <option value="style" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'style') ? 'selected' : ''; ?>>Style</option>
-                        <option value="model" <?php echo (isset($_GET['search_type']) && $_GET['search_type'] == 'model') ? 'selected' : ''; ?>>Model</option>
-                    </select>
-                    <input type="text" name="search_value" placeholder="Nhập từ khóa tìm kiếm..." 
-                           value="<?php echo isset($_GET['search_value']) ? htmlspecialchars($_GET['search_value']) : ''; ?>"
-                           class="mobile-search-input">
-                    <button type="submit" class="mobile-search-button">🔍</button>
-                </div>
-            </form>
-        </div>
-        
-        <div class="dropdown-nav-items">
-            <!-- <a href="index.php" class="dropdown-nav-item">
-                <img src="img/home.png" alt="Trang chủ">
-                Trang chủ
-            </a> -->
-            <a href="dept_statistics_month.php" class="dropdown-nav-item">
-                <img src="img/thongke.png" alt="Thống kê">
-                Thống kê
-            </a>
-            <a href="import.php" class="dropdown-nav-item">
-                <img src="img/add.png" alt="Nhập dữ liệu">
-                Nhập dữ liệu
-            </a>
-            <a href="export.php?month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" class="dropdown-nav-item">
-                <img src="img/export.jpg" alt="Xuất dữ liệu">
-                Xuất dữ liệu
-            </a>
-            <!-- <a href="chart.php" class="dropdown-nav-item">
-                <img src="img/chart.png" alt="Biểu đồ">
-                Biểu đồ
-            </a> -->
-            <!-- <a href="settings.php" class="dropdown-nav-item">
-                <img src="img/setting.png" alt="Cài đặt">
-                Cài đặt
-            </a> -->
-        </div>
-    </div>
-
-    <!-- JavaScript để xử lý đóng/mở menu -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Khởi tạo các biến
-        const navbarToggle = document.getElementById('navbar-toggle');
-        const navbarDropdown = document.getElementById('navbar-dropdown');
-        const title = document.querySelector('.navbar-center h1');
-        const searchInputs = document.querySelectorAll('.search-form input[type="text"]');
-        let originalTitle = '';
-        
-        // Lưu tiêu đề gốc
-        if (title) {
-            originalTitle = title.textContent;
-            title.setAttribute('data-original-text', originalTitle);
-        }
-        
-        // Hàm điều chỉnh giao diện theo kích thước màn hình
-        function adjustForScreenSize() {
-            const isMobile = window.innerWidth < 768;
-            
-            // Điều chỉnh tiêu đề
-            if (title) {
-                if (isMobile) {
-                    title.textContent = 'ĐÁNH GIÁ HỆ THỐNG';
-                    
-                    // Thêm sự kiện click để hiện tiêu đề đầy đủ
-                    if (!title.hasAttribute('data-tooltip-added')) {
-                        title.style.cursor = 'pointer';
-                        title.addEventListener('click', function() {
-                            alert(this.getAttribute('data-original-text'));
-                        });
-                        title.setAttribute('data-tooltip-added', 'true');
-                    }
-                } else {
-                    title.textContent = originalTitle;
-                }
-            }
-            
-            // Điều chỉnh placeholder cho ô tìm kiếm
-            searchInputs.forEach(input => {
-                input.placeholder = isMobile ? 'Tìm kiếm...' : 'Tìm kiếm theo xưởng...';
-            });
-            
-            // Đóng dropdown khi chuyển sang desktop
-            if (!isMobile && navbarDropdown.classList.contains('is-open')) {
-                navbarToggle.classList.remove('is-active');
-                navbarDropdown.classList.remove('is-open');
-            }
-        }
-        
-        // Xử lý click vào nút toggle
-        if (navbarToggle && navbarDropdown) {
-            navbarToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navbarToggle.classList.toggle('is-active');
-                navbarDropdown.classList.toggle('is-open');
-                
-                // Điều chỉnh hiển thị của dropdown
-                if (navbarDropdown.classList.contains('is-open')) {
-                    navbarDropdown.style.display = 'block';
-                } else {
-                    setTimeout(() => {
-                        navbarDropdown.style.display = 'none';
-                    }, 300);
-                }
-            });
-            
-            // Đóng dropdown khi click ra ngoài
-            document.addEventListener('click', function(e) {
-                if (!navbarDropdown.contains(e.target) && !navbarToggle.contains(e.target)) {
-                    if (navbarDropdown.classList.contains('is-open')) {
-                        navbarToggle.classList.remove('is-active');
-                        navbarDropdown.classList.remove('is-open');
-                        
-                        setTimeout(() => {
-                            navbarDropdown.style.display = 'none';
-                        }, 300);
-                    }
-                }
-            });
-            
-            // Ngăn đóng dropdown khi click vào nội dung bên trong
-            navbarDropdown.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-        
-        // Thêm hiệu ứng ripple cho các nút
-        const buttons = document.querySelectorAll('.navbar-right a, .dropdown-nav-item');
-        buttons.forEach(button => {
-            button.addEventListener('touchstart', function() {
-                this.style.opacity = '0.7';
-            });
-            
-            button.addEventListener('touchend', function() {
-                this.style.opacity = '1';
-            });
-        });
-        
-        // Gọi hàm khi tải trang và khi thay đổi kích thước
-        adjustForScreenSize();
-        window.addEventListener('resize', adjustForScreenSize);
-    });
-    </script>
+    <!-- Page-specific JavaScript (preserved from original) -->
+    <!-- Note: Mobile menu functionality is now handled by assets/js/header.js -->
 
     <!-- Form nhập dữ liệu từ Excel -->
     <div class="container">
@@ -3191,6 +3044,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+/* ========================================
+   LEGACY JAVASCRIPT - Phase 7 Cleanup Target
+   ========================================
+   NOTE: The following JavaScript blocks handled mobile title/placeholder
+   adjustments and touch effects that are now handled by:
+   - assets/js/header.js (mobile menu toggle, touch effects)
+   - assets/css/header.css (responsive title via .title-full/.title-short)
+   
+   These legacy scripts target .navbar-center h1 which no longer exists
+   in the header component (now uses .navbar-brand with spans).
+   They can be safely removed in Phase 7 cleanup.
+   ======================================== */
+
 // JavaScript để cải thiện trải nghiệm trên thiết bị di động
 document.addEventListener('DOMContentLoaded', function() {
     // Kiểm tra nếu đang xem trên thiết bị di động
@@ -3350,6 +3216,9 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', adjustForDeviceSize);
 });
 </script>
+
+<!-- Shared Header Component JavaScript -->
+<script src="assets/js/header.js"></script>
 
 </body>
 </html>

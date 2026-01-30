@@ -87,6 +87,7 @@ $dept_names = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THEO DÕI THÔNG TIN CẬP NHẬP ĐÁNH GIÁ</title>
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -96,23 +97,7 @@ $dept_names = [
             background-color: #f5f5f5;
         }
 
-        .navbar {
-            display: flex;
-            background-color: rgb(20, 53, 131);
-            color: white;
-            padding: 10px 20px;
-            align-items: center;
-        }
-        
-        .navbar-left {
-            margin-right: 20px;
-        }
-        
-        .navbar-center {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
+        /* Note: Navbar styles now handled by shared header.css */
 
         .container {
             max-width: 1200px;
@@ -269,15 +254,19 @@ $dept_names = [
     </style>
 </head>
 <body>
-    <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center">
-            <h1 style="font-size: 24px; margin: 0;color: white;">THEO DÕI THÔNG TIN CẬP NHẬP ĐÁNH GIÁ</h1>
-        </div>
-    </div>
+    <!-- Thanh điều hướng - Shared Header Component -->
+    <?php
+    $header_config = [
+        'title' => 'THEO DÕI THÔNG TIN CẬP NHẬP ĐÁNH GIÁ',
+        'title_short' => 'Theo Dõi',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/khsanxuat/index.php',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    include 'components/header.php';
+    ?>
 
     <div class="container">
         <form class="filter-form" method="GET" id="filter-form">
@@ -627,5 +616,6 @@ $dept_names = [
         }
     });
     </script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html> 

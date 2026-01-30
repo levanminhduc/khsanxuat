@@ -293,6 +293,7 @@ $dept_names = array(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Template - <?php echo htmlspecialchars($style); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -629,18 +630,19 @@ $dept_names = array(
     </style>
 </head>
 <body>
-    <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" alt="Logo"></a>
-        </div>
-        <!-- <div class="navbar-center">
-            <h1>Quản Lý Hồ Sơ SA</h1>
-        </div> -->
-        <!-- <div class="navbar-center">
-            <h1 style="font-size: 24px; margin: 0;">Quản Lý Template - <?php echo htmlspecialchars($style); ?></h1>
-        </div> -->
-    </div>
+    <!-- Thanh điều hướng - Shared Header Component -->
+    <?php
+    $header_config = [
+        'title' => 'Quản Lý Hồ Sơ SA',
+        'title_short' => 'Hồ Sơ SA',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/khsanxuat/index.php',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    include 'components/header.php';
+    ?>
 
     <div class="container">
         <a href="indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">
@@ -919,5 +921,6 @@ $dept_names = array(
             });
         });
     </script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html>

@@ -84,6 +84,7 @@ $sanxuat = $result->fetch_assoc();
     <meta charset="UTF-8">
     <title>Đánh Giá Hệ Thống Sản Xuất</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         .evaluation-table {
             width: 100%;
@@ -177,17 +178,18 @@ $sanxuat = $result->fetch_assoc();
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center">
-            <h1 style="font-size: 24px; margin: 0;">TỔNG ĐIỂM ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT</h1>
-        </div>
-        <div class="navbar-right">
-            <a href="index.php" class="btn-back">Trang Chủ</a>
-        </div>
-    </div>
+<?php
+$header_config = [
+    'title' => 'TỔNG ĐIỂM ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT',
+    'title_short' => 'Đánh giá',
+    'logo_path' => 'img/logoht.png',
+    'logo_link' => '/trangchu/',
+    'show_search' => false,
+    'show_mobile_menu' => true,
+    'actions' => []
+];
+?>
+<?php include 'components/header.php'; ?>
 
     <div class="container">
         <?php if ($sanxuat): ?>
@@ -256,5 +258,6 @@ $sanxuat = $result->fetch_assoc();
             <p>- Từ 431 điểm trở lên: Nhà máy quản lý và thực hiện tốt, cần duy trì .</p>
         </div>
     </div>
+<script src="assets/js/header.js"></script>
 </body>
-</html> 
+</html>

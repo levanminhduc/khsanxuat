@@ -176,6 +176,7 @@ $dept_counts = $sorted_dept_counts;
 <head>
     <title>Danh sách tiêu chí chưa hoàn thành - <?php echo htmlspecialchars($style); ?></title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         .navbar {
             background-color: #003366;
@@ -578,17 +579,18 @@ $dept_counts = $sorted_dept_counts;
     </script>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-title">
-            DANH SÁCH TIÊU CHÍ CHƯA HOÀN THÀNH
-        </div>
-        <div class="navbar-links">
-            <a href="index.php"></a>
-        </div>
-    </div>
+    <?php
+    $header_config = [
+        'title' => 'DANH SÁCH TIÊU CHÍ CHƯA HOÀN THÀNH',
+        'title_short' => 'Chưa hoàn thành',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/trangchu/',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    ?>
+    <?php include 'components/header.php'; ?>
 
     <div class="container">
         <div class="style-info">
@@ -684,5 +686,6 @@ $dept_counts = $sorted_dept_counts;
             <a href="index.php" class="btn-back">Quay lại trang chủ</a>
         </div>
     </div>
+    <script src="assets/js/header.js"></script>
 </body>
 </html>

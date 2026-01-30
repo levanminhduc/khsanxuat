@@ -1,0 +1,670 @@
+/**
+ * Shared Header Component Styles
+ * 
+ * Consolidates navbar styling across all 16 pages.
+ * Uses .header-component wrapper for CSS isolation.
+ * 
+ * @version 1.0.0
+ */
+
+/* ========================================
+   CSS Custom Properties (Variables)
+   ======================================== */
+:root {
+    --header-primary: #003366;
+    --header-primary-hover: #004C99;
+    --header-primary-dark: #002244;
+    --header-text: #FFFFFF;
+    --header-hover: rgba(255, 255, 255, 0.1);
+    --header-height: 64px;
+    --header-height-mobile: 56px;
+    --header-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --header-transition: 0.25s ease-in-out;
+    --header-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ========================================
+   Google Fonts Import
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ========================================
+   Header Component Wrapper
+   ======================================== */
+.header-component {
+    font-family: var(--header-font-family);
+    box-sizing: border-box;
+}
+
+.header-component *,
+.header-component *::before,
+.header-component *::after {
+    box-sizing: inherit;
+}
+
+/* ========================================
+   Navbar Base Styles
+   ======================================== */
+.header-component .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    height: var(--header-height);
+    background: linear-gradient(135deg, var(--header-primary) 0%, var(--header-primary-hover) 100%);
+    box-shadow: var(--header-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   Navbar Left (Logo)
+   ======================================== */
+.header-component .navbar-left {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    margin-right: 1rem;
+}
+
+.header-component .navbar-left a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.header-component .navbar-left img {
+    width: 45px;
+    height: auto;
+    transition: transform 0.2s ease;
+    border-radius: 6px;
+}
+
+.header-component .navbar-left img:hover {
+    transform: scale(1.05);
+}
+
+/* ========================================
+   Navbar Center (Title)
+   ======================================== */
+.header-component .navbar-center {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    padding: 0 0.5rem;
+}
+
+.header-component .navbar-brand {
+    color: var(--header-text);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.2;
+}
+
+/* Short title for mobile - hidden by default */
+.header-component .navbar-brand .title-short {
+    display: none;
+}
+
+.header-component .navbar-brand .title-full {
+    display: inline;
+}
+
+/* ========================================
+   Navbar Right (Actions)
+   ======================================== */
+.header-component .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 0 0 auto;
+}
+
+/* ========================================
+   Nav Menu (Desktop Navigation Links)
+   ======================================== */
+.header-component .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.header-component .nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.header-component .nav-item a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+}
+
+.header-component .nav-item a:hover,
+.header-component .nav-item a:focus {
+    background-color: var(--header-hover);
+}
+
+.header-component .nav-item a:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 2px;
+}
+
+.header-component .nav-item img {
+    width: 36px;
+    height: auto;
+    transition: transform 0.2s ease;
+}
+
+.header-component .nav-item img:hover {
+    transform: scale(1.1);
+}
+
+/* ========================================
+   Action Buttons
+   ======================================== */
+.header-component .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+}
+
+.header-component .action-btn:hover,
+.header-component .action-btn:focus {
+    background-color: var(--header-hover);
+}
+
+.header-component .action-btn:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 2px;
+}
+
+.header-component .action-btn img {
+    width: 36px;
+    height: auto;
+    transition: transform 0.2s ease;
+}
+
+.header-component .action-btn:hover img {
+    transform: scale(1.1);
+}
+
+/* ========================================
+   Search Form
+   ======================================== */
+.header-component .search-form {
+    display: flex;
+    align-items: center;
+}
+
+.header-component .search-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    padding: 0.25rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-component .search-select {
+    padding: 0.5rem 0.625rem;
+    border: none;
+    border-radius: 4px;
+    background: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.header-component .search-select:hover {
+    background: #e5e5e5;
+}
+
+.header-component .search-select:focus {
+    outline: 2px solid var(--header-primary);
+    outline-offset: 1px;
+}
+
+.header-component .search-input {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    width: 160px;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.header-component .search-input:focus {
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.3);
+}
+
+.header-component .search-input::placeholder {
+    color: #888;
+    opacity: 1;
+}
+
+.header-component .search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 0.625rem;
+    color: #333;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-component .search-button:hover {
+    background: #f0f0f0;
+}
+
+.header-component .search-button:focus {
+    outline: 2px solid var(--header-primary);
+    outline-offset: 1px;
+}
+
+/* ========================================
+   Mobile Toggle Button (Hamburger)
+   ======================================== */
+.header-component .mobile-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--header-text);
+    z-index: 1001;
+    transition: transform var(--header-transition);
+    border-radius: 6px;
+}
+
+.header-component .mobile-toggle:hover {
+    background-color: var(--header-hover);
+}
+
+.header-component .mobile-toggle:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 2px;
+}
+
+/* Hamburger Icon */
+.header-component .hamburger-icon {
+    display: block;
+    position: relative;
+    width: 24px;
+    height: 18px;
+}
+
+.header-component .hamburger-icon span {
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    background: var(--header-text);
+    border-radius: 2px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: var(--header-transition);
+}
+
+.header-component .hamburger-icon span:nth-child(1) {
+    top: 0;
+}
+
+.header-component .hamburger-icon span:nth-child(2) {
+    top: 8px;
+}
+
+.header-component .hamburger-icon span:nth-child(3) {
+    top: 16px;
+}
+
+/* Hamburger Active State (X animation) */
+.header-component .mobile-toggle.is-active .hamburger-icon span:nth-child(1) {
+    top: 8px;
+    transform: rotate(45deg);
+}
+
+.header-component .mobile-toggle.is-active .hamburger-icon span:nth-child(2) {
+    opacity: 0;
+    width: 0;
+}
+
+.header-component .mobile-toggle.is-active .hamburger-icon span:nth-child(3) {
+    top: 8px;
+    transform: rotate(-45deg);
+}
+
+/* ========================================
+   Mobile Dropdown Menu
+   ======================================== */
+.header-component .mobile-menu {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    background: var(--header-primary-dark);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    z-index: 999;
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.header-component .mobile-menu.is-open {
+    display: block;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Mobile Search Container */
+.header-component .mobile-search-container {
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.header-component .mobile-search-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    width: 100%;
+}
+
+.header-component .mobile-search-select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.95);
+    font-family: inherit;
+}
+
+.header-component .mobile-search-select:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 1px;
+}
+
+.header-component .mobile-search-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+.header-component .mobile-search-input:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 1px;
+}
+
+.header-component .mobile-search-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 16px;
+    background-color: var(--header-primary);
+    color: var(--header-text);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    min-height: 44px;
+}
+
+.header-component .mobile-search-button:hover,
+.header-component .mobile-search-button:focus {
+    background-color: var(--header-primary-hover);
+}
+
+.header-component .mobile-search-button:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 2px;
+}
+
+/* Mobile Navigation Items */
+.header-component .mobile-nav-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.header-component .mobile-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--header-text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    min-height: 44px;
+}
+
+.header-component .mobile-nav-item:hover,
+.header-component .mobile-nav-item:active {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.header-component .mobile-nav-item:focus {
+    outline: 2px solid var(--header-text);
+    outline-offset: 2px;
+}
+
+.header-component .mobile-nav-item img {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   Responsive: Large Desktop (> 1200px)
+   ======================================== */
+@media (min-width: 1200px) {
+    .header-component .navbar {
+        padding: 0 2.5rem;
+    }
+
+    .header-component .navbar-brand {
+        font-size: 20px;
+    }
+
+    .header-component .search-input {
+        width: 200px;
+    }
+
+    .header-component .nav-item img,
+    .header-component .action-btn img {
+        width: 40px;
+    }
+}
+
+/* ========================================
+   Responsive: Desktop (992px - 1199px)
+   ======================================== */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .header-component .navbar {
+        padding: 0 1.5rem;
+    }
+
+    .header-component .navbar-brand {
+        font-size: 18px;
+    }
+}
+
+/* ========================================
+   Responsive: Tablet (768px - 991px)
+   ======================================== */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .header-component .navbar {
+        padding: 0 1rem;
+    }
+
+    .header-component .navbar-brand {
+        font-size: 16px;
+    }
+
+    .header-component .search-input {
+        width: 140px;
+    }
+
+    .header-component .nav-item img,
+    .header-component .action-btn img {
+        width: 32px;
+    }
+}
+
+/* ========================================
+   Responsive: Mobile (< 768px)
+   ======================================== */
+@media (max-width: 767.98px) {
+    .header-component .navbar {
+        height: var(--header-height-mobile);
+        padding: 0 0.75rem;
+    }
+
+    .header-component .navbar-left {
+        margin-right: 0.5rem;
+    }
+
+    .header-component .navbar-left img {
+        width: 35px;
+    }
+
+    /* Show short title, hide full title */
+    .header-component .navbar-brand .title-short {
+        display: inline;
+    }
+
+    .header-component .navbar-brand .title-full {
+        display: none;
+    }
+
+    .header-component .navbar-brand {
+        font-size: 14px;
+    }
+
+    /* Hide desktop navigation */
+    .header-component .navbar-right {
+        display: none;
+    }
+
+    /* Show mobile toggle */
+    .header-component .mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Mobile menu positioning */
+    .header-component .mobile-menu {
+        top: var(--header-height-mobile);
+        max-height: calc(100vh - var(--header-height-mobile));
+    }
+
+    /* Single column for small mobile */
+    .header-component .mobile-nav-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ========================================
+   Responsive: Small Mobile (< 480px)
+   ======================================== */
+@media (max-width: 479.98px) {
+    .header-component .navbar {
+        padding: 0 0.5rem;
+    }
+
+    .header-component .navbar-left img {
+        width: 30px;
+    }
+
+    .header-component .navbar-brand {
+        font-size: 12px;
+    }
+
+    /* Single column layout for mobile nav items */
+    .header-component .mobile-nav-items {
+        grid-template-columns: 1fr;
+    }
+
+    .header-component .mobile-nav-item {
+        padding: 0.75rem;
+    }
+
+    .header-component .mobile-nav-item img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ========================================
+   Accessibility: Focus Visible
+   ======================================== */
+.header-component *:focus-visible {
+    outline: 2px solid var(--header-text);
+    outline-offset: 2px;
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+    .header-component .navbar {
+        position: static;
+        box-shadow: none;
+    }
+
+    .header-component .mobile-toggle,
+    .header-component .mobile-menu {
+        display: none;
+    }
+}

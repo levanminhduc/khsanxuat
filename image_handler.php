@@ -387,6 +387,7 @@ $dept_names = array(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xử Lý Hình Ảnh - <?php echo htmlspecialchars($style); ?></title>
+    <link rel="stylesheet" href="assets/css/header.css">
 
     <!-- Thêm CSS Lightbox từ CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
@@ -713,15 +714,18 @@ $dept_names = array(
     </style>
 </head>
 <body>
-    <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center" style="display: flex; justify-content: center; width: 100%;">
-            <h1 style="font-size: 24px; margin: 0;">Xử Lý Hình Ảnh</h1>
-        </div>
-    </div>
+    <?php
+    $header_config = [
+        'title' => 'Xử Lý Hình Ảnh',
+        'title_short' => 'Hình Ảnh',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/trangchu/',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    ?>
+    <?php include 'components/header.php'; ?>
 
     <div class="container">
         <a href="indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">
@@ -1094,5 +1098,6 @@ $dept_names = array(
         <?php endif; ?>
     });
     </script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html>

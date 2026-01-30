@@ -174,6 +174,7 @@ if ($total_avg_score < 267) {
     <meta charset="UTF-8">
     <title>Thống Kê Điểm Trung Bình Các Bộ Phận</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         .container {
             max-width: 1200px;
@@ -415,17 +416,19 @@ if ($total_avg_score < 267) {
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center">
-            <h1 style="font-size: 24px; margin: 0;">THỐNG KÊ ĐIỂM TRUNG BÌNH CÁC BỘ PHẬN</h1>
-        </div>
-        <!-- <div class="navbar-right">
-            <a href="index.php">Trang Chủ</a>
-        </div> -->
-    </div>
+    <!-- Thanh điều hướng - Shared Header Component -->
+    <?php
+    $header_config = [
+        'title' => 'THỐNG KÊ ĐIỂM TRUNG BÌNH CÁC BỘ PHẬN',
+        'title_short' => 'Thống Kê BP',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => 'index.php',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    include 'components/header.php';
+    ?>
 
     <div class="container">
         <div class="header">
@@ -576,5 +579,6 @@ if ($total_avg_score < 267) {
             <a href="index.php" class="btn-back">Quay lại</a>
         </div>
     </div>
+    <script src="assets/js/header.js"></script>
 </body>
-</html> 
+</html>

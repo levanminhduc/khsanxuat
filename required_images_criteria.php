@@ -21,6 +21,7 @@ $dept_names = [
     <title>Quản lý Tiêu Chí Bắt Buộc Hình Ảnh</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .container {
@@ -113,14 +114,18 @@ $dept_names = [
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="<?php echo $_SERVER['HTTP_REFERER'] ?? '/khsanxuat/index.php'; ?>"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center" style="display: flex; justify-content: center; width: 100%;">
-            <h1 style="font-size: 24px; margin: 0;">QUẢN LÝ TIÊU CHÍ BẮT BUỘC HÌNH ẢNH</h1>
-        </div>
-    </div>
+    <?php
+    $header_config = [
+        'title' => 'QUẢN LÝ TIÊU CHÍ BẮT BUỘC HÌNH ẢNH',
+        'title_short' => 'Bắt buộc hình ảnh',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/trangchu/',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    ?>
+    <?php include 'components/header.php'; ?>
 
     <div class="container">
         <?php
@@ -303,5 +308,6 @@ $dept_names = [
             }
         });
     </script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html> 

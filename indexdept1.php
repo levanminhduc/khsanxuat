@@ -300,26 +300,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
 </head>
 <body>
     <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center" style="display: flex; justify-content: center; width: 100%;">
-            <h1 style="font-size: 24px; margin: 0;">TIÊU CHÍ ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT TOÀN NHÀ MÁY</h1>
-        </div>
-        <div class="navbar-right">
-            <a href="/khsanxuat/theodoi.php" class="navbar-button" title="Theo dõi xử lý đánh giá">
-                <img width="30px" src="img/creat.png" />
-            </a>
-            <span style="margin-right: 10px;"></span>
-            <a href="/khsanxuat/required_images_criteria.php" class="navbar-button" title="Thêm tiêu chí bắt buộc hình ảnh">
-                <img width="45px" src="img/add.png" />
-            </a>
-        </div>
-    </div>
+<?php
+$header_config = [
+    'title' => isset($dept_display_name) ? $dept_display_name : 'Chi tiết Bộ phận',
+    'title_short' => 'Bộ phận',
+    'logo_path' => 'img/logoht.png',
+    'logo_link' => '/trangchu/',
+    'show_search' => false,
+    'show_mobile_menu' => true,
+    'actions' => []
+];
+?>
+<?php include 'components/header.php'; ?>
 
     <div class="container">
         <?php if (isset($_REQUEST['autoselect_image']) && $_REQUEST['autoselect_image'] == 1 && isset($_REQUEST['tieuchi_id'])): ?>
@@ -2651,5 +2647,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<script src="assets/js/header.js"></script>
 </body>
 </html>

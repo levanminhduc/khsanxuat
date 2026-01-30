@@ -111,6 +111,7 @@ $result = $connect->query($sql);
     <title>Quản lý Tiêu Chí Bắt Buộc Hình Ảnh</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
         .form-section { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
@@ -129,14 +130,18 @@ $result = $connect->query($sql);
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <div class="navbar-center">
-            <h1>Quản lý Tiêu Chí Bắt Buộc Hình Ảnh</h1>
-        </div>
-    </div>
+    <?php
+    $header_config = [
+        'title' => 'Quản lý Tiêu Chí Bắt Buộc Hình Ảnh',
+        'title_short' => 'QL Bắt buộc ảnh',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/trangchu/',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    ?>
+    <?php include 'components/header.php'; ?>
 
     <div class="container">
         <?php if (isset($success_message)): ?>
@@ -251,5 +256,6 @@ $result = $connect->query($sql);
             }
         });
     </script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html> 

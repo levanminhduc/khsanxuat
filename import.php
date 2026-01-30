@@ -811,6 +811,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Import Dữ Liệu</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/header.css">
     <style>
         .error-container, .success-container {
             margin: 20px;
@@ -1015,16 +1016,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     </style>
 </head>
 <body>
-    <!-- Thanh điều hướng -->
-    <div class="navbar">
-        <div class="navbar-left">
-            <a href="/khsanxuat/index.php"><img width="45px" src="img/logoht.png" /></a>
-        </div>
-        <!-- <div class="navbar-center">
-        <span style="color:rgb(15, 117, 32); font-size: 24px;">&#x2611;</span>
-            NHẬP DỮ LIỆU TỪ EXCEL
-        </div> -->
-    </div>
+    <!-- Thanh điều hướng - Shared Header Component -->
+    <?php
+    $header_config = [
+        'title' => 'Import Dữ Liệu',
+        'title_short' => 'Import',
+        'logo_path' => 'img/logoht.png',
+        'logo_link' => '/khsanxuat/index.php',
+        'show_search' => false,
+        'show_mobile_menu' => true,
+        'actions' => []
+    ];
+    include 'components/header.php';
+    ?>
 
     <!-- Hiển thị thông báo -->
     <?php if (!empty($errors)) : ?>
@@ -1164,5 +1168,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         showSuccessModal("Đã tải lên thành công <strong><?php echo count($imported_ids); ?></strong> đơn hàng!<br><?php echo $message ?? ''; ?>");
     <?php endif; ?>
     </script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html>
