@@ -1,0 +1,981 @@
+/**
+ * Form Page Component Styles
+ * 
+ * Standardized UI/UX for form-based pages.
+ * Uses .form-page-component wrapper for CSS isolation.
+ * Mobile-first responsive design with 768px breakpoint.
+ * 
+ * @version 1.0.0
+ */
+
+/* ========================================
+   CSS Custom Properties (Variables)
+   ======================================== */
+:root {
+    /* Primary Colors - Cyan Theme */
+    --form-page-primary: #0891b2;           /* Cyan-600 */
+    --form-page-primary-hover: #0e7490;     /* Cyan-700 */
+    --form-page-primary-light: #ecfeff;     /* Cyan-50 */
+    
+    /* Secondary Colors - Slate Theme */
+    --form-page-secondary: #334155;         /* Slate-700 */
+    --form-page-secondary-light: #64748b;   /* Slate-500 */
+    --form-page-text: #1e293b;              /* Slate-800 */
+    --form-page-text-muted: #64748b;        /* Slate-500 */
+    
+    /* Background & Surface */
+    --form-page-bg: #f8fafc;                /* Slate-50 */
+    --form-page-card-bg: #ffffff;
+    --form-page-border: #e2e8f0;            /* Slate-200 */
+    
+    /* Status Colors */
+    --form-page-success: #10b981;           /* Emerald-500 */
+    --form-page-success-light: #d1fae5;     /* Emerald-100 */
+    --form-page-error: #ef4444;             /* Red-500 */
+    --form-page-error-light: #fee2e2;       /* Red-100 */
+    --form-page-warning: #f59e0b;           /* Amber-500 */
+    --form-page-warning-light: #fef3c7;     /* Amber-100 */
+    --form-page-info: #0ea5e9;              /* Sky-500 */
+    --form-page-info-light: #e0f2fe;        /* Sky-100 */
+    
+    /* Typography */
+    --form-page-font: 'Fira Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --form-page-font-mono: 'Fira Code', Consolas, Monaco, monospace;
+    --form-page-font-size-base: 14px;
+    --form-page-font-size-sm: 12px;
+    --form-page-font-size-lg: 16px;
+    --form-page-font-size-xl: 20px;
+    --form-page-font-size-2xl: 24px;
+    
+    /* Spacing */
+    --form-page-spacing-xs: 4px;
+    --form-page-spacing-sm: 8px;
+    --form-page-spacing-md: 16px;
+    --form-page-spacing-lg: 24px;
+    --form-page-spacing-xl: 32px;
+    
+    /* Border Radius */
+    --form-page-radius-sm: 4px;
+    --form-page-radius-md: 8px;
+    --form-page-radius-lg: 12px;
+    
+    /* Shadows */
+    --form-page-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --form-page-shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --form-page-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    
+    /* Touch Targets */
+    --form-page-touch-target: 44px;
+    
+    /* Transitions */
+    --form-page-transition: 0.2s ease-in-out;
+}
+
+/* ========================================
+   Google Fonts Import
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+/* ========================================
+   Form Page Component Wrapper
+   ======================================== */
+.form-page-component {
+    font-family: var(--form-page-font);
+    font-size: var(--form-page-font-size-base);
+    color: var(--form-page-text);
+    line-height: 1.5;
+    background-color: var(--form-page-bg);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.form-page-component *,
+.form-page-component *::before,
+.form-page-component *::after {
+    box-sizing: inherit;
+}
+
+/* ========================================
+   Form Page Container
+   ======================================== */
+.form-page-component .form-page-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--form-page-spacing-md);
+}
+
+/* ========================================
+   Form Page Card
+   ======================================== */
+.form-page-component .form-page-card {
+    background: var(--form-page-card-bg);
+    border-radius: var(--form-page-radius-lg);
+    box-shadow: var(--form-page-shadow-md);
+    overflow: hidden;
+}
+
+/* ========================================
+   Form Page Header
+   ======================================== */
+.form-page-component .form-page-header {
+    padding: var(--form-page-spacing-lg);
+    border-bottom: 1px solid var(--form-page-border);
+    background: var(--form-page-primary-light);
+}
+
+.form-page-component .form-page-title {
+    margin: 0;
+    font-size: var(--form-page-font-size-xl);
+    font-weight: 600;
+    color: var(--form-page-secondary);
+}
+
+.form-page-component .form-page-subtitle {
+    margin: var(--form-page-spacing-xs) 0 0;
+    font-size: var(--form-page-font-size-base);
+    color: var(--form-page-text-muted);
+}
+
+.form-page-component .form-page-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--form-page-spacing-xs);
+    margin-bottom: var(--form-page-spacing-md);
+    color: var(--form-page-primary);
+    text-decoration: none;
+    font-size: var(--form-page-font-size-sm);
+    font-weight: 500;
+    transition: color var(--form-page-transition);
+}
+
+.form-page-component .form-page-back-link:hover {
+    color: var(--form-page-primary-hover);
+    text-decoration: underline;
+}
+
+.form-page-component .form-page-back-link::before {
+    content: '\2190';
+    font-size: 1.1em;
+}
+
+/* ========================================
+   Form Page Body
+   ======================================== */
+.form-page-component .form-page-body {
+    padding: var(--form-page-spacing-lg);
+}
+
+/* ========================================
+   Form Page Footer
+   ======================================== */
+.form-page-component .form-page-footer {
+    padding: var(--form-page-spacing-lg);
+    border-top: 1px solid var(--form-page-border);
+    background: var(--form-page-bg);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--form-page-spacing-md);
+    justify-content: flex-end;
+}
+
+/* ========================================
+   Alerts
+   ======================================== */
+.form-page-component .alert {
+    padding: var(--form-page-spacing-md);
+    border-radius: var(--form-page-radius-md);
+    margin-bottom: var(--form-page-spacing-md);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--form-page-spacing-sm);
+}
+
+.form-page-component .alert:last-child {
+    margin-bottom: 0;
+}
+
+.form-page-component .alert-icon {
+    flex-shrink: 0;
+    font-size: var(--form-page-font-size-lg);
+}
+
+.form-page-component .alert-content {
+    flex: 1;
+}
+
+.form-page-component .alert-success {
+    background: var(--form-page-success-light);
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.form-page-component .alert-success .alert-icon::before {
+    content: '\2713';
+    color: var(--form-page-success);
+}
+
+.form-page-component .alert-error {
+    background: var(--form-page-error-light);
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.form-page-component .alert-error .alert-icon::before {
+    content: '\2717';
+    color: var(--form-page-error);
+}
+
+.form-page-component .alert-warning {
+    background: var(--form-page-warning-light);
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.form-page-component .alert-warning .alert-icon::before {
+    content: '\26A0';
+    color: var(--form-page-warning);
+}
+
+.form-page-component .alert-info {
+    background: var(--form-page-info-light);
+    color: #075985;
+    border: 1px solid #bae6fd;
+}
+
+.form-page-component .alert-info .alert-icon::before {
+    content: '\2139';
+    color: var(--form-page-info);
+}
+
+/* ========================================
+   Form Elements
+   ======================================== */
+.form-page-component .form-group {
+    margin-bottom: var(--form-page-spacing-lg);
+}
+
+.form-page-component .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-page-component .form-label {
+    display: block;
+    margin-bottom: var(--form-page-spacing-sm);
+    font-weight: 500;
+    color: var(--form-page-text);
+    font-size: var(--form-page-font-size-base);
+}
+
+.form-page-component .form-label-required::after {
+    content: ' *';
+    color: var(--form-page-error);
+}
+
+.form-page-component .form-input,
+.form-page-component .form-select,
+.form-page-component .form-textarea {
+    width: 100%;
+    padding: var(--form-page-spacing-sm) var(--form-page-spacing-md);
+    font-size: var(--form-page-font-size-base);
+    font-family: inherit;
+    color: var(--form-page-text);
+    background: var(--form-page-card-bg);
+    border: 1px solid var(--form-page-border);
+    border-radius: var(--form-page-radius-md);
+    transition: border-color var(--form-page-transition), 
+                box-shadow var(--form-page-transition);
+    min-height: var(--form-page-touch-target);
+}
+
+.form-page-component .form-input:focus,
+.form-page-component .form-select:focus,
+.form-page-component .form-textarea:focus {
+    outline: none;
+    border-color: var(--form-page-primary);
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+}
+
+.form-page-component .form-input:disabled,
+.form-page-component .form-select:disabled,
+.form-page-component .form-textarea:disabled {
+    background: var(--form-page-bg);
+    color: var(--form-page-text-muted);
+    cursor: not-allowed;
+}
+
+.form-page-component .form-input.has-error,
+.form-page-component .form-select.has-error,
+.form-page-component .form-textarea.has-error {
+    border-color: var(--form-page-error);
+}
+
+.form-page-component .form-input.has-error:focus,
+.form-page-component .form-select.has-error:focus,
+.form-page-component .form-textarea.has-error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.form-page-component .form-input::placeholder {
+    color: var(--form-page-text-muted);
+    opacity: 1;
+}
+
+.form-page-component .form-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--form-page-spacing-md) center;
+    padding-right: var(--form-page-spacing-xl);
+}
+
+.form-page-component .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-page-component .form-hint {
+    display: block;
+    margin-top: var(--form-page-spacing-xs);
+    font-size: var(--form-page-font-size-sm);
+    color: var(--form-page-text-muted);
+}
+
+.form-page-component .form-error {
+    display: block;
+    margin-top: var(--form-page-spacing-xs);
+    font-size: var(--form-page-font-size-sm);
+    color: var(--form-page-error);
+}
+
+/* Date Input Container */
+.form-page-component .date-input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.form-page-component .date-input-container .form-input {
+    padding-right: 40px;
+}
+
+.form-page-component .date-input-icon {
+    position: absolute;
+    right: var(--form-page-spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--form-page-text-muted);
+    pointer-events: none;
+}
+
+/* ========================================
+   Buttons
+   ======================================== */
+.form-page-component .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--form-page-spacing-sm);
+    padding: var(--form-page-spacing-sm) var(--form-page-spacing-lg);
+    font-size: var(--form-page-font-size-base);
+    font-family: inherit;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--form-page-radius-md);
+    cursor: pointer;
+    transition: background-color var(--form-page-transition),
+                transform var(--form-page-transition),
+                box-shadow var(--form-page-transition);
+    min-height: var(--form-page-touch-target);
+    min-width: 100px;
+}
+
+.form-page-component .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.3);
+}
+
+.form-page-component .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-page-component .btn-primary {
+    background: var(--form-page-primary);
+    color: white;
+}
+
+.form-page-component .btn-primary:hover:not(:disabled) {
+    background: var(--form-page-primary-hover);
+    transform: translateY(-1px);
+}
+
+.form-page-component .btn-secondary {
+    background: var(--form-page-secondary-light);
+    color: white;
+}
+
+.form-page-component .btn-secondary:hover:not(:disabled) {
+    background: var(--form-page-secondary);
+    transform: translateY(-1px);
+}
+
+.form-page-component .btn-danger {
+    background: var(--form-page-error);
+    color: white;
+}
+
+.form-page-component .btn-danger:hover:not(:disabled) {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.form-page-component .btn-outline {
+    background: transparent;
+    border: 1px solid var(--form-page-border);
+    color: var(--form-page-text);
+}
+
+.form-page-component .btn-outline:hover:not(:disabled) {
+    background: var(--form-page-bg);
+    border-color: var(--form-page-text-muted);
+}
+
+.form-page-component .btn-success {
+    background: var(--form-page-success);
+    color: white;
+}
+
+.form-page-component .btn-success:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.form-page-component .btn-sm {
+    padding: var(--form-page-spacing-xs) var(--form-page-spacing-md);
+    min-height: 36px;
+    min-width: auto;
+    font-size: var(--form-page-font-size-sm);
+}
+
+.form-page-component .btn-lg {
+    padding: var(--form-page-spacing-md) var(--form-page-spacing-xl);
+    min-height: 52px;
+    font-size: var(--form-page-font-size-lg);
+}
+
+.form-page-component .btn-block {
+    width: 100%;
+}
+
+/* ========================================
+   Form Actions (Button Group)
+   ======================================== */
+.form-page-component .form-actions {
+    display: flex;
+    gap: var(--form-page-spacing-md);
+    margin-top: var(--form-page-spacing-lg);
+    align-items: center;
+}
+
+.form-page-component .form-actions .btn {
+    flex-shrink: 0;
+}
+
+/* ========================================
+   Info Table / Card View
+   ======================================== */
+.form-page-component .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--form-page-spacing-lg);
+}
+
+.form-page-component .info-table th,
+.form-page-component .info-table td {
+    padding: var(--form-page-spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--form-page-border);
+}
+
+.form-page-component .info-table th {
+    width: 40%;
+    font-weight: 500;
+    color: var(--form-page-text-muted);
+    background: var(--form-page-bg);
+}
+
+.form-page-component .info-table td {
+    color: var(--form-page-text);
+    font-weight: 500;
+}
+
+.form-page-component .info-table tr:last-child th,
+.form-page-component .info-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Info Card (Mobile Alternative) */
+.form-page-component .info-card {
+    display: none;
+}
+
+.form-page-component .info-row {
+    display: flex;
+    flex-direction: column;
+    padding: var(--form-page-spacing-md);
+    border-bottom: 1px solid var(--form-page-border);
+}
+
+.form-page-component .info-row:last-child {
+    border-bottom: none;
+}
+
+.form-page-component .info-label {
+    font-size: var(--form-page-font-size-sm);
+    color: var(--form-page-text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--form-page-spacing-xs);
+}
+
+.form-page-component .info-value {
+    font-size: var(--form-page-font-size-base);
+    color: var(--form-page-text);
+    font-weight: 500;
+}
+
+.form-page-component .info-value.date-format {
+    font-family: var(--form-page-font-mono);
+}
+
+/* ========================================
+   Form Note / Info Box
+   ======================================== */
+.form-page-component .form-note {
+    padding: var(--form-page-spacing-md);
+    border-radius: var(--form-page-radius-md);
+    margin-bottom: var(--form-page-spacing-lg);
+}
+
+.form-page-component .form-note-info {
+    background: var(--form-page-info-light);
+    border: 1px solid #bae6fd;
+}
+
+.form-page-component .form-note-warning {
+    background: var(--form-page-warning-light);
+    border: 1px solid #fde68a;
+}
+
+.form-page-component .form-note-tip {
+    background: var(--form-page-primary-light);
+    border: 1px solid #a5f3fc;
+}
+
+.form-page-component .form-note-title {
+    font-weight: 600;
+    margin-bottom: var(--form-page-spacing-sm);
+    color: inherit;
+}
+
+.form-page-component .form-note-list {
+    margin: 0;
+    padding-left: var(--form-page-spacing-lg);
+}
+
+.form-page-component .form-note-list li {
+    margin-bottom: var(--form-page-spacing-xs);
+}
+
+.form-page-component .form-note-list li:last-child {
+    margin-bottom: 0;
+}
+
+.form-page-component .form-note-footer {
+    margin-top: var(--form-page-spacing-sm);
+    font-size: var(--form-page-font-size-sm);
+    color: var(--form-page-text-muted);
+}
+
+/* ========================================
+   Modal
+   ======================================== */
+.form-page-component .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: var(--form-page-spacing-md);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.form-page-component .modal-overlay.is-open {
+    display: flex;
+    opacity: 1;
+}
+
+.form-page-component .modal-content {
+    background: var(--form-page-card-bg);
+    border-radius: var(--form-page-radius-lg);
+    box-shadow: var(--form-page-shadow-lg);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.form-page-component .modal-overlay.is-open .modal-content {
+    transform: scale(1);
+}
+
+.form-page-component .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--form-page-spacing-lg);
+    border-bottom: 1px solid var(--form-page-border);
+}
+
+.form-page-component .modal-title {
+    margin: 0;
+    font-size: var(--form-page-font-size-lg);
+    font-weight: 600;
+    color: var(--form-page-text);
+}
+
+.form-page-component .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--form-page-text-muted);
+    cursor: pointer;
+    padding: var(--form-page-spacing-xs);
+    line-height: 1;
+    border-radius: var(--form-page-radius-sm);
+    transition: background-color var(--form-page-transition),
+                color var(--form-page-transition);
+}
+
+.form-page-component .modal-close:hover {
+    background: var(--form-page-bg);
+    color: var(--form-page-text);
+}
+
+.form-page-component .modal-body {
+    padding: var(--form-page-spacing-lg);
+    overflow-y: auto;
+    max-height: calc(90vh - 140px);
+}
+
+.form-page-component .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--form-page-spacing-sm);
+    padding: var(--form-page-spacing-lg);
+    border-top: 1px solid var(--form-page-border);
+    background: var(--form-page-bg);
+    justify-content: flex-end;
+}
+
+/* Modal Types */
+.form-page-component .modal-success .modal-header {
+    background: var(--form-page-success-light);
+}
+
+.form-page-component .modal-success .modal-title {
+    color: #065f46;
+}
+
+.form-page-component .modal-error .modal-header {
+    background: var(--form-page-error-light);
+}
+
+.form-page-component .modal-error .modal-title {
+    color: #991b1b;
+}
+
+.form-page-component .modal-warning .modal-header {
+    background: var(--form-page-warning-light);
+}
+
+.form-page-component .modal-warning .modal-title {
+    color: #92400e;
+}
+
+/* Modal Icon */
+.form-page-component .modal-icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: var(--form-page-spacing-md);
+}
+
+.form-page-component .modal-success .modal-icon {
+    color: var(--form-page-success);
+}
+
+.form-page-component .modal-error .modal-icon {
+    color: var(--form-page-error);
+}
+
+.form-page-component .modal-warning .modal-icon {
+    color: var(--form-page-warning);
+}
+
+/* Countdown */
+.form-page-component .modal-countdown {
+    text-align: center;
+    font-size: var(--form-page-font-size-sm);
+    color: var(--form-page-text-muted);
+    margin-top: var(--form-page-spacing-md);
+}
+
+.form-page-component .modal-countdown-number {
+    font-weight: 600;
+    color: var(--form-page-primary);
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+.form-page-component .text-center {
+    text-align: center;
+}
+
+.form-page-component .text-right {
+    text-align: right;
+}
+
+.form-page-component .text-muted {
+    color: var(--form-page-text-muted);
+}
+
+.form-page-component .mb-0 {
+    margin-bottom: 0;
+}
+
+.form-page-component .mb-md {
+    margin-bottom: var(--form-page-spacing-md);
+}
+
+.form-page-component .mb-lg {
+    margin-bottom: var(--form-page-spacing-lg);
+}
+
+.form-page-component .mt-md {
+    margin-top: var(--form-page-spacing-md);
+}
+
+.form-page-component .mt-lg {
+    margin-top: var(--form-page-spacing-lg);
+}
+
+.form-page-component .hidden {
+    display: none !important;
+}
+
+/* ========================================
+   Responsive: Desktop (> 768px)
+   ======================================== */
+@media (min-width: 769px) {
+    .form-page-component .form-page-container {
+        padding: var(--form-page-spacing-xl);
+    }
+
+    .form-page-component .form-row {
+        display: flex;
+        gap: var(--form-page-spacing-md);
+    }
+
+    .form-page-component .form-row .form-group {
+        flex: 1;
+    }
+
+    .form-page-component .form-row-2 .form-group {
+        flex: 0 0 calc(50% - var(--form-page-spacing-sm));
+    }
+
+    .form-page-component .modal-footer {
+        flex-wrap: nowrap;
+    }
+}
+
+/* ========================================
+   Responsive: Mobile (< 768px)
+   ======================================== */
+@media (max-width: 768px) {
+    .form-page-component .form-page-container {
+        padding: var(--form-page-spacing-sm);
+    }
+
+    .form-page-component .form-page-header {
+        padding: var(--form-page-spacing-md);
+    }
+
+    .form-page-component .form-page-title {
+        font-size: var(--form-page-font-size-lg);
+    }
+
+    .form-page-component .form-page-body {
+        padding: var(--form-page-spacing-md);
+    }
+
+    .form-page-component .form-page-footer {
+        padding: var(--form-page-spacing-md);
+        flex-direction: column;
+    }
+
+    .form-page-component .form-page-footer .btn {
+        width: 100%;
+    }
+
+    /* Hide table, show card view on mobile */
+    .form-page-component .info-table {
+        display: none;
+    }
+
+    .form-page-component .info-card {
+        display: block;
+        background: var(--form-page-bg);
+        border-radius: var(--form-page-radius-md);
+    }
+
+    .form-page-component .btn {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .form-page-component .form-actions {
+        flex-direction: column;
+    }
+
+    .form-page-component .form-actions .btn {
+        width: 100%;
+    }
+
+    .form-page-component .modal-content {
+        max-height: 100vh;
+        border-radius: var(--form-page-radius-md);
+    }
+
+    .form-page-component .modal-footer {
+        flex-direction: column;
+    }
+
+    .form-page-component .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   Responsive: Small Mobile (< 480px)
+   ======================================== */
+@media (max-width: 480px) {
+    :root {
+        --form-page-font-size-base: 14px;
+        --form-page-font-size-lg: 15px;
+        --form-page-font-size-xl: 18px;
+    }
+
+    .form-page-component .form-page-container {
+        padding: var(--form-page-spacing-xs);
+    }
+
+    .form-page-component .form-page-card {
+        border-radius: var(--form-page-radius-sm);
+    }
+
+    .form-page-component .form-page-header {
+        padding: var(--form-page-spacing-md) var(--form-page-spacing-sm);
+    }
+
+    .form-page-component .form-page-body {
+        padding: var(--form-page-spacing-md) var(--form-page-spacing-sm);
+    }
+
+    .form-page-component .modal-header,
+    .form-page-component .modal-body,
+    .form-page-component .modal-footer {
+        padding: var(--form-page-spacing-md);
+    }
+}
+
+/* ========================================
+   Accessibility: Focus Visible
+   ======================================== */
+.form-page-component *:focus-visible {
+    outline: 2px solid var(--form-page-primary);
+    outline-offset: 2px;
+}
+
+.form-page-component .btn:focus-visible {
+    outline-offset: 2px;
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+    .form-page-component {
+        background: white;
+    }
+
+    .form-page-component .form-page-card {
+        box-shadow: none;
+        border: 1px solid var(--form-page-border);
+    }
+
+    .form-page-component .modal-overlay {
+        display: none !important;
+    }
+
+    .form-page-component .btn {
+        display: none;
+    }
+
+    .form-page-component .form-page-back-link {
+        display: none;
+    }
+}
+
+/* ========================================
+   Animation Keyframes
+   ======================================== */
+@keyframes form-page-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes form-page-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.form-page-component .animate-fade-in {
+    animation: form-page-fade-in 0.3s ease-out;
+}
+
+.form-page-component .animate-pulse {
+    animation: form-page-pulse 2s ease-in-out infinite;
+}
