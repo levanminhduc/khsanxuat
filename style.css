@@ -14,7 +14,7 @@ h3 {
 
 /* Navbar */
 .navbar {
-  background-color: #003366;
+  background-color: #143583;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -90,7 +90,7 @@ h3 {
 }
 
 .data-table th {
-  background-color: #003366;
+  background-color: #143583;
   color: white;
 }
 
@@ -111,7 +111,7 @@ form input[type="file"] {
 
 form button {
   padding: 10px 20px;
-  background-color: #003366;
+  background-color: #143583;
   color: white;
   border: none;
   cursor: pointer;
@@ -231,7 +231,7 @@ textarea {
 }
 
 .evaluation-table th {
-  background-color: #003366;
+  background-color: #143583;
   color: white;
   text-align: center;
   padding: 10px;
@@ -750,11 +750,6 @@ h2 {
     cursor: pointer;
     font-size: 16px;
     pointer-events: auto;
-}
-
-/* Hide default date picker */
-input[type="date"] {
-    display: none;
 }
 
 /* jQuery UI Datepicker Customization */

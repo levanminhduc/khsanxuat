@@ -210,17 +210,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="assets/css/form-page.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 </head>
 
 <body>
     <?php
     $header_config = [
-        'title' => 'Cập nhật ngày vào chuyền',
+        'title' => 'CẬP NHẬP NGÀY VÀO CHUYỀN',
         'title_short' => 'Cập nhật',
         'logo_path' => 'img/logoht.png',
         'logo_link' => '/trangchu/',
@@ -229,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
         'actions' => [
             [
                 'url' => 'index.php',
-                'icon' => 'img/back.png',
+                // 'icon' => 'img/back.png',
                 'title' => 'Quay lại',
                 'tooltip' => 'Quay lại trang chủ'
             ]
@@ -280,18 +278,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
                 </table>
 
                 <form method="post" action="" id="date_form">
-                    <input type="hidden" name="new_date" id="new_date"
-                        value="<?php echo date('Y-m-d', strtotime($item_data['ngayin'])); ?>">
-
                     <div class="form-row">
                         <div class="form-group">
                             <label for="date_input" class="form-label form-label-required">Ngày vào mới:</label>
-                            <div class="date-input-container">
-                                <input type="text" name="date_display" id="date_input" class="form-input date-picker"
-                                    value="<?php echo date('d/m/Y', strtotime($item_data['ngayin'])); ?>"
-                                    placeholder="DD/MM/YYYY" autocomplete="off" required>
-                                <span class="date-input-icon"><i class="fas fa-calendar-alt"></i></span>
-                            </div>
+                            <input type="date" name="new_date" id="date_input" class="form-input"
+                                value="<?php echo date('Y-m-d', strtotime($item_data['ngayin'])); ?>"
+                                required>
                         </div>
 
                         <div class="form-group">
@@ -338,98 +330,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
         </div>
     </div>
 
-    <?php
-    render_modal([
-        'id' => 'successModal',
-        'title' => 'Cập nhật thành công',
-        'type' => 'success',
-        'body' => '<p>Đã cập nhật ngày thành công!</p>',
-        'auto_redirect' => [
-            'url' => 'index.php',
-            'delay' => 3,
-            'show_countdown' => true
-        ],
-        'buttons' => [
-            ['text' => 'Về trang chủ ngay', 'class' => 'btn-primary', 'id' => 'redirectNow'],
-            ['text' => 'Ở lại trang này', 'class' => 'btn-secondary', 'id' => 'stayHere']
-        ]
-    ]);
-    ?>
-
     <script>
-        $(document).ready(function () {
-            const hiddenDateInput = document.getElementById('new_date');
-            const displayInput = document.getElementById('date_input');
-            const dateForm = document.getElementById('date_form');
+        document.addEventListener('DOMContentLoaded', function () {
+            var dateForm = document.getElementById('date_form');
 
-            const successModal = document.getElementById('successModal');
+            if (dateForm) {
+                dateForm.addEventListener('submit', function (e) {
+                    var dateValue = document.getElementById('date_input').value;
+                    var lineValue = document.getElementById('line_input').value.trim();
+                    var qtyValue = document.getElementById('qty_input').value;
 
-            $("#date_input").datepicker({
-                dateFormat: "dd/mm/yy",
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "2020:2030",
-                showButtonPanel: true,
-                onSelect: function (dateText, inst) {
-                    const parts = dateText.split('/');
-                    const formattedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
-                    hiddenDateInput.value = formattedDate;
-                }
-            });
-
-            $(document).on('click', '.date-input-icon', function () {
-                $("#date_input").datepicker('show');
-            });
-
-            displayInput.addEventListener('input', function () {
-                const value = this.value;
-                const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-                const match = value.match(dateRegex);
-
-                if (match) {
-                    const day = match[1];
-                    const month = match[2];
-                    const year = match[3];
-
-                    const date = new Date(year, month - 1, day);
-                    if (date.getFullYear() == year &&
-                        date.getMonth() == month - 1 &&
-                        date.getDate() == day) {
-                        hiddenDateInput.value = year + '-' + month + '-' + day;
+                    if (!dateValue) {
+                        e.preventDefault();
+                        alert('Vui lòng chọn ngày hợp lệ.');
+                        return false;
                     }
-                }
-            });
 
-            dateForm.addEventListener('submit', function (e) {
-                const dateValue = hiddenDateInput.value;
-                const lineValue = document.getElementById('line_input').value.trim();
-                const qtyValue = document.getElementById('qty_input').value;
+                    if (!lineValue || isNaN(lineValue) || lineValue < 1 || lineValue > 10 || lineValue !=
+                        parseInt(lineValue)) {
+                        e.preventDefault();
+                        alert('Line phải là số nguyên từ 1 đến 10.');
+                        document.getElementById('line_input').focus();
+                        return false;
+                    }
 
-                if (!dateValue) {
-                    e.preventDefault();
-                    alert('Vui lòng chọn ngày hợp lệ.');
-                    return false;
-                }
-
-                if (!lineValue || isNaN(lineValue) || lineValue < 1 || lineValue > 10 || lineValue !=
-                    parseInt(lineValue)) {
-                    e.preventDefault();
-                    alert('Line phải là số nguyên từ 1 đến 10.');
-                    document.getElementById('line_input').focus();
-                    return false;
-                }
-
-                if (!qtyValue || qtyValue <= 0) {
-                    e.preventDefault();
-                    alert('Vui lòng nhập số lượng hợp lệ.');
-                    document.getElementById('qty_input').focus();
-                    return false;
-                }
-            });
-
-            <?php if (!empty($message)): ?>
-                successModal.classList.add('is-open');
-            <?php endif; ?>
+                    if (!qtyValue || qtyValue <= 0) {
+                        e.preventDefault();
+                        alert('Vui lòng nhập số lượng hợp lệ.');
+                        document.getElementById('qty_input').focus();
+                        return false;
+                    }
+                });
+            }
         });
     </script>
     <script src="assets/js/header.js"></script>
