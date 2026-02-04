@@ -120,16 +120,7 @@ $sanxuat = $result->fetch_assoc();
             font-weight: bold;
             background-color: #f0f0f0;
         }
-        .navbar-center {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-        .navbar-center h1 {
-            font-size: 24px;
-            margin: 0;
-            text-align: center;
-        }
+
         .style-info {
             background-color: #f0f7ff;
             padding: 15px;
@@ -143,19 +134,7 @@ $sanxuat = $result->fetch_assoc();
             color: #1e40af;
         }
         
-        .navbar {
-            background-color: #003366;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .navbar-left a {
-            color: white;
-            text-decoration: none;
-        }
+
         
         .container {
             max-width: 1200px;

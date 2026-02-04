@@ -1,6 +1,21 @@
 <?php
 // Kết nối database
 require "contdb.php";
+
+// Header Config
+$header_config = [
+    'title' => 'Hướng dẫn sử dụng hệ thống hạn xử lý',
+    'title_short' => 'Hướng dẫn',
+    'logo_path' => 'img/logoht.png',
+    'logo_link' => '/trangchu/',
+    'show_search' => false,
+    'show_mobile_menu' => true,
+    'actions' => [
+        ['url' => 'settings.php', 'icon' => 'img/settings.png', 'title' => 'Cài đặt', 'tooltip' => 'Trang cài đặt'],
+        ['url' => 'check_deadline_system.php', 'icon' => 'img/check.png', 'title' => 'Kiểm tra', 'tooltip' => 'Kiểm tra hệ thống'],
+        ['url' => 'index.php', 'icon' => 'img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
+    ]
+];
 ?>
 
 <!DOCTYPE html>
@@ -16,16 +31,15 @@ require "contdb.php";
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     
+    <!-- Header CSS -->
+    <link rel="stylesheet" href="assets/css/header.css">
+    
     <style>
         body {
-            padding-top: 20px;
             padding-bottom: 20px;
+            background-color: #f8f9fa;
         }
-        .header {
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e5e5e5;
-        }
+        /* Removed legacy .header styles */
         .footer {
             padding-top: 20px;
             margin-top: 20px;
@@ -42,6 +56,10 @@ require "contdb.php";
         }
         .help-section {
             margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .badge-deadline-ok {
             background-color: #28a745;
@@ -63,18 +81,19 @@ require "contdb.php";
             background-color: #6c757d;
             color: white;
         }
+        /* Override bootstrap container padding for header */
+        .container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
+    <?php include 'components/header.php'; ?>
+    
     <div class="container">
-        <div class="header">
-            <h1>Hướng dẫn sử dụng hệ thống hạn xử lý</h1>
-            <p class="lead">Tài liệu hướng dẫn chi tiết về cách sử dụng tính năng hạn xử lý tiêu chí</p>
-        </div>
-        
         <div class="row">
             <div class="col-md-3">
-                <div class="list-group">
+                <div class="list-group sticky-top" style="top: 80px; z-index: 1;">
                     <a href="#overview" class="list-group-item list-group-item-action">Tổng quan</a>
                     <a href="#deadline-types" class="list-group-item list-group-item-action">Các loại tính hạn</a>
                     <a href="#default-settings" class="list-group-item list-group-item-action">Cài đặt mặc định</a>
@@ -83,7 +102,7 @@ require "contdb.php";
                     <a href="#common-issues" class="list-group-item list-group-item-action">Vấn đề thường gặp</a>
                 </div>
                 
-                <div class="card mt-3">
+                <div class="card mt-3 sticky-top" style="top: 360px;">
                     <div class="card-header">
                         <h5>Liên kết hữu ích</h5>
                     </div>

@@ -5,8 +5,24 @@ session_start();
 // Kết nối database
 require "contdb.php";
 
+// Header Config
+$header_config = [
+    'title' => 'Cài đặt hệ thống hạn xử lý',
+    'title_short' => 'Cài đặt',
+    'logo_path' => 'img/logoht.png',
+    'logo_link' => '/trangchu/',
+    'show_search' => false,
+    'show_mobile_menu' => true,
+    'actions' => [
+        ['url' => 'help_deadline.php', 'icon' => 'img/help_icon.png', 'title' => 'Hướng dẫn', 'tooltip' => 'Hướng dẫn sử dụng'],
+        ['url' => 'check_deadline_system.php', 'icon' => 'img/check.png', 'title' => 'Kiểm tra', 'tooltip' => 'Kiểm tra hệ thống'],
+        ['url' => 'index.php', 'icon' => 'img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
+    ]
+];
+
 // Kiểm tra quyền truy cập
 $access_allowed = true; // Thay đổi điều kiện này tùy theo cấu trúc xác thực của hệ thống
+
 
 // Kiểm tra xem có hành động gì không
 $action = isset($_GET['action']) ? $_GET['action'] : '';
@@ -162,16 +178,15 @@ $departments = [
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     
+    <!-- Header CSS -->
+    <link rel="stylesheet" href="assets/css/header.css">
+    
     <style>
         body {
-            padding-top: 20px;
             padding-bottom: 20px;
+            background-color: #f8f9fa;
         }
-        .header {
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e5e5e5;
-        }
+        /* Removed legacy .header styles */
         .footer {
             padding-top: 20px;
             margin-top: 20px;
@@ -201,22 +216,25 @@ $departments = [
             background-color: #6c757d;
             color: white;
         }
+        /* Override bootstrap container padding for header */
+        .container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
+    <?php include 'components/header.php'; ?>
+
     <div class="container">
-        <div class="header">
-            <h1>Cài đặt hệ thống hạn xử lý</h1>
-            <p class="lead">Quản lý cài đặt hạn xử lý tiêu chí đánh giá</p>
-            
-            <?php if (!empty($message)): ?>
-            <div class="alert alert-<?php echo $message_type; ?>" role="alert">
-                <?php echo $message; ?>
-            </div>
-            <?php endif; ?>
+        
+        <?php if (!empty($message)): ?>
+        <div class="alert alert-<?php echo $message_type; ?>" role="alert">
+            <?php echo $message; ?>
         </div>
+        <?php endif; ?>
         
         <div class="row">
+
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-header">
