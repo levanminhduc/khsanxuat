@@ -3,3 +3,5 @@ nul
 
 docs/
 plans/
+logs/php_errors.log
+debug.log
