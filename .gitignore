@@ -5,3 +5,8 @@ docs/
 plans/
 logs/php_errors.log
 debug.log
+
+# Playwright MCP test files
+.playwright-mcp/
+*.png
+!assets/**/*.png

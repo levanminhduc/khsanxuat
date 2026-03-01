@@ -1033,7 +1033,7 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
 
     .best-performer, .worst-performer {
         flex: 1;
-        min-width: 300px;
+        min-width: 250px;
         padding: 15px;
         border-radius: 8px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -2184,6 +2184,30 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
                 cursor: pointer;
             }
         }
+
+        /* Mobile responsive fixes - ensure no horizontal overflow */
+        @media screen and (max-width: 480px) {
+            .stat-card {
+                flex: 1 1 100%;
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            .best-performer, .worst-performer {
+                flex: 1 1 100%;
+                min-width: 100%;
+            }
+
+            .evaluation-container {
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .chart-container {
+                margin: 10px 0;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2232,7 +2256,7 @@ function hasIncompleteCriteria($connect, $style, $stt = null)
 
     <!-- Form nhập dữ liệu từ Excel -->
     <div class="container">
-    <h3DANH SÁCH MÃ HÀNG SẢN XUẤT TRONG THÁNG</h3>
+    <h3>DANH SÁCH MÃ HÀNG SẢN XUẤT TRONG THÁNG</h3>
 
     <!-- Thêm biểu đồ cột mới -->
     <div class="chart-container">
@@ -3093,23 +3117,8 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Kiểm tra nếu đang xem trên thiết bị di động
     const isMobile = window.innerWidth <= 768;
-    
+
     if (isMobile) {
-        // Điều chỉnh tiêu đề nếu quá dài
-        const title = document.querySelector('.navbar-center h1');
-        if (title && title.textContent.length > 30) {
-            // Rút gọn tiêu đề trên điện thoại
-            const originalText = title.textContent;
-            title.setAttribute('data-original-text', originalText);
-            title.textContent = 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT';
-            
-            // Thêm tooltip để hiển thị tiêu đề đầy đủ khi nhấn vào
-            title.style.cursor = 'pointer';
-            title.addEventListener('click', function() {
-                alert(this.getAttribute('data-original-text'));
-            });
-        }
-        
         // Điều chỉnh placeholder của ô tìm kiếm
         const searchInput = document.querySelector('.search-form input[type="text"]');
         if (searchInput) {
@@ -3118,82 +3127,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Thêm JavaScript để rút gọn tiêu đề trên điện thoại
-document.addEventListener('DOMContentLoaded', function() {
-    function adjustNavbarForMobile() {
-        const isMobile = window.innerWidth <= 768;
-        const title = document.querySelector('.navbar-center h1');
-        
-        if (isMobile && title) {
-            // Lưu tiêu đề gốc nếu chưa lưu
-            if (!title.getAttribute('data-original-text')) {
-                title.setAttribute('data-original-text', title.textContent);
-            }
-            
-            // Rút gọn tiêu đề
-            title.textContent = 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT';
-            
-            // Thêm tooltip
-            title.style.cursor = 'pointer';
-            if (!title.hasAttribute('data-tooltip-added')) {
-                title.addEventListener('click', function() {
-                    alert(this.getAttribute('data-original-text'));
-                });
-                title.setAttribute('data-tooltip-added', 'true');
-            }
-        } else if (!isMobile && title && title.getAttribute('data-original-text')) {
-            // Khôi phục tiêu đề gốc trên màn hình lớn
-            title.textContent = title.getAttribute('data-original-text');
-        }
-    }
-    
-    // Gọi hàm khi tải trang và khi thay đổi kích thước màn hình
-    adjustNavbarForMobile();
-    window.addEventListener('resize', adjustNavbarForMobile);
-});
+// NOTE: Mobile title handling is now done via CSS in assets/css/header.css
+// using .title-full and .title-short classes with media queries
 
 // Cải thiện trải nghiệm người dùng trên thiết bị di động
 document.addEventListener('DOMContentLoaded', function() {
     function adjustForDeviceSize() {
         const viewport = window.innerWidth;
-        const navbar = document.querySelector('.navbar');
-        const title = document.querySelector('.navbar-center h1');
         const searchInput = document.querySelector('.search-form input[type="text"]');
-        
-        // Lưu trữ tiêu đề gốc nếu chưa lưu
-        if (title && !title.hasAttribute('data-original-text')) {
-            title.setAttribute('data-original-text', title.textContent);
-        }
-        
+
         if (viewport <= 768) {
-            // Điều chỉnh cho thiết bị di động
-            if (title) {
-                title.textContent = 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT';
-                title.style.cursor = 'pointer';
-                
-                // Thêm tooltip chỉ khi chưa có
-                if (!title.hasAttribute('data-tooltip-added')) {
-                    title.addEventListener('click', function() {
-                        alert(this.getAttribute('data-original-text'));
-                    });
-                    title.setAttribute('data-tooltip-added', 'true');
-                }
-            }
-            
             if (searchInput) {
                 searchInput.placeholder = 'Tìm...';
             }
         } else {
-            // Khôi phục trên thiết bị lớn hơn
-            if (title && title.hasAttribute('data-original-text')) {
-                title.textContent = title.getAttribute('data-original-text');
-            }
-            
             if (searchInput) {
                 searchInput.placeholder = 'Tìm kiếm theo xưởng...';
             }
         }
-        
+
         // Thêm hiệu ứng ripple cho các nút trên thiết bị cảm ứng
         const buttons = document.querySelectorAll('.navbar-right img, .navbar-left img');
         buttons.forEach(button => {
@@ -3201,16 +3153,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.addEventListener('touchstart', function() {
                     this.style.opacity = '0.7';
                 });
-                
+
                 button.addEventListener('touchend', function() {
                     this.style.opacity = '1';
                 });
-                
+
                 button.setAttribute('data-ripple-added', 'true');
             }
         });
     }
-    
+
     // Gọi hàm khi tải trang và khi thay đổi kích thước
     adjustForDeviceSize();
     window.addEventListener('resize', adjustForDeviceSize);
