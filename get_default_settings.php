@@ -1,4 +1,5 @@
 <?php
+// VERSION: 2026-03-01-v2 - Fixed GROUP BY
 // Bật hiển thị lỗi để dễ debug
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -32,16 +33,18 @@ try {
         // Lấy dữ liệu ưu tiên theo thứ tự:
         // 1. Cài đặt cho xưởng cụ thể (nếu có)
         // 2. Cài đặt mặc định cho tất cả xưởng (nếu không có cài đặt cho xưởng cụ thể)
-        $sql = "SELECT t1.* FROM (
-                   SELECT * FROM default_settings WHERE dept = ? AND xuong = ?
-                   UNION ALL
-                   SELECT * FROM default_settings WHERE dept = ? AND xuong = '' AND id_tieuchi NOT IN 
-                       (SELECT id_tieuchi FROM default_settings WHERE dept = ? AND xuong = ?)
-               ) t1
-               GROUP BY t1.id_tieuchi
-               ORDER BY t1.id_tieuchi";
+        $sql = "SELECT ds.* FROM default_settings ds
+                INNER JOIN (
+                    SELECT id_tieuchi, MAX(CASE WHEN xuong = ? THEN 1 ELSE 0 END) as has_xuong
+                    FROM default_settings
+                    WHERE dept = ? AND (xuong = ? OR xuong = '')
+                    GROUP BY id_tieuchi
+                ) priority ON ds.id_tieuchi = priority.id_tieuchi
+                WHERE ds.dept = ?
+                  AND ((priority.has_xuong = 1 AND ds.xuong = ?) OR (priority.has_xuong = 0 AND ds.xuong = ''))
+                ORDER BY ds.id_tieuchi";
         $stmt = $connect->prepare($sql);
-        $stmt->bind_param("sssss", $dept, $xuong, $dept, $dept, $xuong);
+        $stmt->bind_param("sssss", $xuong, $dept, $xuong, $dept, $xuong);
     } else {
         // Chỉ lấy cài đặt mặc định cho tất cả xưởng
         $sql = "SELECT * FROM default_settings WHERE dept = ? AND xuong = ''";

@@ -282,8 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
                         <div class="form-group">
                             <label for="date_input" class="form-label form-label-required">Ngày vào mới:</label>
                             <input type="date" name="new_date" id="date_input" class="form-input"
-                                value="<?php echo date('Y-m-d', strtotime($item_data['ngayin'])); ?>"
-                                required>
+                                value="<?php echo date('Y-m-d', strtotime($item_data['ngayin'])); ?>" required>
                         </div>
 
                         <div class="form-group">
