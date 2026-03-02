@@ -296,3 +296,146 @@ body {
     height: 200px;
   }
 }
+
+/* Month Filter Component */
+.month-filter {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+.month-filter-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.month-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.month-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Stat Card additional styles */
+.stat-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-percent {
+  font-size: 14px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.stat-progress {
+  margin-top: 10px;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stat-progress .progress-bar {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Chart title */
+.chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Evaluation section additional styles */
+.eval-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.eval-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+.eval-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eval-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.eval-percent {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.best-performer .eval-percent {
+  color: #10b981;
+}
+
+.worst-performer .eval-percent {
+  color: #ef4444;
+}
+
+/* Department status styles */
+.status-completed {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #f59e0b;
+  font-size: 12px;
+}
+
+/* Scroll hint */
+.scroll-hint {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .month-filter {
+    justify-content: center;
+  }
+
+  .scroll-hint {
+    display: block;
+    text-align: center;
+    background-color: #fff9c4;
+    color: #333;
+    font-weight: bold;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+}

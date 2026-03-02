@@ -185,6 +185,11 @@ $dept_counts = $sorted_dept_counts;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 1000;
+        }
+
+        /* Đảm bảo header-component sticky để navbar sticky hoạt động */
+        .header-component {
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -259,7 +264,7 @@ $dept_counts = $sorted_dept_counts;
         .sticky-header {
             display: none;
             position: fixed;
-            top: 245px;
+            top: 0; /* Sẽ được tính toán bằng JS */
             left: 0;
             right: 0;
             z-index: 99;
@@ -334,11 +339,12 @@ $dept_counts = $sorted_dept_counts;
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 35px;
+            margin-bottom: 0;
             position: sticky;
-            top: 70px;
+            top: 64px; /* Chiều cao thực tế của header-component */
             background-color: white;
             padding: 10px;
+            padding-bottom: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 100;
@@ -428,7 +434,7 @@ $dept_counts = $sorted_dept_counts;
             flex-grow: 1;
             overflow-y: auto;
             padding-right: 10px;
-            padding-top: 25px;
+            padding-top: 20px; /* Khoảng cách với summary-section khi chưa cuộn */
         }
 
         html {
@@ -505,15 +511,23 @@ $dept_counts = $sorted_dept_counts;
                 const scrollPosition = window.scrollY;
                 const tableRect = originalTable.getBoundingClientRect();
 
+                // Lấy chiều cao thực của header-component và summary-section
+                const headerComponent = document.querySelector('.header-component');
+                const summarySection = document.querySelector('.summary-section');
+                const headerHeight = headerComponent ? headerComponent.offsetHeight : 64;
+                const summaryHeight = summarySection.offsetHeight;
+                const stickyTop = headerHeight + summaryHeight;
+
                 // Tìm vị trí của tiêu đề bộ phận đầu tiên
                 let firstDeptHeaderPos = 0;
                 if (deptHeaders.length > 0) {
                     firstDeptHeaderPos = deptHeaders[0].getBoundingClientRect().top + window.scrollY;
                 }
 
-                // Hiển thị tiêu đề cố định chỉ khi đã cuộn qua tiêu đề bộ phận đầu tiên
-                if (scrollPosition > firstDeptHeaderPos - 220) {
+                // Hiển thị tiêu đề cố định khi cần
+                if (scrollPosition > firstDeptHeaderPos - stickyTop - 10) {
                     stickyContainer.style.display = 'block';
+                    stickyContainer.style.top = stickyTop + 'px';
 
                     // Đảm bảo tiêu đề cố định có cùng độ rộng và vị trí với bảng gốc
                     const tableWidth = tableRect.width;
@@ -521,16 +535,15 @@ $dept_counts = $sorted_dept_counts;
 
                     stickyContainer.style.width = tableWidth + 'px';
                     stickyContainer.style.left = tableLeft + 'px';
-                    stickyContainer.style.right = 'auto'; // Vô hiệu hóa right: 0 để tránh xung đột
+                    stickyContainer.style.right = 'auto';
 
-                    // Thêm timeout để hiệu ứng opacity hoạt động
                     setTimeout(function() {
                         stickyContainer.style.opacity = '1';
                     }, 10);
                 } else {
                     stickyContainer.style.opacity = '0';
                     setTimeout(function() {
-                        if (scrollPosition <= firstDeptHeaderPos - 220) {
+                        if (scrollPosition <= firstDeptHeaderPos - stickyTop - 10) {
                             stickyContainer.style.display = 'none';
                         }
                     }, 300);

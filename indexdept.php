@@ -10,6 +10,9 @@ ini_set('error_log', 'C:/xampp/php/logs/php_log.txt');
 // Kết nối database
 include 'db_connect.php';
 
+// CSRF protection
+require_once 'includes/security/csrf-helper.php';
+
 // Thêm vào sau phần kết nối database
 include 'check_tieuchi_image.php';
 
@@ -26,8 +29,7 @@ $dept = isset($_GET['dept']) ? $_GET['dept'] : '';
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
 
 // Tạm thời bỏ kiểm tra user
-// $is_admin = isset($_SESSION['username']) && $_SESSION['username'] === 'admin';
-$is_admin = true; // Để test, tạm thời coi như tất cả người dùng là admin
+$is_admin = isset($_SESSION['username']) && $_SESSION['username'] === 'admin';
 
 // Ánh xạ tên hiển thị cho từng bộ phận
 $dept_names = [
@@ -682,6 +684,7 @@ $header_config = [
         <div class="evaluation-section" style="max-width: 1600px; margin: 0 auto; overflow-x: auto;">
             <h2>Tiêu chí đánh giá</h2>
             <form action="save_danhgia_with_log.php" method="POST" id="danhgiaForm">
+                <?php echo getCsrfInput(); ?>
                 <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
                 <input type="hidden" name="dept" value="<?php echo $dept; ?>">
 

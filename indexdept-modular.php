@@ -37,8 +37,7 @@ if (!$connect) {
 session_start();
 
 // TODO: Replace with proper authentication
-// $is_admin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
-$is_admin = true; // Temporary for testing
+$is_admin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 
 // ===========================================
 // 5. Request Parameters & Validation

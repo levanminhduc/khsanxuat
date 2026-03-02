@@ -1,14 +1,4 @@
 <?php
-/**
- * Header Component Test Page
- * 
- * This file tests the shared header component with various configurations.
- * Access via: http://localhost/khsanxuat/components/test_header.php
- * 
- * DELETE THIS FILE AFTER TESTING - not for production use.
- */
-
-// Basic configuration test
 $header_config = [
     'title' => 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY',
     'title_short' => 'ĐÁNH GIÁ HỆ THỐNG',
@@ -51,7 +41,6 @@ $header_config = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Header Component Test</title>
-    <!-- Include the header CSS -->
     <link rel="stylesheet" href="../assets/css/header.css">
     <style>
         body {
@@ -100,12 +89,12 @@ $header_config = [
 </head>
 <body>
     <?php include 'header.php'; ?>
-    
+
     <div class="test-content">
         <div class="test-info">
             <h2>Header Component Test Page</h2>
             <p>This page tests the shared header component. Use this to verify:</p>
-            
+
             <h3>Test Checklist</h3>
             <ul class="test-checklist">
                 <li><span class="status-check">[ ]</span> Header displays with #003366 background color</li>
@@ -119,11 +108,11 @@ $header_config = [
                 <li><span class="status-check">[ ]</span> Menu closes when resizing above 768px</li>
                 <li><span class="status-check">[ ]</span> No JavaScript console errors</li>
             </ul>
-            
+
             <h3>Configuration Used</h3>
             <pre><?php print_r($header_config); ?></pre>
         </div>
-        
+
         <div class="test-info">
             <h3>Files Created</h3>
             <ul>
@@ -133,8 +122,7 @@ $header_config = [
             </ul>
         </div>
     </div>
-    
-    <!-- Include the header JavaScript -->
+
     <script src="../assets/js/header.js"></script>
 </body>
 </html>

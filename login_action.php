@@ -16,7 +16,8 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
     mysqli_stmt_bind_result($stmt, $user_id, $db_name, $db_password, $full_name);
     mysqli_stmt_fetch($stmt);
     if ($pass == $db_password) {
-        // Lưu thông tin người dùng vào session
+        session_regenerate_id(true);
+
         $_SESSION['id'] = $user_id;
         $_SESSION['name'] = $db_name;
         $_SESSION['full_name'] = $full_name; // Lưu full_name

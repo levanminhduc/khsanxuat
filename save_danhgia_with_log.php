@@ -1,21 +1,24 @@
 <?php
-// Bật hiển thị lỗi để dễ debug
+// Production: disable error display
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 // Kết nối database và logger
 include 'db_connect.php';
 include 'activity_logger.php';
 
+// CSRF protection
+require_once 'includes/security/csrf-helper.php';
+
 // Khởi tạo phiên làm việc
 session_start();
 
-// Kiểm tra quyền ghi log (không cần kiểm tra đăng nhập vì đã login rồi)
-$can_log = false;
+// Validate CSRF token
+verifyCsrfOrDie();
 
-// Tạm thời set $can_log = true để test
-$can_log = true;
-error_log("Force can_log = true for testing");
+// Kiểm tra quyền ghi log
+$can_log = false;
 
 // Kiểm tra bảng activity_logs có tồn tại không
 $check_table = $connect->query("SHOW TABLES LIKE 'activity_logs'");

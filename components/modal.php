@@ -1,55 +1,13 @@
 <?php
-/**
- * Modal Component (Standalone)
- * 
- * Standalone modal dialog component for use outside form-page context.
- * For use within form-page, use the render_modal() from form-page.php.
- * 
- * Usage:
- * require_once 'components/modal.php';
- * 
- * render_modal_standalone([
- *     'id' => 'myModal',
- *     'title' => 'Modal Title',
- *     'body' => '<p>Modal content here</p>',
- *     'type' => 'success'
- * ]);
- * 
- * @version 1.0.0
- */
-
-// Avoid redefinition if included multiple times
 if (!function_exists('render_modal_standalone')) {
 
-/**
- * Safely escape output for HTML context
- */
 if (!function_exists('modal_escape')) {
     function modal_escape($value) {
         return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
     }
 }
 
-/**
- * Render standalone modal dialog
- * 
- * Renders a modal dialog that can be used outside of the form-page component.
- * Includes its own wrapper class for styling isolation.
- * 
- * @param array $config Configuration array
- *   - id: (required) Unique modal ID
- *   - title: (required) Modal header title
- *   - body: (required) Modal body HTML content
- *   - type: (optional) Modal type (default, success, error, warning)
- *   - show_close: (optional) Show X close button (default: true)
- *   - buttons: (optional) Array of footer buttons
- *   - auto_redirect: (optional) Auto-redirect config
- *   - class: (optional) Additional modal classes
- *   - auto_open: (optional) Auto-open the modal on page load (default: false)
- * @return void Outputs HTML directly
- */
 function render_modal_standalone($config) {
-    // Set defaults
     $defaults = [
         'id' => 'modal-' . uniqid(),
         'title' => 'Modal',
@@ -61,44 +19,40 @@ function render_modal_standalone($config) {
         'class' => '',
         'auto_open' => false
     ];
-    
+
     $config = array_merge($defaults, $config);
-    
+
     $id = modal_escape($config['id']);
     $title = modal_escape($config['title']);
-    $body = $config['body']; // Allow HTML content
+    $body = $config['body'];
     $type = modal_escape($config['type']);
     $show_close = (bool)$config['show_close'];
     $buttons = is_array($config['buttons']) ? $config['buttons'] : [];
     $auto_redirect = $config['auto_redirect'];
     $extra_class = modal_escape($config['class']);
     $auto_open = (bool)$config['auto_open'];
-    
-    // Determine modal type class
+
     $type_class = '';
     if (in_array($type, ['success', 'error', 'warning'])) {
         $type_class = 'modal-' . $type;
     }
-    
-    // Icon based on type
+
     $icon = '';
     switch ($type) {
         case 'success':
-            $icon = '&#10004;'; // Checkmark
+            $icon = '&#10004;';
             break;
         case 'error':
-            $icon = '&#10006;'; // X mark
+            $icon = '&#10006;';
             break;
         case 'warning':
-            $icon = '&#9888;'; // Warning triangle
+            $icon = '&#9888;';
             break;
     }
-    
-    // Auto-open class
+
     $open_class = $auto_open ? ' is-open' : '';
-    
+
     ?>
-<!-- Modal: <?php echo $id; ?> (Standalone) -->
 <div class="form-page-component">
 <div class="modal-overlay <?php echo $type_class; ?> <?php echo $extra_class; ?><?php echo $open_class; ?>" id="<?php echo $id; ?>" role="dialog" aria-modal="true" aria-labelledby="<?php echo $id; ?>-title">
     <div class="modal-content">
@@ -112,9 +66,9 @@ function render_modal_standalone($config) {
             <?php if (!empty($icon)): ?>
             <div class="modal-icon"><?php echo $icon; ?></div>
             <?php endif; ?>
-            
+
             <?php echo $body; ?>
-            
+
             <?php if ($auto_redirect && isset($auto_redirect['show_countdown']) && $auto_redirect['show_countdown']): ?>
             <?php $delay = isset($auto_redirect['delay']) ? (int)$auto_redirect['delay'] : 3; ?>
             <div class="modal-countdown">
@@ -122,7 +76,7 @@ function render_modal_standalone($config) {
             </div>
             <?php endif; ?>
         </div>
-        
+
         <?php if (!empty($buttons)): ?>
         <div class="modal-footer">
             <?php foreach ($buttons as $button): ?>
@@ -133,7 +87,7 @@ function render_modal_standalone($config) {
                 $btn_onclick = isset($button['onclick']) ? modal_escape($button['onclick']) : '';
                 $btn_dismiss = isset($button['data-dismiss']) && $button['data-dismiss'] === 'modal';
                 $btn_attrs = '';
-                
+
                 if (!empty($btn_id)) {
                     $btn_attrs .= ' id="' . $btn_id . '"';
                 }
@@ -154,7 +108,6 @@ function render_modal_standalone($config) {
 </div>
 
 <script>
-// Modal utility functions
 function openModal(modalId) {
     var modal = document.getElementById(modalId);
     if (modal) {
@@ -171,7 +124,6 @@ function closeModal(modalId) {
     }
 }
 
-// Close modal on overlay click
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal-overlay')) {
         e.target.classList.remove('is-open');
@@ -179,7 +131,6 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Close modal on Escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         var openModal = document.querySelector('.modal-overlay.is-open');
@@ -205,7 +156,7 @@ document.addEventListener('keydown', function(e) {
     var delay = <?php echo $delay; ?>;
     var countdownInterval = null;
     var redirectTimeout = null;
-    
+
     function startCountdown() {
         var remaining = delay;
         if (countdownEl) {
@@ -221,33 +172,29 @@ document.addEventListener('keydown', function(e) {
             window.location.href = redirectUrl;
         }, delay * 1000);
     }
-    
+
     function stopRedirect() {
         if (countdownInterval) clearInterval(countdownInterval);
         if (redirectTimeout) clearTimeout(redirectTimeout);
         closeModal('<?php echo $id; ?>');
     }
-    
-    // Handle stay button (common pattern)
+
     var stayBtn = document.getElementById('stayHere');
     if (stayBtn) {
         stayBtn.addEventListener('click', stopRedirect);
     }
-    
-    // Handle redirect now button (common pattern)
+
     var redirectBtn = document.getElementById('redirectNow');
     if (redirectBtn) {
         redirectBtn.addEventListener('click', function() {
             window.location.href = redirectUrl;
         });
     }
-    
-    // Start countdown when modal is shown
+
     if (modal && modal.classList.contains('is-open')) {
         startCountdown();
     }
-    
-    // Observe modal for class changes
+
     var observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
             if (mutation.attributeName === 'class') {
@@ -260,7 +207,7 @@ document.addEventListener('keydown', function(e) {
             }
         });
     });
-    
+
     if (modal) {
         observer.observe(modal, { attributes: true });
     }
@@ -270,15 +217,6 @@ document.addEventListener('keydown', function(e) {
     <?php
 }
 
-/**
- * Helper function to show a simple alert modal
- * 
- * @param string $title Modal title
- * @param string $message Modal message
- * @param string $type Modal type (default, success, error, warning)
- * @param string $id Optional modal ID
- * @return void
- */
 function render_alert_modal($title, $message, $type = 'default', $id = null) {
     render_modal_standalone([
         'id' => $id ?: 'alertModal',
@@ -292,16 +230,6 @@ function render_alert_modal($title, $message, $type = 'default', $id = null) {
     ]);
 }
 
-/**
- * Helper function to show a confirm modal
- * 
- * @param string $title Modal title
- * @param string $message Modal message
- * @param string $confirm_text Confirm button text
- * @param string $confirm_action JavaScript action for confirm
- * @param string $id Optional modal ID
- * @return void
- */
 function render_confirm_modal($title, $message, $confirm_text = 'Confirm', $confirm_action = '', $id = null) {
     render_modal_standalone([
         'id' => $id ?: 'confirmModal',
@@ -315,5 +243,5 @@ function render_confirm_modal($title, $message, $confirm_text = 'Confirm', $conf
     ]);
 }
 
-} // End if function_exists check
+}
 ?>

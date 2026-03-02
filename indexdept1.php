@@ -26,8 +26,7 @@ $dept = isset($_GET['dept']) ? $_GET['dept'] : '';
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
 
 // Tạm thời bỏ kiểm tra user
-// $is_admin = isset($_SESSION['username']) && $_SESSION['username'] === 'admin';
-$is_admin = true; // Để test, tạm thời coi như tất cả người dùng là admin
+$is_admin = isset($_SESSION['username']) && $_SESSION['username'] === 'admin';
 
 // Ánh xạ tên hiển thị cho từng bộ phận
 $dept_names = [
