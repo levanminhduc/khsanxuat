@@ -701,7 +701,8 @@ foreach ($dept_stats as $dept => $completed) {
             'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
             'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
             'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
-            'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0']
+            'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
+            'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF']
 
         ];
 
@@ -862,6 +863,11 @@ foreach ($dept_stats as $dept => $completed) {
                                 Cắt
                             </a>
                         </th>
+                        <th style="width: 110px;">
+                            <a href="dept_statistics.php?dept=co_dien&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                                Cơ Điện
+                            </a>
+                        </th>
                         
                         
                         
@@ -980,7 +986,8 @@ foreach ($dept_stats as $dept => $completed) {
             echo "</td>";
 
             $departments = [
-                'cat' => 'Cắt'
+                'cat' => 'Cắt',
+                'co_dien' => 'Cơ Điện'
 
             ];
 
@@ -1062,7 +1069,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
         'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
         'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
-        'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0']
+        'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
+        'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF']
 
     ];
 
