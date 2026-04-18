@@ -1,0 +1,564 @@
+/* Action buttons, badges and helper animations for indexdept */
+.btn-default-setting {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.btn-default-setting:hover {
+    background-color: #2980b9;
+}
+
+.btn-upload-image {
+    display: inline-flex;
+    align-items: center;
+    padding: 0px 0px;
+    background-color: #1976d2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    margin-left: 0px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-upload-image:hover {
+    background-color: #1565c0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transform: translateY(-1px);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-upload-image:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.image-count-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+
+.warning-icon {
+    color: #ffc107;
+    animation: blink 1.5s infinite;
+}
+
+.btn-upload-file {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #0275d8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-upload-file:hover {
+    background-color: #025aa5;
+    text-decoration: none;
+    color: white;
+}
+
+.file-count-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+
+/* Legacy override block preserved to keep current behavior */
+.btn-upload-image {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.btn-upload-image:hover {
+    background-color: #218838;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.alert {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 5px;
+    font-size: 13px;
+    display: block;
+    width: 52px;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+/* Default settings modal - component tier */
+.default-settings-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.default-settings-modal__close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.default-settings-modal__title {
+    margin: 0 40px 8px 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.default-settings-modal__subtitle {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+.default-settings-modal__label {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.default-settings-modal__select-xuong {
+    width: 240px;
+    min-height: 38px;
+}
+
+.default-settings-modal__status {
+    margin: 10px 20px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.default-settings-modal__btn {
+    min-height: 38px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: none;
+    transition: all 0.2s ease;
+}
+
+.default-settings-modal__btn--primary {
+    background-color: #0b5ed7;
+}
+
+.default-settings-modal__btn--primary:hover {
+    background-color: #0a53be;
+}
+
+.default-settings-modal__btn--info {
+    background-color: #0f766e;
+}
+
+.default-settings-modal__btn--info:hover {
+    background-color: #115e59;
+}
+
+.default-settings-modal__btn--secondary {
+    background-color: #64748b;
+}
+
+.default-settings-modal__btn--secondary:hover {
+    background-color: #475569;
+}
+
+.default-settings-modal__table thead th {
+    background: #003366;
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid #003366;
+    white-space: nowrap;
+    word-break: keep-all;
+}
+
+#default_settings_tbody td {
+    padding: 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eef2f7;
+    background: #fff;
+}
+
+#default_settings_tbody .text-left {
+    text-align: left;
+    min-width: 360px;
+    line-height: 1.3;
+}
+
+.default-settings-modal__table tbody tr:hover td {
+    background: #f8fafc;
+}
+
+.default-settings-modal__group-row {
+    background: #eef2ff !important;
+    color: #1e3a8a;
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px !important;
+    border-top: 1px solid #dbeafe;
+    border-bottom: 1px solid #dbeafe !important;
+}
+
+.default-settings-modal__table .form-control {
+    min-width: 120px;
+}
+
+.default-settings-modal__owner-select {
+    min-height: 40px;
+    min-width: 220px;
+}
+
+.default-settings-modal__col {
+    white-space: nowrap;
+}
+
+.default-settings-modal__col--stt {
+    width: 64px;
+    min-width: 64px;
+}
+
+.default-settings-modal__col--criteria {
+    width: 420px;
+    min-width: 420px;
+}
+
+.default-settings-modal__col--type {
+    width: 230px;
+    min-width: 230px;
+}
+
+.default-settings-modal__col--days {
+    width: 110px;
+    min-width: 110px;
+}
+
+.default-settings-modal__col--owner {
+    width: 260px;
+    min-width: 260px;
+}
+
+.default-settings-modal__col--actions {
+    width: 150px;
+    min-width: 150px;
+}
+
+.btn-default-setting {
+    background: #2563eb;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 98px;
+}
+
+.btn-default-setting:hover {
+    background: #1d4ed8;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+
+
+
+/* Staff modal - component tier */
+.staff-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.staff-modal__close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.staff-modal__title {
+    margin: 0 40px 8px 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.staff-modal__subtitle {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+.staff-modal__status {
+    margin: 10px 20px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.staff-modal__form-title {
+    margin: 0 0 10px;
+    color: #1e293b;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.staff-modal__input {
+    min-height: 38px;
+}
+
+.staff-modal__btn-add {
+    min-width: 92px;
+}
+
+.staff-modal__table thead th {
+    background: #003366;
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid #003366;
+}
+
+#staff_tbody td {
+    padding: 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eef2f7;
+    background: #fff;
+}
+
+.staff-modal__table tbody tr:hover td {
+    background: #f8fafc;
+}
+
+.staff-modal__col {
+    white-space: nowrap;
+}
+
+.staff-modal__col--stt {
+    width: 70px;
+}
+
+.staff-modal__col--name {
+    width: 34%;
+}
+
+.staff-modal__col--position {
+    width: 28%;
+}
+
+.staff-modal__col--actions {
+    width: 220px;
+}
+
+.staff-modal__action-btn {
+    min-height: 34px;
+    min-width: 88px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.staff-modal__action-btn:last-child {
+    margin-right: 0;
+}
+
+.staff-modal__action-btn--danger {
+    background-color: #dc2626;
+}
+
+.staff-modal__action-btn--danger:hover {
+    background-color: #b91c1c;
+}
+
+
+/* Ensure buttons use project default font */
+.btn-add-criteria,
+.btn-default-setting,
+.default-settings-modal__btn,
+.staff-modal__action-btn,
+.default-settings-modal__close,
+.staff-modal__close {
+    font-family: inherit;
+}
+
+
+/* Add criteria modal - component tier */
+.add-criteria-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #64748b;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.add-criteria-modal__close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.add-criteria-modal__title {
+    margin: 0 44px 8px 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: left;
+}
+
+.add-criteria-modal__subtitle {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.add-criteria-modal__group {
+    margin-bottom: 0;
+}
+
+.add-criteria-modal__group--sm {
+    max-width: 240px;
+}
+
+.add-criteria-modal__label {
+    display: block;
+    margin: 0 0 6px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.add-criteria-modal__control {
+    min-height: 42px;
+    font-family: inherit;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: all 0.2s ease;
+}
+
+.add-criteria-modal__control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    outline: none;
+}
+
+.add-criteria-modal__textarea {
+    min-height: 144px;
+    padding-top: 10px;
+    resize: vertical;
+}
+
+.add-criteria-modal__btn {
+    min-height: 42px;
+    min-width: 130px;
+    padding: 0 18px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+
+/* Add criteria modal - enforce project default font */
+.add-criteria-modal,
+.add-criteria-modal * {
+    font-family: Arial, sans-serif !important;
+}

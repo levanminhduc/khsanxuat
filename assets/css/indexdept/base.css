@@ -1,0 +1,78 @@
+/* Base form controls and status indicators for indexdept */
+.diem-select {
+    width: 85px;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 13px;
+    height: 30px;
+}
+
+.nguoi-thuchien-select {
+    width: 160px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    height: 40px;
+    white-space: normal;
+}
+
+select[name^="nguoi_thuchien_"] {
+    width: 160px;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    height: 40px;
+    white-space: normal;
+}
+
+.checkbox {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+    cursor: default;
+    text-align: center;
+    line-height: 25px;
+}
+
+.checkbox.checked {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+}
+
+.checkbox.unchecked {
+    background-color: #F44336;
+    border-color: #F44336;
+    color: white;
+}
+
+.checkmark {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.checkbox-input {
+    display: none;
+}
+
+.small-btn {
+    font-size: 9px;
+    padding: 1px 3px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}

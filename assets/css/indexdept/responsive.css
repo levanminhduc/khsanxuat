@@ -1,0 +1,164 @@
+/* Responsive tuning for indexdept */
+@media screen and (max-width: 1200px) {
+    .evaluation-table th,
+    .evaluation-table td {
+        font-size: 13px;
+    }
+
+    select[name^="nguoi_thuchien_"] {
+        width: 140px;
+        padding: 2px;
+        font-size: 12px;
+        height: 28px;
+    }
+
+    .diem-select {
+        width: 80px;
+        height: 28px;
+    }
+}
+
+/* Default settings modal - responsive tier */
+@media screen and (max-width: 1024px) {
+    .default-settings-modal__content {
+        width: 95vw;
+        max-height: 90vh;
+    }
+
+    .default-settings-modal__title {
+        font-size: 18px;
+    }
+
+    .default-settings-modal__table thead th,
+    #default_settings_tbody td {
+        font-size: 12px;
+    }
+
+    .default-settings-modal__col--criteria {
+        width: 28%;
+    }
+
+    .default-settings-modal__col--owner {
+        width: 22%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .default-settings-modal__header {
+        padding: 16px 16px 12px;
+    }
+
+    .default-settings-modal__body {
+        padding: 12px;
+    }
+
+    .default-settings-modal__toolbar,
+    .default-settings-modal__toolbar-left,
+    .default-settings-modal__actions,
+    .default-settings-modal__xuong-filter {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .default-settings-modal__select-xuong,
+    .default-settings-modal__btn {
+        width: 100%;
+    }
+
+    .default-settings-modal__table-wrap {
+        overflow: auto;
+    }
+
+    .default-settings-modal__table {
+        min-width: 860px;
+    }
+}
+
+
+/* Staff modal - responsive tier */
+@media screen and (max-width: 1024px) {
+    .staff-modal__content {
+        width: 95vw;
+        max-height: 90vh;
+    }
+
+    .staff-modal__title {
+        font-size: 18px;
+    }
+
+    .staff-modal__table thead th,
+    #staff_tbody td {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .staff-modal__header {
+        padding: 16px 16px 12px;
+    }
+
+    .staff-modal__body {
+        padding: 12px;
+    }
+
+    .staff-modal__form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-modal__btn-add {
+        width: 100%;
+    }
+
+    .staff-modal__table-wrap {
+        overflow: auto;
+    }
+
+    .staff-modal__table {
+        min-width: 760px;
+    }
+
+    .staff-modal__footer .default-settings-modal__btn {
+        width: 100%;
+    }
+}
+
+
+/* Add criteria modal - responsive tier */
+@media screen and (max-width: 1024px) {
+    .add-criteria-modal__content {
+        width: 94vw;
+        max-height: 90vh;
+    }
+
+    .add-criteria-modal__title {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .add-criteria-modal__header {
+        padding: 16px 16px 12px;
+    }
+
+    .add-criteria-modal__body {
+        padding: 12px;
+    }
+
+    .add-criteria-modal__title {
+        font-size: 17px;
+    }
+
+    .add-criteria-modal__group--sm {
+        max-width: 100%;
+    }
+
+    .add-criteria-modal__actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .add-criteria-modal__btn {
+        width: 100%;
+    }
+}

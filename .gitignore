@@ -10,3 +10,8 @@ debug.log
 .playwright-mcp/
 *.png
 !assets/**/*.png
+openspec/
+template_files/
+images/
+playwright_test/
+.augment/
