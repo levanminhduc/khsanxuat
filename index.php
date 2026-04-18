@@ -604,6 +604,7 @@ foreach ($dept_stats as $dept => $completed) {
             font-size: 16px;
         }
 
+
         #month-select {
             padding: 4px 30px 4px 8px;
             border: none;

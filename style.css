@@ -452,7 +452,8 @@ h2 {
     cursor: pointer;
 }
 
-.calendar-icon {
+.edit-date-input-container .calendar-icon,
+.date-input-container .calendar-icon {
     position: absolute;
     right: 10px;
     top: 50%;
@@ -679,45 +680,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-#date_input {
-    width: 100%;
-    padding: 8px 30px 8px 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.calendar-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 16px;
-    pointer-events: auto;
-}
-
-/* jQuery UI Datepicker Customization */
-.ui-datepicker {
-    font-size: 14px;
-}
-
-.ui-datepicker .ui-datepicker-header {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.ui-datepicker .ui-datepicker-calendar .ui-state-default {
-    background: #f6f6f6;
-    color: #333;
-}
-
-.ui-datepicker .ui-datepicker-calendar .ui-state-active {
-    background: #4CAF50;
-    color: white;
-}
 
 /* Modal Styles */
 .modal {
@@ -800,7 +762,8 @@ h2 {
 }
 
 /* Calendar icon hover effects */
-.calendar-icon:hover {
+.edit-date-input-container .calendar-icon:hover,
+.date-input-container .calendar-icon:hover {
     color: #007cba !important;
     transform: translateY(-50%) scale(1.1) !important;
     transition: all 0.2s ease !important;

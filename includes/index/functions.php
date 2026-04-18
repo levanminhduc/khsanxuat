@@ -121,7 +121,7 @@ function getProductionData($connect, $month, $year, $search_value = '', $search_
 
     $sql = "SELECT * FROM khsanxuat
             WHERE MONTH(ngayin) = ? AND YEAR(ngayin) = ?" . $search['condition'] . "
-            ORDER BY xuong ASC, CAST(line1 AS UNSIGNED) ASC, ngayin ASC";
+            ORDER BY xuong ASC, ngayin ASC, CAST(line1 AS UNSIGNED) ASC";
 
     $stmt = $connect->prepare($sql);
 
