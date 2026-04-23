@@ -18,6 +18,152 @@
     }
 }
 
+/* Tablet and smaller screens */
+@media screen and (max-width: 1024px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: center !important;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .action-buttons h2 {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+
+    .action-buttons > .header-actions {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .action-buttons .btn-add-criteria {
+        margin-right: 0;
+    }
+}
+
+/* General Layout Responsive */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 10px !important;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .action-buttons h2 {
+        margin-bottom: 5px;
+        border-bottom: none;
+        font-size: 1.1rem;
+    }
+
+    .action-buttons > .header-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .action-buttons .btn-add-criteria {
+        width: 100%;
+        margin-right: 0;
+        padding: 12px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    /* Tables responsiveness */
+    .evaluation-section {
+        padding: 0 !important;
+        margin-top: 20px;
+    }
+
+    .data-table, .evaluation-table {
+        display: table; /* Reset from block to maintain table layout inside scrollable wrapper */
+        width: 100%;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    /* Keep tables from shrinking too much to ensure readability */
+    .data-table {
+        min-width: 900px;
+    }
+
+    .evaluation-table {
+        min-width: 1100px;
+    }
+
+    /* Make evaluation table cells more compact on mobile */
+    .evaluation-table th, .evaluation-table td {
+        padding: 8px 4px !important;
+        font-size: 12px !important;
+    }
+
+    /* Compact deadline info for mobile */
+    .deadline-form {
+        padding: 2px !important;
+    }
+
+    .deadline-input {
+        width: 35px !important;
+        height: 24px !important;
+    }
+
+    .deadline-button {
+        padding: 2px 5px !important;
+        font-size: 9px !important;
+    }
+
+    .ngay-tinh-han-select {
+        font-size: 11px !important;
+        height: 24px !important;
+        width: 130px !important;
+    }
+
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .button-group .btn-save,
+    .button-group .btn-back {
+        width: 100%;
+        text-align: center;
+        margin-right: 0;
+    }
+
+    /* Order info specific adjustments */
+    .btn-upload-image, .btn-upload-file {
+        padding: 4px 8px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+}
+
 /* Default settings modal - responsive tier */
 @media screen and (max-width: 1024px) {
     .default-settings-modal__content {
@@ -58,20 +204,35 @@
     .default-settings-modal__xuong-filter {
         width: 100%;
         flex-direction: column;
-        align-items: stretch;
+        align-items: stretch !important;
+        gap: 10px;
     }
 
     .default-settings-modal__select-xuong,
     .default-settings-modal__btn {
         width: 100%;
+        margin-right: 0;
     }
 
     .default-settings-modal__table-wrap {
         overflow: auto;
+        border-radius: 4px;
     }
 
     .default-settings-modal__table {
-        min-width: 860px;
+        min-width: 900px;
+    }
+
+    .default-settings-modal__table th,
+    .default-settings-modal__table td {
+        padding: 8px 4px !important;
+        font-size: 12px !important;
+    }
+
+    /* Owner select specific in default settings */
+    .default-settings-modal__owner-select {
+        width: 100% !important;
+        font-size: 11px !important;
     }
 }
 
@@ -103,19 +264,23 @@
     }
 
     .staff-modal__form-row {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
     .staff-modal__btn-add {
         width: 100%;
+        margin-right: 0;
     }
 
     .staff-modal__table-wrap {
         overflow: auto;
+        border-radius: 4px;
     }
 
     .staff-modal__table {
-        min-width: 760px;
+        min-width: 600px;
     }
 
     .staff-modal__footer .default-settings-modal__btn {
@@ -160,5 +325,26 @@
 
     .add-criteria-modal__btn {
         width: 100%;
+    }
+}
+
+/* Generic Modal Responsive */
+@media screen and (max-width: 768px) {
+    .modal-content {
+        width: 95% !important;
+        margin: 10% auto !important;
+        padding: 15px !important;
+    }
+    
+    .quick-suggestion {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 5px;
+    }
+
+    .quick-btn {
+        padding: 4px 8px;
+        font-size: 12px;
     }
 }

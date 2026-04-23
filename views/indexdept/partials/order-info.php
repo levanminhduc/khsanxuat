@@ -1,3 +1,4 @@
+    <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px;">
         <table class="data-table">
             <thead>
                 <tr>
@@ -57,4 +58,5 @@
                 </tr>
             </tbody>
         </table>
+    </div>
 

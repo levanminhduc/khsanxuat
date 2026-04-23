@@ -5,33 +5,31 @@
         </div>
         <?php endif; ?>
 
-        <!-- <div class="evaluation-section" style="max-width: 1200px; margin: 0 auto; overflow-x: auto;"> -->
-        <div class="evaluation-section" style="max-width: 1600px; margin: 0 auto; overflow-x: auto;">
+        <div class="evaluation-section" style="max-width: 1600px; margin: 0 auto;">
             <h2>Tiêu chí đánh giá</h2>
             <form action="save_danhgia_with_log.php" method="POST" id="danhgiaForm">
                 <?php echo getCsrfInput(); ?>
                 <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
                 <input type="hidden" name="dept" value="<?php echo $dept; ?>">
 
-                <table class="evaluation-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 40px;">STT</th>
-                            <th style="width: 360px;" class="resizable">Tiêu chí đánh giá</th>
-                            <th style="width: 130px;" class="resizable">
-                                Hạn Xử Lý
-                                <span class="tooltip-icon" title="Thời hạn đã được tính toán tự động">ⓘ</span>
-                                <?php /* if($is_admin): */ ?>
-                                <button type="button" onclick="openDeadlineModal()" class="small-btn">Cài đặt</button>
-                                <?php /* endif; */ ?>
-                            </th>
-                            <th style="width: 200px; height: 50px;" class="resizable">Người chịu trách nhiệm</th>
-                            <th style="width: 120px;" class="resizable">Điểm đánh giá</th>
-                            <th style="width: 80px;">Đã thực hiện</th>
-                            <th style="width: 150px;" class="resizable">Ghi chú</th>
+                <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px;">
+                    <table class="evaluation-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">STT</th>
+                                <th style="width: 360px;" class="resizable">Tiêu chí đánh giá</th>
+                                <th style="width: 130px;" class="resizable">
+                                    Hạn Xử Lý
+                                    <span class="tooltip-icon" title="Thời hạn đã được tính toán tự động">ⓘ</span>
+                                    <button type="button" onclick="openDeadlineModal()" class="small-btn">Cài đặt</button>
+                                </th>
+                                <th style="width: 200px; height: 50px;" class="resizable">Người chịu trách nhiệm</th>
+                                <th style="width: 120px;" class="resizable">Điểm đánh giá</th>
+                                <th style="width: 80px;">Đã thực hiện</th>
+                                <th style="width: 150px;" class="resizable">Ghi chú</th>
                             </tr>
                         </thead>
-                    <tbody>
+                        <tbody>
                         <?php
                         // Lấy danh sách tiêu chí và trạng thái đánh giá
                         $sql = "SELECT tc.*, dg.nguoi_thuchien, dg.da_thuchien, dg.diem_danhgia, dg.ghichu, dg.han_xuly, dg.so_ngay_xuly, dg.ngay_tinh_han

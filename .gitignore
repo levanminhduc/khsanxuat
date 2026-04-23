@@ -3,15 +3,20 @@ nul
 
 docs/
 plans/
-logs/php_errors.log
+logs/
 debug.log
 
 # Playwright MCP test files
 .playwright-mcp/
 *.png
+*.txt
 !assets/**/*.png
 openspec/
 template_files/
 images/
+img/
+vendor/
+specs/
 playwright_test/
 .augment/
+node_modules/
