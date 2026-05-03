@@ -12,7 +12,6 @@ $header_config = [
     'show_mobile_menu' => true,
     'actions' => [
         ['url' => 'settings.php', 'icon' => 'img/settings.png', 'title' => 'Cài đặt', 'tooltip' => 'Trang cài đặt'],
-        ['url' => 'check_deadline_system.php', 'icon' => 'img/check.png', 'title' => 'Kiểm tra', 'tooltip' => 'Kiểm tra hệ thống'],
         ['url' => 'index.php', 'icon' => 'img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
@@ -109,9 +108,6 @@ $header_config = [
                     <div class="list-group list-group-flush">
                         <a href="settings.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-cog"></i> Trang cài đặt
-                        </a>
-                        <a href="check_deadline_system.php" class="list-group-item list-group-item-action">
-                            <i class="fas fa-check-circle"></i> Kiểm tra hệ thống
                         </a>
                         <a href="index.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-home"></i> Trang chủ

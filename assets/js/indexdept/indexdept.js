@@ -1,5 +1,6 @@
 (function () {
     const INDEXDEPT_BOOTSTRAP = window.INDEXDEPT_BOOTSTRAP || {};
+    let scoreOptionsDirty = false;
 
     function buildCheckImageUrl(tieuchiId) {
         const id = encodeURIComponent(INDEXDEPT_BOOTSTRAP.id || '');
@@ -18,35 +19,317 @@
 
     // Các hàm cơ bản cho modal
     function openModal() {
-        document.getElementById('addCriteriaModal').style.display = 'block';
+        showElement(document.getElementById('addCriteriaModal'), 'block');
     }
 
     function closeModal() {
-        document.getElementById('addCriteriaModal').style.display = 'none';
+        hideElement(document.getElementById('addCriteriaModal'));
     }
 
     function openDeadlineModal() {
-        document.getElementById('deadlineModal').style.display = 'block';
+        showElement(document.getElementById('deadlineModal'), 'block');
     }
 
     function closeDeadlineModal() {
-        document.getElementById('deadlineModal').style.display = 'none';
+        hideElement(document.getElementById('deadlineModal'));
     }
 
     function openDefaultSettingModal() {
-        document.getElementById('defaultSettingModal').style.display = 'block';
+        showElement(document.getElementById('defaultSettingModal'), 'block');
         document.getElementById('current_dept').value = (INDEXDEPT_BOOTSTRAP.dept || '');
         document.getElementById('selected_xuong').value = (INDEXDEPT_BOOTSTRAP.xuong || '');
         changeSelectedXuong();
     }
 
     function closeDefaultSettingModal() {
-        document.getElementById('defaultSettingModal').style.display = 'none';
+        hideElement(document.getElementById('defaultSettingModal'));
+    }
+
+    function openScoreOptionsModal() {
+        showElement(document.getElementById('scoreOptionsModal'), 'block');
+    }
+
+    function closeScoreOptionsModal() {
+        hideElement(document.getElementById('scoreOptionsModal'));
+        if (scoreOptionsDirty) {
+            window.location.reload();
+        }
     }
 
     function closeStaffModal() {
-        document.getElementById('staffModal').style.display = 'none';
+        hideElement(document.getElementById('staffModal'));
     }
+
+    function showElement(element, displayValue) {
+        if (!element) return;
+        element.hidden = false;
+        element.style.display = element.classList.contains('indexdept-modern-modal') ? 'flex' : (displayValue || 'block');
+    }
+
+    function hideElement(element) {
+        if (!element) return;
+        element.style.display = 'none';
+        element.hidden = true;
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, function(char) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[char];
+        });
+    }
+
+    function buildLoadingIcon(sizeClass, altText) {
+        return '<img src="img/loading.gif" class="loading-icon ' + (sizeClass || 'loading-icon--sm') + '" alt="' + escapeHtml(altText || 'Đang tải') + '">';
+    }
+
+    function buildStatusMessage(type, message, options) {
+        const settings = options || {};
+        const classes = ['status-panel', 'status-panel--' + type];
+        if (settings.loading) {
+            classes.push('status-panel--loading');
+        }
+
+        return '<div class="' + classes.join(' ') + '">' +
+            (settings.loading ? buildLoadingIcon(settings.iconSize || 'loading-icon--sm', settings.altText || message) : '') +
+            escapeHtml(message) +
+            '</div>';
+    }
+
+    function setStatusMessage(container, type, message, options) {
+        if (!container) return;
+        showElement(container, 'block');
+        container.innerHTML = buildStatusMessage(type, message, options);
+    }
+
+    function clearDeadlineState(dateDisplay) {
+        if (!dateDisplay) return;
+        dateDisplay.classList.remove('deadline-date--loading', 'deadline-date--success', 'deadline-date--error');
+    }
+
+    function setDeadlineState(dateDisplay, state, html) {
+        if (!dateDisplay) return;
+        clearDeadlineState(dateDisplay);
+        if (state) {
+            dateDisplay.classList.add('deadline-date--' + state);
+        }
+        dateDisplay.innerHTML = html;
+    }
+
+    function setProgressBarState(progressBar, percent) {
+        if (!progressBar) return;
+        progressBar.classList.remove('progress-bar--low', 'progress-bar--medium', 'progress-bar--high');
+
+        if (percent < 30) {
+            progressBar.classList.add('progress-bar--low');
+        } else if (percent < 70) {
+            progressBar.classList.add('progress-bar--medium');
+        } else {
+            progressBar.classList.add('progress-bar--high');
+        }
+
+        progressBar.style.width = percent + '%';
+        progressBar.setAttribute('data-progress', percent);
+        progressBar.textContent = Math.round(percent) + '%';
+    }
+
+    function buildTableMessageRow(colspan, type, message) {
+        return '<tr><td colspan="' + colspan + '" class="table-message table-message--' + type + '">' + escapeHtml(message) + '</td></tr>';
+    }
+
+    function flashRow(row, className, duration) {
+        if (!row) return;
+        row.classList.add(className);
+        setTimeout(function() {
+            row.classList.remove(className);
+        }, duration || 2000);
+    }
+
+    function buildRequiredImageWarning(uploadUrl) {
+        const safeUrl = escapeHtml(uploadUrl);
+        return '<div class="warning-message__text warning-message__text--error">(*) Tiêu chí này bắt buộc phải có hình ảnh đính kèm</div>' +
+            '<div class="warning-message__actions"><a href="' + safeUrl + '" class="warning-message__link"><i class="fas fa-upload icon-inline"></i>Upload ảnh</a></div>';
+    }
+
+    function buildImageUploadedMessage(uploadUrl) {
+        const safeUrl = escapeHtml(uploadUrl);
+        return '<div class="warning-message__text warning-message__text--success"><i class="fas fa-check-circle icon-inline"></i>Đã upload hình ảnh cho tiêu chí này</div>' +
+            '<div class="warning-message__actions"><a href="' + safeUrl + '" class="warning-message__link"><i class="fas fa-images icon-inline"></i>Xem/Quản lý hình ảnh</a></div>';
+    }
+
+    function getCsrfToken() {
+        const tokenInput = document.querySelector('input[name="csrf_token"]');
+        return tokenInput ? tokenInput.value : '';
+    }
+
+    function formatScoreValue(value) {
+        const number = parseFloat(value);
+        if (Number.isNaN(number)) {
+            return String(value).trim();
+        }
+
+        return String(parseFloat(number.toFixed(2)));
+    }
+
+    function normalizeScoreInput(value) {
+        const parts = String(value || '').trim().split(/[,\s;]+/).filter(Boolean);
+        const unique = {};
+
+        parts.forEach(function(part) {
+            const number = parseFloat(part);
+            if (Number.isNaN(number)) {
+                unique[part] = part;
+                return;
+            }
+            unique[formatScoreValue(number)] = number;
+        });
+
+        return Object.values(unique).sort(function(left, right) {
+            const leftNumber = parseFloat(left);
+            const rightNumber = parseFloat(right);
+            if (Number.isNaN(leftNumber) || Number.isNaN(rightNumber)) {
+                return String(left).localeCompare(String(right));
+            }
+            return leftNumber - rightNumber;
+        }).map(formatScoreValue).join(', ');
+    }
+
+    function setScoreOptionsStatus(type, message) {
+        setStatusMessage(document.getElementById('score_options_status'), type, message);
+    }
+
+    function setScoreRowState(idTieuchi, configured, scores) {
+        const row = document.getElementById('score_row_' + idTieuchi);
+        const input = document.getElementById('score_values_' + idTieuchi);
+        const badge = document.getElementById('score_badge_' + idTieuchi);
+
+        if (input && typeof scores === 'string') {
+            input.value = scores;
+        }
+
+        if (row && typeof scores === 'string') {
+            row.setAttribute('data-original-scores', normalizeScoreInput(scores));
+        }
+
+        if (badge) {
+            badge.classList.toggle('score-options-modal__badge--custom', !!configured);
+            badge.classList.toggle('score-options-modal__badge--default', !configured);
+            badge.classList.remove('tw-border-[#b8cdf4]', 'tw-bg-[#eef5ff]', 'tw-text-[#143583]', 'tw-border-slate-200', 'tw-bg-slate-50', 'tw-text-slate-700');
+            (configured
+                ? ['tw-border-[#b8cdf4]', 'tw-bg-[#eef5ff]', 'tw-text-[#143583]']
+                : ['tw-border-slate-200', 'tw-bg-slate-50', 'tw-text-slate-700']
+            ).forEach(function(className) {
+                badge.classList.add(className);
+            });
+            badge.textContent = configured ? 'Tùy chỉnh' : 'Mặc định';
+        }
+
+        if (row) {
+            flashRow(row, configured ? 'row-flash--success' : 'row-flash--muted');
+        }
+    }
+
+    function sendScoreOptionsRequest(payload, onSuccess) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'save_score_options.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) {
+                return;
+            }
+
+            try {
+                const response = JSON.parse(xhr.responseText);
+                if (xhr.status === 200 && response.success) {
+                    onSuccess(response);
+                    return;
+                }
+
+                setScoreOptionsStatus('error', response.message || 'Không thể lưu mốc điểm');
+            } catch (error) {
+                setScoreOptionsStatus('error', 'Không thể xử lý phản hồi từ máy chủ');
+            }
+        };
+
+        const body = new URLSearchParams(payload);
+        body.set('csrf_token', getCsrfToken());
+        xhr.send(body.toString());
+    }
+
+    function saveScoreOptions(idTieuchi, dept) {
+        const input = document.getElementById('score_values_' + idTieuchi);
+        if (!input) return;
+
+        setScoreOptionsStatus('info', 'Đang lưu mốc điểm...');
+        sendScoreOptionsRequest({
+            action: 'save',
+            dept: dept,
+            id_tieuchi: idTieuchi,
+            scores: input.value
+        }, function(response) {
+            scoreOptionsDirty = true;
+            setScoreRowState(response.id_tieuchi, response.configured, response.scores);
+            setScoreOptionsStatus('success', response.message);
+        });
+    }
+
+    function resetScoreOptions(idTieuchi, dept) {
+        setScoreOptionsStatus('info', 'Đang chuyển về mặc định...');
+        sendScoreOptionsRequest({
+            action: 'reset',
+            dept: dept,
+            id_tieuchi: idTieuchi
+        }, function(response) {
+            scoreOptionsDirty = true;
+            setScoreRowState(response.id_tieuchi, response.configured, response.scores);
+            setScoreOptionsStatus('success', response.message);
+        });
+    }
+
+    function saveAllScoreOptions(dept) {
+        const rows = document.querySelectorAll('#score_options_tbody tr[data-tieuchi-id]');
+        const settings = [];
+
+        rows.forEach(function(row) {
+            const idTieuchi = row.getAttribute('data-tieuchi-id');
+            const input = document.getElementById('score_values_' + idTieuchi);
+            if (!input) return;
+
+            const currentScores = normalizeScoreInput(input.value);
+            const originalScores = normalizeScoreInput(row.getAttribute('data-original-scores') || '');
+
+            if (currentScores !== originalScores) {
+                settings.push({
+                    id_tieuchi: parseInt(idTieuchi, 10),
+                    scores: input.value
+                });
+            }
+        });
+
+        if (!settings.length) {
+            setScoreOptionsStatus('warning', 'Không có mốc điểm nào thay đổi');
+            return;
+        }
+
+        setScoreOptionsStatus('info', 'Đang lưu ' + settings.length + ' dòng mốc điểm...');
+        sendScoreOptionsRequest({
+            action: 'bulk_save',
+            dept: dept,
+            settings: JSON.stringify(settings)
+        }, function(response) {
+            scoreOptionsDirty = true;
+            (response.items || []).forEach(function(item) {
+                setScoreRowState(item.id_tieuchi, item.configured, item.scores);
+            });
+            setScoreOptionsStatus('success', response.message);
+        });
+    }
+
 
     // Hàm cập nhật trạng thái checkbox khi thay đổi điểm
     function updateStatus(element) {
@@ -91,17 +374,7 @@
         // Cập nhật thanh tiến trình
         const percent = (maxPoints > 0) ? (totalPoints / maxPoints) * 100 : 0;
         const progressBar = document.querySelector('.progress-bar');
-        progressBar.style.width = percent + '%';
-        progressBar.innerHTML = Math.round(percent) + '%';
-
-        // Thay đổi màu sắc dựa vào phần trăm hoàn thành
-        if (percent < 30) {
-            progressBar.style.backgroundColor = "#F44336"; // Đỏ
-        } else if (percent < 70) {
-            progressBar.style.backgroundColor = "#FFC107"; // Vàng
-        } else {
-            progressBar.style.backgroundColor = "#4CAF50"; // Xanh lá
-        }
+        setProgressBarState(progressBar, percent);
     }
 
     // Hàm định dạng số với số thập phân
@@ -171,8 +444,7 @@
         const currentXuong = (INDEXDEPT_BOOTSTRAP.xuong || '');
 
         // Hiển thị trạng thái đang cập nhật
-        dateDisplay.innerHTML = '<img src="img/loading.gif" style="width: 20px; height: 20px;" alt="Đang cập nhật"> Đang cập nhật...';
-        dateDisplay.style.backgroundColor = '#e2f0fd';
+        setDeadlineState(dateDisplay, 'loading', buildLoadingIcon('loading-icon--md', 'Đang cập nhật') + ' Đang cập nhật...');
 
         // Thực hiện cập nhật bằng AJAX
         const xhr = new XMLHttpRequest();
@@ -185,10 +457,8 @@
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
                             // Cập nhật hiển thị ngày deadline
-                            dateDisplay.innerHTML = response.new_date;
+                            setDeadlineState(dateDisplay, 'success', response.new_date);
                             dateDisplay.classList.add('update-success');
-                            // Hiệu ứng flash cho thanh deadline
-                            dateDisplay.style.backgroundColor = '#d4edda';
 
                             // Giữ nguyên giá trị ô input mà người dùng đã nhập, không dùng giá trị từ server
                             document.getElementById('so_ngay_xuly_' + idTieuchi).value = soNgayXuly;
@@ -196,7 +466,7 @@
 
                             setTimeout(function() {
                                 dateDisplay.classList.remove('update-success');
-                                dateDisplay.style.backgroundColor = '';
+                                clearDeadlineState(dateDisplay);
                             }, 2000);
 
                             // Comment phần confirm này lại vì người dùng không muốn nó xuất hiện
@@ -205,28 +475,25 @@
                             }*/
                         } else {
                             // Hiển thị lỗi trong khung deadline
-                            dateDisplay.innerHTML = '<span style="color: red;">' + (response.message || 'Lỗi không xác định') + '</span>';
-                            dateDisplay.style.backgroundColor = '#f8d7da';
+                            setDeadlineState(dateDisplay, 'error', '<span class="text-danger">' + escapeHtml(response.message || 'Lỗi không xác định') + '</span>');
                             setTimeout(function() {
                                 dateDisplay.innerHTML = originalText;
-                                dateDisplay.style.backgroundColor = '';
+                                clearDeadlineState(dateDisplay);
                             }, 3000);
                         }
                     } catch (e) {
                         console.error('Lỗi xử lý JSON:', e);
-                        dateDisplay.innerHTML = '<span style="color: red;">Lỗi xử lý dữ liệu</span>';
-                        dateDisplay.style.backgroundColor = '#f8d7da';
+                        setDeadlineState(dateDisplay, 'error', '<span class="text-danger">Lỗi xử lý dữ liệu</span>');
                         setTimeout(function() {
                             dateDisplay.innerHTML = originalText;
-                            dateDisplay.style.backgroundColor = '';
+                            clearDeadlineState(dateDisplay);
                         }, 3000);
                     }
                 } else {
-                    dateDisplay.innerHTML = '<span style="color: red;">Lỗi kết nối máy chủ</span>';
-                    dateDisplay.style.backgroundColor = '#f8d7da';
+                    setDeadlineState(dateDisplay, 'error', '<span class="text-danger">Lỗi kết nối máy chủ</span>');
                     setTimeout(function() {
                         dateDisplay.innerHTML = originalText;
-                        dateDisplay.style.backgroundColor = '';
+                        clearDeadlineState(dateDisplay);
                     }, 3000);
                 }
             }
@@ -251,15 +518,13 @@
             return;
         }
 
-        updateStatusDiv.style.display = 'block';
-        updateStatusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px; display: flex; align-items: center;"><img src="img/loading.gif" style="width: 20px; height: 20px; margin-right: 10px;" alt="Đang cập nhật"> Đang cập nhật hạn xử lý cho ' + selectedTieuchi.length + ' tiêu chí...</div>';
+        setStatusMessage(updateStatusDiv, 'info', 'Đang cập nhật hạn xử lý cho ' + selectedTieuchi.length + ' tiêu chí...', { loading: true, iconSize: 'loading-icon--md', altText: 'Đang cập nhật' });
 
         // Tạo hiệu ứng loading cho các tiêu chí đang được cập nhật
         selectedTieuchi.forEach(tieuchiId => {
             const dateDisplay = document.getElementById('date_display_' + tieuchiId);
             if (dateDisplay) {
-                dateDisplay.innerHTML = '<img src="img/loading.gif" style="width: 16px; height: 16px;" alt="Đang cập nhật">';
-                dateDisplay.style.backgroundColor = '#e2f0fd';
+                setDeadlineState(dateDisplay, 'loading', buildLoadingIcon('loading-icon--sm', 'Đang cập nhật'));
             }
         });
 
@@ -272,16 +537,15 @@
                     try {
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
-                            updateStatusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã cập nhật hạn xử lý cho ' + response.updated_count + ' tiêu chí!</div>';
+                            setStatusMessage(updateStatusDiv, 'success', 'Đã cập nhật hạn xử lý cho ' + response.updated_count + ' tiêu chí!');
 
                             // Cập nhật hiển thị trên giao diện
                             if (response.updated_items) {
                                 response.updated_items.forEach(item => {
                                     const dateDisplay = document.getElementById('date_display_' + item.id_tieuchi);
                                     if (dateDisplay) {
-                                        dateDisplay.innerHTML = item.new_date;
+                                        setDeadlineState(dateDisplay, 'success', item.new_date);
                                         dateDisplay.classList.add('update-success');
-                                        dateDisplay.style.backgroundColor = '#d4edda';
 
                                         // Cập nhật giá trị trong input
                                         const soNgayInput = document.getElementById('so_ngay_xuly_' + item.id_tieuchi);
@@ -297,7 +561,7 @@
 
                                         setTimeout(function() {
                                             dateDisplay.classList.remove('update-success');
-                                            dateDisplay.style.backgroundColor = '';
+                                            clearDeadlineState(dateDisplay);
                                         }, 2000);
                                     }
                                 });
@@ -310,22 +574,22 @@
                                     // Gọi hàm lưu tất cả cài đặt mặc định
                                     saveAllDefaultSettings(dept);
                                 } else {
-                                    updateStatusDiv.style.display = 'none';
+                                    hideElement(updateStatusDiv);
                                     closeDeadlineModal();
                                 }*/
 
                                 // Chỉ đóng modal sau khi hoàn thành
-                                updateStatusDiv.style.display = 'none';
+                                hideElement(updateStatusDiv);
                                 closeDeadlineModal();
                             }, 1000);
                         } else {
-                            updateStatusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(updateStatusDiv, 'error', 'Lỗi: ' + response.message);
 
                             // Khôi phục trạng thái ban đầu cho các tiêu chí
                             selectedTieuchi.forEach(tieuchiId => {
                                 const dateDisplay = document.getElementById('date_display_' + tieuchiId);
                                 if (dateDisplay) {
-                                    dateDisplay.style.backgroundColor = '';
+                                    clearDeadlineState(dateDisplay);
                                     // Tải lại dữ liệu hiện tại từ cơ sở dữ liệu
                                     loadCurrentDeadline(tieuchiId, idSanxuat);
                                 }
@@ -333,25 +597,25 @@
                         }
                     } catch (e) {
                         console.error('Lỗi xử lý JSON:', e);
-                        updateStatusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(updateStatusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
 
                         // Khôi phục trạng thái ban đầu cho các tiêu chí
                         selectedTieuchi.forEach(tieuchiId => {
                             const dateDisplay = document.getElementById('date_display_' + tieuchiId);
                             if (dateDisplay) {
-                                dateDisplay.style.backgroundColor = '';
+                                clearDeadlineState(dateDisplay);
                                 loadCurrentDeadline(tieuchiId, idSanxuat);
                             }
                         });
                     }
                 } else {
-                    updateStatusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(updateStatusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
 
                     // Khôi phục trạng thái ban đầu cho các tiêu chí
                     selectedTieuchi.forEach(tieuchiId => {
                         const dateDisplay = document.getElementById('date_display_' + tieuchiId);
                         if (dateDisplay) {
-                            dateDisplay.style.backgroundColor = '';
+                            clearDeadlineState(dateDisplay);
                             loadCurrentDeadline(tieuchiId, idSanxuat);
                         }
                     });
@@ -395,7 +659,7 @@
     // Hàm mở modal quản lý người thực hiện
     function openStaffModal(dept) {
         document.getElementById('current_staff_dept').value = dept;
-        document.getElementById('staffModal').style.display = 'block';
+        showElement(document.getElementById('staffModal'), 'block');
         document.getElementById('dept_display_name').textContent = getDeptDisplayName(dept);
 
         loadStaffList(dept);
@@ -433,32 +697,34 @@
                             let html = '';
 
                             if (!staffList.length) {
-                                html = '<tr><td colspan="4" style="text-align: center; color: #64748b;">Chưa có người chịu trách nhiệm nào cho bộ phận này.</td></tr>';
+                                html = buildTableMessageRow(4, 'muted', 'Chưa có người chịu trách nhiệm nào cho bộ phận này.');
                             }
 
                             staffList.forEach(function(staff, index) {
                                 html += `
-                                <tr id="staff_row_${staff.id}">
-                                    <td>${index + 1}</td>
-                                    <td><input type="text" id="staff_name_${staff.id}" class="form-control staff-modal__input" value="${staff.ten}"></td>
-                                    <td><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input" value="${staff.chuc_vu || ''}"></td>
-                                    <td>
-                                        <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria default-settings-modal__btn default-settings-modal__btn--primary staff-modal__action-btn">Cập nhật</button>
-                                        <button type="button" onclick="deleteStaff(${staff.id})" class="btn-add-criteria default-settings-modal__btn staff-modal__action-btn staff-modal__action-btn--danger">Xóa</button>
+                                <tr id="staff_row_${staff.id}" class="tw-bg-white tw-transition hover:tw-bg-[#eef5ff]/60">
+                                    <td class="tw-whitespace-nowrap tw-px-4 tw-py-3 tw-font-bold tw-text-slate-700">${index + 1}</td>
+                                    <td class="tw-px-4 tw-py-3"><input type="text" id="staff_name_${staff.id}" class="form-control staff-modal__input tw-h-10 tw-rounded-lg tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-4 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.ten)}"></td>
+                                    <td class="tw-px-4 tw-py-3"><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input tw-h-10 tw-rounded-lg tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-4 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.chuc_vu || '')}"></td>
+                                    <td class="tw-px-4 tw-py-3">
+                                        <div class="tw-flex tw-flex-wrap tw-gap-2">
+                                            <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary staff-modal__action-btn tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-3 tw-text-xs tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">Cập nhật</button>
+                                            <button type="button" onclick="deleteStaff(${staff.id})" class="btn-add-criteria default-settings-modal__btn staff-modal__action-btn staff-modal__action-btn--danger tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-rose-200 tw-bg-rose-50 tw-px-3 tw-text-xs tw-font-bold tw-text-rose-800 tw-shadow-sm tw-transition hover:tw-bg-rose-100">Xóa</button>
+                                        </div>
                                     </td>
                                 </tr>`;
                             });
 
                             document.getElementById('staff_tbody').innerHTML = html;
                         } else {
-                            document.getElementById('staff_tbody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Lỗi: ' + response.message + '</td></tr>';
+                            document.getElementById('staff_tbody').innerHTML = buildTableMessageRow(4, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        document.getElementById('staff_tbody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Lỗi khi xử lý phản hồi từ máy chủ.</td></tr>';
+                        document.getElementById('staff_tbody').innerHTML = buildTableMessageRow(4, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    document.getElementById('staff_tbody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Lỗi khi tải danh sách người thực hiện.</td></tr>';
+                    document.getElementById('staff_tbody').innerHTML = buildTableMessageRow(4, 'error', 'Lỗi khi tải danh sách người thực hiện.');
                 }
             }
         };
@@ -477,8 +743,8 @@
             return;
         }
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang thêm người chịu trách nhiệm...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang thêm người chịu trách nhiệm...');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'add_staff.php', true);
@@ -489,23 +755,23 @@
                     try {
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
-                            statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã thêm người chịu trách nhiệm thành công!</div>';
+                            setStatusMessage(statusDiv, 'success', 'Đã thêm người chịu trách nhiệm thành công!');
                             document.getElementById('new_staff_name').value = '';
                             document.getElementById('new_staff_position').value = '';
                             loadStaffList(dept);
 
                             setTimeout(function() {
-                                statusDiv.style.display = 'none';
+                                hideElement(statusDiv);
                             }, 3000);
                         } else {
-                            statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
                 }
             }
         };
@@ -546,7 +812,18 @@
         });
 
         // Cập nhật tổng điểm khi trang được tải
+        document.querySelectorAll('.progress-bar[data-progress]').forEach(function(bar) {
+            const percent = parseFloat(bar.getAttribute('data-progress') || '0');
+            setProgressBarState(bar, percent);
+        });
         updateTotalPoints();
+
+        ['update_status', 'default_settings_status', 'staff_status'].forEach(function(id) {
+            const element = document.getElementById(id);
+            if (element && element.hidden) {
+                hideElement(element);
+            }
+        });
 
         // Kiểm tra tiêu chí 131 (tiêu chí số 5 của Kho Phụ Liệu)
         if ((INDEXDEPT_BOOTSTRAP.dept || '') === 'kho') {
@@ -574,12 +851,12 @@
                     const noteText = document.createElement('div');
                     noteText.className = 'image-required-warning';
                     noteText.innerHTML = `
-                        <div style="margin-bottom: 8px;">
-                            <strong style="color:rgb(38, 0, 255); font-size: 12px;">(*) Tiêu chí này bắt buộc phải có hình ảnh đính kèm</strong>
+                        <div class="image-required-warning">
+                            <strong class="image-required-warning__title">(*) Tiêu chí này bắt buộc phải có hình ảnh đính kèm</strong>
                         </div>
                         <a href="#"
                            class="upload-image-btn">
-                            <i class="fas fa-upload" style="margin-right: 5px;"></i>
+                            <i class="fas fa-upload icon-inline"></i>
                             Upload hình ảnh
                         </a>
                     `;
@@ -587,45 +864,6 @@
                     // Thêm style cho nút upload
                     noteColumn.prepend(noteText);
                     */
-
-                    // Thêm style cho nút upload
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        .upload-image-btn {
-                            display: inline-flex;
-                            align-items: center;
-                            padding: 6px 12px;
-                            background-color: #1976d2;
-                            color: white;
-                            text-decoration: none;
-                            border-radius: 4px;
-                            font-size: 12px;
-                            transition: all 0.3s ease;
-                            border: none;
-                            cursor: pointer;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-
-                        .upload-image-btn:hover {
-                            background-color: #1565c0;
-                            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                            transform: translateY(-1px);
-                        }
-
-                        .upload-image-btn:active {
-                            transform: translateY(0);
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-
-                        .image-required-warning {
-                            margin-bottom: 5px;
-                            padding: 8px;
-                            background-color: #fff3f3;
-                            border-radius: 4px;
-                            border: 1px solid #ffcdd2;
-                        }
-                    `;
-                    document.head.appendChild(style);
                 }
             }
         }
@@ -644,8 +882,8 @@
             return;
         }
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang cập nhật thông tin...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang cập nhật thông tin...');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'manage_staff.php', true);
@@ -657,15 +895,12 @@
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
                             // Hiển thị thông báo thành công
-                            statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã cập nhật thông tin thành công!</div>';
+                            setStatusMessage(statusDiv, 'success', 'Đã cập nhật thông tin thành công!');
 
                             // Highlight dòng vừa cập nhật
                             const row = document.getElementById('staff_row_' + staffId);
                             if (row) {
-                                row.style.backgroundColor = '#d4edda';
-                                setTimeout(function() {
-                                    row.style.backgroundColor = '';
-                                }, 2000);
+                                flashRow(row, 'row-flash--success');
                             }
 
                             // Cập nhật danh sách nhân viên để đảm bảo các thay đổi được hiển thị
@@ -673,18 +908,18 @@
 
                             // Ẩn thông báo sau 3 giây
                             setTimeout(function() {
-                                statusDiv.style.display = 'none';
+                                hideElement(statusDiv);
                             }, 3000);
                         } else {
                             // Hiển thị thông báo lỗi
-                            statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
                 }
             }
         };
@@ -700,8 +935,8 @@
         const dept = document.getElementById('current_staff_dept').value;
         const statusDiv = document.getElementById('staff_status');
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang xóa người chịu trách nhiệm...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang xóa người chịu trách nhiệm...');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'manage_staff.php', true);
@@ -713,25 +948,25 @@
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
                             // Hiển thị thông báo thành công
-                            statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã xóa người chịu trách nhiệm thành công!</div>';
+                            setStatusMessage(statusDiv, 'success', 'Đã xóa người chịu trách nhiệm thành công!');
 
                             // Tải lại danh sách
                             loadStaffList(dept);
 
                             // Ẩn thông báo sau 3 giây
                             setTimeout(function() {
-                                statusDiv.style.display = 'none';
+                                hideElement(statusDiv);
                             }, 3000);
                         } else {
                             // Hiển thị thông báo lỗi
-                            statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
                 }
             }
         };
@@ -853,8 +1088,8 @@
         const statusDiv = document.getElementById('default_settings_status');
         const row = document.getElementById('ds_row_' + id_tieuchi);
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang lưu cài đặt...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang lưu cài đặt...');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'save_default_setting.php', true);
@@ -865,21 +1100,20 @@
                     try {
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
-                            statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã lưu cài đặt mặc định!</div>';
-                            row.style.backgroundColor = '#f8f9fa';
+                            setStatusMessage(statusDiv, 'success', 'Đã lưu cài đặt mặc định!');
+                            flashRow(row, 'row-flash--muted');
                             setTimeout(function() {
-                                row.style.backgroundColor = '';
-                                statusDiv.style.display = 'none';
+                                hideElement(statusDiv);
                             }, 2000);
                         } else {
-                            statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
                 }
             }
         };
@@ -914,8 +1148,8 @@
             return;
         }
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang lưu tất cả cài đặt...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang lưu tất cả cài đặt...');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'save_all_default_settings.php', true);
@@ -926,26 +1160,23 @@
                     try {
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
-                            statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã lưu tất cả cài đặt mặc định!</div>';
+                            setStatusMessage(statusDiv, 'success', 'Đã lưu tất cả cài đặt mặc định!');
                             rows.forEach(row => {
-                                row.style.backgroundColor = '#f8f9fa';
-                                setTimeout(function() {
-                                    row.style.backgroundColor = '';
-                                }, 2000);
+                                flashRow(row, 'row-flash--muted');
                             });
 
                             setTimeout(function() {
-                                statusDiv.style.display = 'none';
+                                hideElement(statusDiv);
                             }, 3000);
                         } else {
-                            statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
                 }
             }
         };
@@ -961,8 +1192,8 @@
         const statusDiv = document.getElementById('default_settings_status');
         const row = document.getElementById('ds_row_' + id_tieuchi);
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang áp dụng cài đặt mặc định...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang áp dụng cài đặt mặc định...');
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', 'apply_default_setting.php', true);
@@ -973,21 +1204,20 @@
                     try {
                         const response = JSON.parse(this.responseText);
                         if (response.success) {
-                            statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã áp dụng cài đặt mặc định thành công!</div>';
-                            row.style.backgroundColor = '#d4edda';
+                            setStatusMessage(statusDiv, 'success', 'Đã áp dụng cài đặt mặc định thành công!');
+                            flashRow(row, 'row-flash--success');
                             setTimeout(function() {
-                                row.style.backgroundColor = '';
-                                statusDiv.style.display = 'none';
+                                hideElement(statusDiv);
                             }, 2000);
                         } else {
-                            statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi: ' + response.message + '</div>';
+                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
                         }
                     } catch (e) {
                         console.error(e);
-                        statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Lỗi khi xử lý phản hồi từ máy chủ.</div>';
+                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
                     }
                 } else {
-                    statusDiv.innerHTML = '<div style="color: #721c24; padding: 10px; background-color: #f8d7da; border-radius: 4px;">Có lỗi xảy ra. Vui lòng thử lại sau.</div>';
+                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
                 }
             }
         };
@@ -1005,8 +1235,8 @@
             return;
         }
 
-        statusDiv.style.display = 'block';
-        statusDiv.innerHTML = '<div style="color: #0c5460; padding: 10px; background-color: #d1ecf1; border-radius: 4px;">Đang áp dụng tất cả cài đặt mặc định...</div>';
+        showElement(statusDiv, 'block');
+        setStatusMessage(statusDiv, 'info', 'Đang áp dụng tất cả cài đặt mặc định...');
 
         const rows = tableBody.querySelectorAll('tr[id^="ds_row_"]');
         let completedCount = 0;
@@ -1026,28 +1256,22 @@
                             const response = JSON.parse(this.responseText);
                             if (response.success) {
                                 completedCount++;
-                                row.style.backgroundColor = '#d4edda';
-                                setTimeout(function() {
-                                    row.style.backgroundColor = '';
-                                }, 2000);
+                                flashRow(row, 'row-flash--success');
                             } else {
                                 errorCount++;
-                                row.style.backgroundColor = '#f8d7da';
-                                setTimeout(function() {
-                                    row.style.backgroundColor = '';
-                                }, 2000);
+                                flashRow(row, 'row-flash--error');
                             }
 
                             // Kiểm tra nếu đã hoàn thành tất cả
                             if (completedCount + errorCount === rows.length) {
                                 if (errorCount === 0) {
-                                    statusDiv.innerHTML = '<div style="color: #155724; padding: 10px; background-color: #d4edda; border-radius: 4px;">Đã áp dụng tất cả cài đặt mặc định thành công!</div>';
+                                    setStatusMessage(statusDiv, 'success', 'Đã áp dụng tất cả cài đặt mặc định thành công!');
                                 } else {
-                                    statusDiv.innerHTML = '<div style="color: #856404; padding: 10px; background-color: #fff3cd; border-radius: 4px;">Đã áp dụng ' + completedCount + '/' + rows.length + ' cài đặt mặc định. Có ' + errorCount + ' lỗi.</div>';
+                                    setStatusMessage(statusDiv, 'warning', 'Đã áp dụng ' + completedCount + '/' + rows.length + ' cài đặt mặc định. Có ' + errorCount + ' lỗi.');
                                 }
 
                                 setTimeout(function() {
-                                    statusDiv.style.display = 'none';
+                                    hideElement(statusDiv);
                                 }, 3000);
                             }
                         } catch (e) {
@@ -1094,10 +1318,7 @@
                         var uploadUrl = buildAutoSelectImageUrl(tieuchiId);
 
                         // Hiển thị cảnh báo và liên kết để upload hình ảnh
-                        warningDiv.innerHTML = '<div style="color: red; margin-top: 5px; font-size: 14px;">' +
-                            '(*) Tiêu chí này bắt buộc phải có hình ảnh đính kèm' +
-                            '</div>' +
-                            '<div style="margin-top: 5px;"><a href="' + uploadUrl + '" style="color: blue; text-decoration: underline;"><i class="fas fa-upload" style="margin-right: 5px;"></i>Upload ảnh</a></div>';
+                        warningDiv.innerHTML = buildRequiredImageWarning(uploadUrl);
 
                         // Nếu có điểm > 0, reset về 0
                         if (parseFloat(selectElement.value) > 0) {
@@ -1120,7 +1341,7 @@
 
                         // Disable các lựa chọn có giá trị lớn hơn 0 (trừ khi là 999)
                         for (var i = 0; i < selectElement.options.length; i++) {
-                            var optionValue = parseInt(selectElement.options[i].value);
+                            var optionValue = parseFloat(selectElement.options[i].value);
                             if (optionValue > 0 && optionValue !== 999) {
                                 selectElement.options[i].disabled = true;
                             }
@@ -1128,10 +1349,7 @@
                     } else {
                         // Đã có hình ảnh, hiển thị thông báo thành công và enable tất cả lựa chọn
                         var uploadUrl = buildAutoSelectImageUrl(tieuchiId);
-                        warningDiv.innerHTML = '<div style="color: #28a745; margin-top: 5px; font-size: 14px;">' +
-                            '<i class="fas fa-check-circle" style="margin-right: 5px;"></i>Đã upload hình ảnh cho tiêu chí này' +
-                            '</div>' +
-                            '<div style="margin-top: 5px;"><a href="' + uploadUrl + '" style="color: blue; text-decoration: underline;"><i class="fas fa-images" style="margin-right: 5px;"></i>Xem/Quản lý hình ảnh</a></div>';
+                        warningDiv.innerHTML = buildImageUploadedMessage(uploadUrl);
 
                         for (var i = 0; i < selectElement.options.length; i++) {
                             selectElement.options[i].disabled = false;
@@ -1304,6 +1522,11 @@
     window.closeDeadlineModal = typeof closeDeadlineModal === 'function' ? closeDeadlineModal : window.closeDeadlineModal;
     window.openDefaultSettingModal = typeof openDefaultSettingModal === 'function' ? openDefaultSettingModal : window.openDefaultSettingModal;
     window.closeDefaultSettingModal = typeof closeDefaultSettingModal === 'function' ? closeDefaultSettingModal : window.closeDefaultSettingModal;
+    window.openScoreOptionsModal = typeof openScoreOptionsModal === 'function' ? openScoreOptionsModal : window.openScoreOptionsModal;
+    window.closeScoreOptionsModal = typeof closeScoreOptionsModal === 'function' ? closeScoreOptionsModal : window.closeScoreOptionsModal;
+    window.saveScoreOptions = typeof saveScoreOptions === 'function' ? saveScoreOptions : window.saveScoreOptions;
+    window.resetScoreOptions = typeof resetScoreOptions === 'function' ? resetScoreOptions : window.resetScoreOptions;
+    window.saveAllScoreOptions = typeof saveAllScoreOptions === 'function' ? saveAllScoreOptions : window.saveAllScoreOptions;
     window.closeStaffModal = typeof closeStaffModal === 'function' ? closeStaffModal : window.closeStaffModal;
     window.setQuickDays = typeof setQuickDays === 'function' ? setQuickDays : window.setQuickDays;
     window.changeNgayTinhHan = typeof changeNgayTinhHan === 'function' ? changeNgayTinhHan : window.changeNgayTinhHan;
@@ -1316,6 +1539,8 @@
     window.updateDeadline = typeof updateDeadline === 'function' ? updateDeadline : window.updateDeadline;
     window.updateStatus = typeof updateStatus === 'function' ? updateStatus : window.updateStatus;
     window.addNewStaff = typeof addNewStaff === 'function' ? addNewStaff : window.addNewStaff;
+    window.updateStaff = typeof updateStaff === 'function' ? updateStaff : window.updateStaff;
+    window.deleteStaff = typeof deleteStaff === 'function' ? deleteStaff : window.deleteStaff;
     window.syncTieuChiWithDefaultSettings = typeof syncTieuChiWithDefaultSettings === 'function' ? syncTieuChiWithDefaultSettings : window.syncTieuChiWithDefaultSettings;
 
     // Auto-redirect to image handler when requested via query string
@@ -1326,3 +1551,4 @@
         });
     }
 })();
+

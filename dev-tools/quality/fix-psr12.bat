@@ -1,4 +1,7 @@
 @echo off
+set "SCRIPT_DIR=%~dp0"
+set "PROJECT_ROOT=%SCRIPT_DIR%..\.."
+pushd "%PROJECT_ROOT%"
 echo ========================================
 echo TỰ ĐỘNG SỬA CÁC LỖI PSR-12 CÓ THỂ SỬA
 echo ========================================
@@ -19,23 +22,23 @@ echo Đang sửa các file PHP...
 echo.
 
 echo [1/5] Sửa db_connect.php...
-C:\xampp\php\php.exe phpcbf.phar --standard=PSR12 db_connect.php
+C:\xampp\php\php.exe "%SCRIPT_DIR%phpcbf.phar" --standard=PSR12 db_connect.php
 echo.
 
 echo [2/5] Sửa contdb.php...
-C:\xampp\php\php.exe phpcbf.phar --standard=PSR12 contdb.php
+C:\xampp\php\php.exe "%SCRIPT_DIR%phpcbf.phar" --standard=PSR12 contdb.php
 echo.
 
 echo [3/5] Sửa index.php (có thể mất thời gian)...
-C:\xampp\php\php.exe phpcbf.phar --standard=PSR12 index.php
+C:\xampp\php\php.exe "%SCRIPT_DIR%phpcbf.phar" --standard=PSR12 index.php
 echo.
 
 echo [4/5] Sửa indexdept.php (có thể mất thời gian)...
-C:\xampp\php\php.exe phpcbf.phar --standard=PSR12 indexdept.php
+C:\xampp\php\php.exe "%SCRIPT_DIR%phpcbf.phar" --standard=PSR12 indexdept.php
 echo.
 
 echo [5/5] Sửa import.php...
-C:\xampp\php\php.exe phpcbf.phar --standard=PSR12 import.php
+C:\xampp\php\php.exe "%SCRIPT_DIR%phpcbf.phar" --standard=PSR12 import.php
 echo.
 
 echo ========================================
@@ -44,4 +47,5 @@ echo ========================================
 echo.
 echo Chạy lại check-psr12.bat để xem kết quả sau khi sửa.
 echo.
+popd
 pause

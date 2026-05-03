@@ -5,6 +5,17 @@ docs/
 plans/
 logs/
 debug.log
+/*.log
+/*.phar
+/*.backup
+/*-backup.php
+/test_*.php
+/debug*.php
+/check_*.php
+!/check_tieuchi_image.php
+/mobile-*-test.png
+/tablet-*-test.png
+/test-*.png
 
 # Playwright MCP test files
 .playwright-mcp/

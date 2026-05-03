@@ -8,7 +8,10 @@
                 <button type="button" class="btn-add-criteria" onclick="openDefaultSettingModal()">
                     <i class="fas fa-cog"></i> Cài đặt mặc định
                 </button>
-                <button type="button" class="btn-add-criteria" onclick="syncTieuChiWithDefaultSettings('<?php echo $dept; ?>', '<?php echo $xuong; ?>')" style="background-color: #ffc107; color: #212529;">
+                <button type="button" class="btn-add-criteria btn-add-criteria--score" onclick="openScoreOptionsModal()">
+                    <i class="fas fa-sliders-h"></i> Cài mốc điểm
+                </button>
+                <button type="button" class="btn-add-criteria btn-add-criteria--warning" onclick="syncTieuChiWithDefaultSettings('<?php echo $dept; ?>', '<?php echo $xuong; ?>')">
                     <i class="fas fa-sync-alt"></i> Áp dụng giá trị mặc định
                 </button>
             </div>

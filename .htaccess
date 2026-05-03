@@ -1,0 +1,19 @@
+# Block development-only artifacts from direct web access.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^dev-tools(/|$) - [F,L]
+    RewriteRule ^(test_.*|debug.*|check_.*|alter_table|migrate_settings|update_column_name|db_update_.*|fix.*)\.php$ - [F,L]
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    <FilesMatch "(?i)^(\.gitignore|composer\.(json|lock)|package\.json|phpcs\.xml)$|\.(log|bak|backup|sql|phar|ps1|bat)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    <FilesMatch "(?i)^(\.gitignore|composer\.(json|lock)|package\.json|phpcs\.xml)$|\.(log|bak|backup|sql|phar|ps1|bat)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>

@@ -118,6 +118,69 @@
     border-spacing: 0;
 }
 
+.score-options-modal__content {
+    width: min(1160px, 96vw);
+    max-width: 96vw;
+    max-height: 92vh;
+    margin: 4vh auto;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    border-radius: 8px;
+    background: #eef2f5;
+    box-shadow: 0 28px 80px rgba(10, 15, 25, 0.38);
+}
+
+.score-options-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 58px 14px 18px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+    background: #ffffff;
+}
+
+.score-options-modal__heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.score-options-modal__body {
+    gap: 0;
+    padding: 0;
+    background: #eef2f5;
+}
+
+.score-options-modal__toolbar {
+    flex-shrink: 0;
+}
+
+.score-options-modal__toolbar--bottom {
+    position: sticky;
+    bottom: 0;
+    z-index: 12;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 0;
+    padding: 12px 14px;
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(248, 250, 252, 0.94);
+    backdrop-filter: blur(8px);
+}
+
+.score-options-modal__table-wrap {
+    margin: 12px 12px 0;
+    border-radius: 8px 8px 0 0;
+    max-height: calc(92vh - 158px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.score-options-modal__table {
+    width: 100%;
+    min-width: 900px;
+}
+
 
 /* Staff modal - layout tier */
 .staff-modal__content {
@@ -230,4 +293,35 @@
     border-top: 1px solid #e2e8f0;
     margin-top: 6px;
     padding-top: 14px;
+}
+
+
+
+/* Deadline modal - layout tier */
+.deadline-modal__content {
+    font-family: inherit;
+    width: min(720px, 92vw);
+    max-height: 88vh;
+    margin: 6vh auto;
+    padding: 0;
+    border: 1px solid #d7dde6;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+}
+
+.deadline-modal__header {
+    padding: 22px 24px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.deadline-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 20px 16px;
+    background: #f8fafc;
 }

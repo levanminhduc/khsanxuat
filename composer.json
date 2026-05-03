@@ -21,20 +21,20 @@
         }
     },
     "scripts": {
-        "check-style": "php phpcs.phar --standard=PSR12 --report=summary",
-        "check-style-detailed": "php phpcs.phar --standard=PSR12",
-        "fix-style": "php phpcbf.phar --standard=PSR12",
+        "check-style": "php dev-tools/quality/phpcs.phar --standard=PSR12 --report=summary",
+        "check-style-detailed": "php dev-tools/quality/phpcs.phar --standard=PSR12",
+        "fix-style": "php dev-tools/quality/phpcbf.phar --standard=PSR12",
         "check-main-files": [
-            "php phpcs.phar --standard=PSR12 --report=summary index.php",
-            "php phpcs.phar --standard=PSR12 --report=summary indexdept.php",
-            "php phpcs.phar --standard=PSR12 --report=summary db_connect.php",
-            "php phpcs.phar --standard=PSR12 --report=summary contdb.php"
+            "php dev-tools/quality/phpcs.phar --standard=PSR12 --report=summary index.php",
+            "php dev-tools/quality/phpcs.phar --standard=PSR12 --report=summary indexdept.php",
+            "php dev-tools/quality/phpcs.phar --standard=PSR12 --report=summary db_connect.php",
+            "php dev-tools/quality/phpcs.phar --standard=PSR12 --report=summary contdb.php"
         ],
         "fix-main-files": [
-            "php phpcbf.phar --standard=PSR12 db_connect.php",
-            "php phpcbf.phar --standard=PSR12 contdb.php",
-            "php phpcbf.phar --standard=PSR12 index.php",
-            "php phpcbf.phar --standard=PSR12 indexdept.php"
+            "php dev-tools/quality/phpcbf.phar --standard=PSR12 db_connect.php",
+            "php dev-tools/quality/phpcbf.phar --standard=PSR12 contdb.php",
+            "php dev-tools/quality/phpcbf.phar --standard=PSR12 index.php",
+            "php dev-tools/quality/phpcbf.phar --standard=PSR12 indexdept.php"
         ],
         "test": "echo 'No tests configured yet'",
         "quality": [

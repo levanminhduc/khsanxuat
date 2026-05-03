@@ -75,9 +75,9 @@ include 'contdb.php';
                         <div class="feature-icon">
                             <i class="fas fa-search"></i>
                         </div>
-                        <h5 class="card-title">Kiểm tra Cài đặt Hạn Xử lý</h5>
-                        <p class="card-text">Kiểm tra và cập nhật hạn xử lý cho từng đơn hàng dựa trên cài đặt mặc định.</p>
-                        <a href="check_default_settings.php" class="btn btn-primary mt-auto btn-feature">Mở công cụ</a>
+                        <h5 class="card-title">Cài đặt Hạn Xử lý</h5>
+                        <p class="card-text">Quản lý cài đặt mặc định cho hệ thống hạn xử lý theo bộ phận và xưởng.</p>
+                        <a href="settings.php" class="btn btn-primary mt-auto btn-feature">Mở cài đặt</a>
                     </div>
                 </div>
             </div>
@@ -144,9 +144,9 @@ include 'contdb.php';
                         <div class="feature-icon">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <h5 class="card-title">Kiểm tra Hệ thống Hạn Xử lý</h5>
-                        <p class="card-text">Kiểm tra tính chính xác và cấu hình của hệ thống hạn xử lý.</p>
-                        <a href="check_deadline_system.php" class="btn btn-primary mt-auto btn-feature">Kiểm tra hệ thống</a>
+                        <h5 class="card-title">Danh sách Đơn hàng</h5>
+                        <p class="card-text">Quay lại trang chính để theo dõi tiến độ và trạng thái hạn xử lý của đơn hàng.</p>
+                        <a href="index.php" class="btn btn-primary mt-auto btn-feature">Mở trang chính</a>
                     </div>
                 </div>
             </div>

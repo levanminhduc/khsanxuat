@@ -6,8 +6,10 @@ param(
 )
 
 $phpPath = "C:\xampp\php\php.exe"
-$phpcsPath = "phpcs.phar"
-$phpcbfPath = "phpcbf.phar"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Resolve-Path (Join-Path $scriptDir "..\..")
+$phpcsPath = Join-Path $scriptDir "phpcs.phar"
+$phpcbfPath = Join-Path $scriptDir "phpcbf.phar"
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "KIỂM TRA CHẤT LƯỢNG CODE PHP - PSR-12" -ForegroundColor Cyan
@@ -25,6 +27,8 @@ if (!(Test-Path $phpcsPath)) {
     Write-Host "Lỗi: Không tìm thấy PHP_CodeSniffer tại $phpcsPath" -ForegroundColor Red
     exit 1
 }
+
+Set-Location $projectRoot
 
 if ($Fix) {
     Write-Host "Chế độ: TỰ ĐỘNG SỬA LỖI" -ForegroundColor Yellow
@@ -81,8 +85,8 @@ Write-Host "HOÀN THÀNH" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Cách sử dụng:" -ForegroundColor White
-Write-Host "  .\check-quality.ps1                    # Kiểm tra tất cả file chính" -ForegroundColor Gray
-Write-Host "  .\check-quality.ps1 -File index.php    # Kiểm tra file cụ thể" -ForegroundColor Gray
-Write-Host "  .\check-quality.ps1 -Fix               # Tự động sửa tất cả file" -ForegroundColor Gray
-Write-Host "  .\check-quality.ps1 -Fix -File index.php # Tự động sửa file cụ thể" -ForegroundColor Gray
-Write-Host "  .\check-quality.ps1 -Summary           # Hiển thị tóm tắt" -ForegroundColor Gray
+Write-Host "  .\dev-tools\quality\check-quality.ps1                    # Kiểm tra tất cả file chính" -ForegroundColor Gray
+Write-Host "  .\dev-tools\quality\check-quality.ps1 -File index.php    # Kiểm tra file cụ thể" -ForegroundColor Gray
+Write-Host "  .\dev-tools\quality\check-quality.ps1 -Fix               # Tự động sửa tất cả file" -ForegroundColor Gray
+Write-Host "  .\dev-tools\quality\check-quality.ps1 -Fix -File index.php # Tự động sửa file cụ thể" -ForegroundColor Gray
+Write-Host "  .\dev-tools\quality\check-quality.ps1 -Summary           # Hiển thị tóm tắt" -ForegroundColor Gray

@@ -10,6 +10,7 @@ include 'activity_logger.php';
 
 // CSRF protection
 require_once 'includes/security/csrf-helper.php';
+require_once 'includes/indexdept/score-options.php';
 
 // Khởi tạo phiên làm việc
 session_start();
@@ -132,6 +133,18 @@ try {
         $diem_danhgia = isset($_POST['diem_danhgia_' . $id_tieuchi]) ? $_POST['diem_danhgia_' . $id_tieuchi] : null;
         $nguoi_thuchien = isset($_POST['nguoi_thuchien_' . $id_tieuchi]) ? $_POST['nguoi_thuchien_' . $id_tieuchi] : null;
         $ghichu = isset($_POST['ghichu_' . $id_tieuchi]) ? $_POST['ghichu_' . $id_tieuchi] : null;
+
+        if ($diem_danhgia !== null) {
+            $score_options = getScoreOptionsForCriteria($connect, $id_tieuchi, $dept, $thutu);
+
+            if (!isScoreAllowed($score_options, $diem_danhgia)) {
+                $allowed_scores = getScoreOptionValuesForMessage($score_options);
+                throw new Exception("Điểm đánh giá không hợp lệ cho tiêu chí {$thutu}. Mốc hợp lệ: {$allowed_scores}");
+            }
+
+            $diem_danhgia = (float) $diem_danhgia;
+        }
+        $da_thuchien = ($diem_danhgia !== null && $diem_danhgia > 0) ? 1 : 0;
         
         // Kiểm tra xem có dữ liệu cũ không
         $has_old_data = isset($old_data[$id_tieuchi]);
@@ -141,16 +154,17 @@ try {
             if ($has_old_data) {
                 $sql_update = "UPDATE danhgia_tieuchi SET 
                               diem_danhgia = COALESCE(?, diem_danhgia),
+                              da_thuchien = ?,
                               nguoi_thuchien = COALESCE(?, nguoi_thuchien),
                               ghichu = COALESCE(?, ghichu)
                               WHERE id_sanxuat = ? AND id_tieuchi = ?";
                 $stmt_update = $connect->prepare($sql_update);
-                $stmt_update->bind_param("disii", $diem_danhgia, $nguoi_thuchien, $ghichu, $id_sanxuat, $id_tieuchi);
+                $stmt_update->bind_param("diisii", $diem_danhgia, $da_thuchien, $nguoi_thuchien, $ghichu, $id_sanxuat, $id_tieuchi);
             } else {
-                $sql_insert = "INSERT INTO danhgia_tieuchi (id_sanxuat, id_tieuchi, diem_danhgia, nguoi_thuchien, ghichu) 
-                              VALUES (?, ?, ?, ?, ?)";
+                $sql_insert = "INSERT INTO danhgia_tieuchi (id_sanxuat, id_tieuchi, diem_danhgia, da_thuchien, nguoi_thuchien, ghichu) 
+                              VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt_insert = $connect->prepare($sql_insert);
-                $stmt_insert->bind_param("iidis", $id_sanxuat, $id_tieuchi, $diem_danhgia, $nguoi_thuchien, $ghichu);
+                $stmt_insert->bind_param("iidiis", $id_sanxuat, $id_tieuchi, $diem_danhgia, $da_thuchien, $nguoi_thuchien, $ghichu);
             }
             
             // Thực thi câu lệnh SQL

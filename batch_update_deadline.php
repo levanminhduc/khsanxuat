@@ -316,8 +316,8 @@ if (isset($_POST['batch_update'])) {
                 <div class="card-body">
                     <p>Đã cập nhật thành công <?php echo $orders_updated; ?> đơn hàng.</p>
                     <p>Chi tiết xem trong file log: <code>update_deadline_batch.log</code></p>
-                    <a href="check_default_settings.php" class="btn btn-info">
-                        <i class="fas fa-search"></i> Kiểm tra cài đặt hạn xử lý
+                    <a href="settings.php" class="btn btn-info">
+                        <i class="fas fa-cog"></i> Mở cài đặt hạn xử lý
                     </a>
                 </div>
             </div>

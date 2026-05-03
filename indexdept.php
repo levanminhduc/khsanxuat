@@ -15,6 +15,7 @@ require_once 'includes/security/csrf-helper.php';
 
 // Thêm vào sau phần kết nối database
 include 'check_tieuchi_image.php';
+require_once 'includes/indexdept/score-options.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -164,7 +165,7 @@ foreach ($required_files as $file) {
 }
 
 if (!empty($missing_files)) {
-    echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+    echo '<div class="system-message system-message--error">';
     echo '<strong>Cảnh báo:</strong> Không tìm thấy các file sau: ' . implode(', ', $missing_files);
     echo '</div>';
 }
@@ -188,7 +189,7 @@ if ($check_table->num_rows === 0) {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 
     if (!$connect->query($sql_create_table)) {
-        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<div class="system-message system-message--error">';
         echo '<strong>Lỗi:</strong> Không thể tạo bảng default_settings: ' . $connect->error;
         echo '</div>';
     }
@@ -201,7 +202,7 @@ if ($check_xuong_column->num_rows === 0) {
     $sql_add_xuong = "ALTER TABLE default_settings ADD COLUMN xuong VARCHAR(50) NOT NULL DEFAULT '' AFTER dept";
 
     if (!$connect->query($sql_add_xuong)) {
-        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<div class="system-message system-message--error">';
         echo '<strong>Lỗi:</strong> Không thể thêm cột xuong vào bảng default_settings: ' . $connect->error;
         echo '</div>';
     }
@@ -213,7 +214,7 @@ if ($check_index->num_rows > 0) {
     // Xóa ràng buộc UNIQUE cũ
     $sql_drop_unique = "ALTER TABLE default_settings DROP INDEX unique_dept_tieuchi";
     if (!$connect->query($sql_drop_unique)) {
-        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<div class="system-message system-message--error">';
         echo '<strong>Lỗi:</strong> Không thể xóa ràng buộc UNIQUE cũ: ' . $connect->error;
         echo '</div>';
     }
@@ -225,7 +226,7 @@ if ($check_new_index->num_rows === 0) {
     // Thêm ràng buộc UNIQUE mới
     $sql_add_unique = "ALTER TABLE default_settings ADD UNIQUE KEY unique_dept_tieuchi_xuong (dept, id_tieuchi, xuong)";
     if (!$connect->query($sql_add_unique)) {
-        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<div class="system-message system-message--error">';
         echo '<strong>Lỗi:</strong> Không thể thêm ràng buộc UNIQUE mới: ' . $connect->error;
         echo '</div>';
     }
@@ -238,7 +239,7 @@ if ($check_nguoi_column->num_rows === 0) {
     $sql_add_nguoi = "ALTER TABLE default_settings ADD COLUMN nguoi_chiu_trachnhiem_default INT(11) NULL AFTER so_ngay_xuly";
 
     if (!$connect->query($sql_add_nguoi)) {
-        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<div class="system-message system-message--error">';
         echo '<strong>Lỗi:</strong> Không thể thêm cột nguoi_chiu_trachnhiem_default vào bảng default_settings: ' . $connect->error;
         echo '</div>';
     }
@@ -251,7 +252,7 @@ if ($check_column->num_rows === 0) {
     $sql_add_column = "ALTER TABLE danhgia_tieuchi ADD COLUMN ngay_tinh_han VARCHAR(20) DEFAULT 'ngay_vao' AFTER so_ngay_xuly";
 
     if (!$connect->query($sql_add_column)) {
-        echo '<div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px;">';
+        echo '<div class="system-message system-message--error">';
         echo '<strong>Lỗi:</strong> Không thể thêm cột ngay_tinh_han vào bảng danhgia_tieuchi: ' . $connect->error;
         echo '</div>';
     }
@@ -309,6 +310,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
     <link rel="stylesheet" href="assets/css/indexdept/layout.css">
     <link rel="stylesheet" href="assets/css/indexdept/components.css">
     <link rel="stylesheet" href="assets/css/indexdept/responsive.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            prefix: 'tw-',
+            corePlugins: {
+                preflight: false
+            },
+            theme: {
+                extend: {
+                    boxShadow: {
+                        'modal-soft': '0 26px 80px rgba(15, 23, 42, 0.28)'
+                    }
+                }
+            }
+        };
+    </script>
 </head>
 <body>
     <!-- Thanh điều hướng -->

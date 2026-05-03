@@ -1,4 +1,4 @@
-    <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px;">
+    <div class="table-responsive table-responsive--spaced">
         <table class="data-table">
             <thead>
                 <tr>

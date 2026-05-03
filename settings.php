@@ -15,7 +15,6 @@ $header_config = [
     'show_mobile_menu' => true,
     'actions' => [
         ['url' => 'help_deadline.php', 'icon' => 'img/help_icon.png', 'title' => 'Hướng dẫn', 'tooltip' => 'Hướng dẫn sử dụng'],
-        ['url' => 'check_deadline_system.php', 'icon' => 'img/check.png', 'title' => 'Kiểm tra', 'tooltip' => 'Kiểm tra hệ thống'],
         ['url' => 'index.php', 'icon' => 'img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
