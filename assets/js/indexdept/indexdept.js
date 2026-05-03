@@ -176,31 +176,201 @@
         return String(parseFloat(number.toFixed(2)));
     }
 
-    function normalizeScoreInput(value) {
+    function parseScoreValues(value, options) {
+        const settings = options || {};
         const parts = String(value || '').trim().split(/[,\s;]+/).filter(Boolean);
         const unique = {};
 
-        parts.forEach(function(part) {
-            const number = parseFloat(part);
-            if (Number.isNaN(number)) {
-                unique[part] = part;
-                return;
+        if (!parts.length) {
+            return settings.allowEmpty ? { values: [] } : { error: 'Vui lòng nhập ít nhất một mốc điểm' };
+        }
+
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            const number = Number(part);
+
+            if (!Number.isFinite(number)) {
+                return { error: 'Mốc điểm không hợp lệ: ' + part };
             }
+
+            if (number < 0 || number > 999.99) {
+                return { error: 'Mốc điểm phải nằm trong khoảng 0 đến 999.99' };
+            }
+
             unique[formatScoreValue(number)] = number;
+        }
+
+        const values = Object.keys(unique).sort(function(left, right) {
+            return parseFloat(left) - parseFloat(right);
         });
 
-        return Object.values(unique).sort(function(left, right) {
-            const leftNumber = parseFloat(left);
-            const rightNumber = parseFloat(right);
-            if (Number.isNaN(leftNumber) || Number.isNaN(rightNumber)) {
-                return String(left).localeCompare(String(right));
-            }
-            return leftNumber - rightNumber;
-        }).map(formatScoreValue).join(', ');
+        if (values.length > 12) {
+            return { error: 'Mỗi tiêu chí chỉ nên có tối đa 12 mốc điểm' };
+        }
+
+        return { values: values };
+    }
+
+    function normalizeScoreInput(value) {
+        const parsed = parseScoreValues(value, { allowEmpty: true });
+        return parsed.error ? String(value || '').trim() : parsed.values.join(', ');
     }
 
     function setScoreOptionsStatus(type, message) {
         setStatusMessage(document.getElementById('score_options_status'), type, message);
+    }
+
+    function getScoreEditorElements(idTieuchi) {
+        return {
+            row: document.getElementById('score_row_' + idTieuchi),
+            input: document.getElementById('score_values_' + idTieuchi),
+            entry: document.getElementById('score_entry_' + idTieuchi),
+            chipList: document.getElementById('score_chips_' + idTieuchi)
+        };
+    }
+
+    function buildScoreChip(idTieuchi, scoreValue) {
+        return '<span class="score-options-modal__chip">' +
+            '<span class="score-options-modal__chip-value">' + escapeHtml(scoreValue) + '</span>' +
+            '<button type="button" class="score-options-modal__chip-remove" data-score-remove data-tieuchi-id="' + escapeHtml(idTieuchi) + '" data-score-value="' + escapeHtml(scoreValue) + '" aria-label="Xóa mốc điểm ' + escapeHtml(scoreValue) + '">' +
+            '<i class="fas fa-times" aria-hidden="true"></i>' +
+            '</button>' +
+            '</span>';
+    }
+
+    function updateScoreChangedSummary() {
+        const summary = document.getElementById('score_options_changed_summary');
+        const saveAllLabel = document.getElementById('score_options_save_all_label');
+        const rows = document.querySelectorAll('#score_options_tbody tr[data-tieuchi-id]');
+        let changedCount = 0;
+
+        rows.forEach(function(row) {
+            const idTieuchi = row.getAttribute('data-tieuchi-id');
+            const input = document.getElementById('score_values_' + idTieuchi);
+            if (!input) return;
+
+            const changed = normalizeScoreInput(input.value) !== normalizeScoreInput(row.getAttribute('data-original-scores') || '');
+            row.classList.toggle('score-options-modal__row--dirty', changed);
+            if (changed) {
+                changedCount++;
+            }
+        });
+
+        if (summary) {
+            summary.textContent = changedCount > 0 ? changedCount + ' dòng đã thay đổi' : 'Chưa có thay đổi';
+            summary.classList.toggle('score-options-modal__footer-meta--dirty', changedCount > 0);
+        }
+
+        if (saveAllLabel) {
+            saveAllLabel.textContent = changedCount > 0 ? 'Lưu ' + changedCount + ' dòng thay đổi' : 'Lưu tất cả mốc điểm';
+        }
+    }
+
+    function syncScoreEditor(idTieuchi, options) {
+        const settings = options || {};
+        const elements = getScoreEditorElements(idTieuchi);
+        if (!elements.input || !elements.chipList) return;
+
+        const parsed = parseScoreValues(elements.input.value, { allowEmpty: true });
+        const values = parsed.error ? [] : parsed.values;
+        elements.input.value = values.join(', ');
+
+        if (!values.length) {
+            elements.chipList.innerHTML = '<span class="score-options-modal__empty-chip">Chưa có mốc</span>';
+        } else {
+            elements.chipList.innerHTML = values.map(function(scoreValue) {
+                return buildScoreChip(idTieuchi, scoreValue);
+            }).join('');
+        }
+
+        if (settings.clearEntry && elements.entry) {
+            elements.entry.value = '';
+        }
+
+        updateScoreChangedSummary();
+    }
+
+    function addScoreChip(idTieuchi) {
+        const elements = getScoreEditorElements(idTieuchi);
+        if (!elements.input || !elements.entry) return false;
+
+        const entryValue = elements.entry.value.trim();
+        if (entryValue === '') {
+            setScoreOptionsStatus('warning', 'Nhập mốc điểm cần thêm');
+            return false;
+        }
+
+        const mergedValue = [elements.input.value, entryValue].filter(Boolean).join(', ');
+        const parsed = parseScoreValues(mergedValue);
+
+        if (parsed.error) {
+            setScoreOptionsStatus('error', parsed.error);
+            return false;
+        }
+
+        elements.input.value = parsed.values.join(', ');
+        syncScoreEditor(idTieuchi, { clearEntry: true });
+        elements.entry.focus();
+        return true;
+    }
+
+    function removeScoreChip(idTieuchi, scoreValue) {
+        const elements = getScoreEditorElements(idTieuchi);
+        if (!elements.input) return;
+
+        const parsed = parseScoreValues(elements.input.value, { allowEmpty: true });
+        const values = parsed.error ? [] : parsed.values.filter(function(value) {
+            return value !== formatScoreValue(scoreValue);
+        });
+
+        elements.input.value = values.join(', ');
+        syncScoreEditor(idTieuchi);
+    }
+
+    function handleScoreEntryKeydown(event, idTieuchi) {
+        if (event.key === 'Enter' || event.key === ',' || event.key === ';') {
+            event.preventDefault();
+            addScoreChip(idTieuchi);
+            return;
+        }
+
+        if (event.key === 'Backspace' && event.target.value === '') {
+            const elements = getScoreEditorElements(idTieuchi);
+            if (!elements.input) return;
+
+            const parsed = parseScoreValues(elements.input.value, { allowEmpty: true });
+            if (!parsed.error && parsed.values.length) {
+                event.preventDefault();
+                parsed.values.pop();
+                elements.input.value = parsed.values.join(', ');
+                syncScoreEditor(idTieuchi);
+            }
+        }
+    }
+
+    function flushScoreEntry(idTieuchi) {
+        const elements = getScoreEditorElements(idTieuchi);
+        if (!elements.input) return false;
+
+        if (elements.entry && elements.entry.value.trim() !== '') {
+            return addScoreChip(idTieuchi);
+        }
+
+        const parsed = parseScoreValues(elements.input.value);
+        if (parsed.error) {
+            setScoreOptionsStatus('error', parsed.error);
+            return false;
+        }
+
+        elements.input.value = parsed.values.join(', ');
+        syncScoreEditor(idTieuchi);
+        return true;
+    }
+
+    function initializeScoreEditors() {
+        document.querySelectorAll('#score_options_tbody tr[data-tieuchi-id]').forEach(function(row) {
+            syncScoreEditor(row.getAttribute('data-tieuchi-id'));
+        });
     }
 
     function setScoreRowState(idTieuchi, configured, scores) {
@@ -214,6 +384,10 @@
 
         if (row && typeof scores === 'string') {
             row.setAttribute('data-original-scores', normalizeScoreInput(scores));
+        }
+
+        if (typeof scores === 'string') {
+            syncScoreEditor(idTieuchi);
         }
 
         if (badge) {
@@ -232,6 +406,8 @@
         if (row) {
             flashRow(row, configured ? 'row-flash--success' : 'row-flash--muted');
         }
+
+        updateScoreChangedSummary();
     }
 
     function sendScoreOptionsRequest(payload, onSuccess) {
@@ -265,6 +441,10 @@
         const input = document.getElementById('score_values_' + idTieuchi);
         if (!input) return;
 
+        if (!flushScoreEntry(idTieuchi)) {
+            return;
+        }
+
         setScoreOptionsStatus('info', 'Đang lưu mốc điểm...');
         sendScoreOptionsRequest({
             action: 'save',
@@ -294,11 +474,17 @@
     function saveAllScoreOptions(dept) {
         const rows = document.querySelectorAll('#score_options_tbody tr[data-tieuchi-id]');
         const settings = [];
+        let hasInvalidRow = false;
 
         rows.forEach(function(row) {
             const idTieuchi = row.getAttribute('data-tieuchi-id');
             const input = document.getElementById('score_values_' + idTieuchi);
             if (!input) return;
+
+            if (!flushScoreEntry(idTieuchi)) {
+                hasInvalidRow = true;
+                return;
+            }
 
             const currentScores = normalizeScoreInput(input.value);
             const originalScores = normalizeScoreInput(row.getAttribute('data-original-scores') || '');
@@ -310,6 +496,10 @@
                 });
             }
         });
+
+        if (hasInvalidRow) {
+            return;
+        }
 
         if (!settings.length) {
             setScoreOptionsStatus('warning', 'Không có mốc điểm nào thay đổi');
@@ -327,8 +517,23 @@
                 setScoreRowState(item.id_tieuchi, item.configured, item.scores);
             });
             setScoreOptionsStatus('success', response.message);
+            updateScoreChangedSummary();
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeScoreEditors();
+
+        document.addEventListener('click', function(event) {
+            const removeButton = event.target.closest('[data-score-remove]');
+            if (!removeButton) return;
+
+            removeScoreChip(
+                removeButton.getAttribute('data-tieuchi-id'),
+                removeButton.getAttribute('data-score-value')
+            );
+        });
+    });
 
 
     // Hàm cập nhật trạng thái checkbox khi thay đổi điểm
@@ -1527,6 +1732,9 @@
     window.saveScoreOptions = typeof saveScoreOptions === 'function' ? saveScoreOptions : window.saveScoreOptions;
     window.resetScoreOptions = typeof resetScoreOptions === 'function' ? resetScoreOptions : window.resetScoreOptions;
     window.saveAllScoreOptions = typeof saveAllScoreOptions === 'function' ? saveAllScoreOptions : window.saveAllScoreOptions;
+    window.addScoreChip = typeof addScoreChip === 'function' ? addScoreChip : window.addScoreChip;
+    window.removeScoreChip = typeof removeScoreChip === 'function' ? removeScoreChip : window.removeScoreChip;
+    window.handleScoreEntryKeydown = typeof handleScoreEntryKeydown === 'function' ? handleScoreEntryKeydown : window.handleScoreEntryKeydown;
     window.closeStaffModal = typeof closeStaffModal === 'function' ? closeStaffModal : window.closeStaffModal;
     window.setQuickDays = typeof setQuickDays === 'function' ? setQuickDays : window.setQuickDays;
     window.changeNgayTinhHan = typeof changeNgayTinhHan === 'function' ? changeNgayTinhHan : window.changeNgayTinhHan;
