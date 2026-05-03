@@ -20,6 +20,12 @@
     // Các hàm cơ bản cho modal
     function openModal() {
         showElement(document.getElementById('addCriteriaModal'), 'block');
+        setTimeout(function() {
+            const firstField = document.getElementById('thutu') || document.getElementById('nhom');
+            if (firstField) {
+                firstField.focus();
+            }
+        }, 0);
     }
 
     function closeModal() {
@@ -28,6 +34,7 @@
 
     function openDeadlineModal() {
         showElement(document.getElementById('deadlineModal'), 'block');
+        updateDeadlineSelectionSummary();
     }
 
     function closeDeadlineModal() {
@@ -523,6 +530,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeScoreEditors();
+        updateDeadlineSelectionSummary();
 
         document.addEventListener('click', function(event) {
             const removeButton = event.target.closest('[data-score-remove]');
@@ -532,6 +540,12 @@
                 removeButton.getAttribute('data-tieuchi-id'),
                 removeButton.getAttribute('data-score-value')
             );
+        });
+
+        document.addEventListener('change', function(event) {
+            if (event.target && event.target.classList.contains('tieuchi-checkbox')) {
+                updateDeadlineSelectionSummary();
+            }
         });
     });
 
@@ -635,6 +649,25 @@
         checkboxes.forEach(checkbox => {
             checkbox.checked = select;
         });
+        updateDeadlineSelectionSummary();
+    }
+
+    function updateDeadlineSelectionSummary() {
+        const summary = document.getElementById('deadline_selected_summary');
+        const saveLabel = document.getElementById('deadline_save_label');
+        const selectedCount = document.querySelectorAll('.tieuchi-checkbox:checked').length;
+        const totalCount = document.querySelectorAll('.tieuchi-checkbox').length;
+
+        if (summary) {
+            summary.textContent = selectedCount > 0
+                ? selectedCount + '/' + totalCount + ' tiêu chí đã chọn'
+                : 'Chưa chọn tiêu chí';
+            summary.classList.toggle('deadline-modal__footer-meta--active', selectedCount > 0);
+        }
+
+        if (saveLabel) {
+            saveLabel.textContent = selectedCount > 0 ? 'Lưu cho ' + selectedCount + ' tiêu chí' : 'Lưu cài đặt';
+        }
     }
 
     // Hàm cập nhật hạn xử lý cho một tiêu chí
@@ -719,7 +752,7 @@
         });
 
         if (selectedTieuchi.length === 0) {
-            alert('Vui lòng chọn ít nhất một tiêu chí để áp dụng cài đặt.');
+            setStatusMessage(updateStatusDiv, 'warning', 'Vui lòng chọn ít nhất một tiêu chí để áp dụng cài đặt.');
             return;
         }
 
@@ -868,6 +901,12 @@
         document.getElementById('dept_display_name').textContent = getDeptDisplayName(dept);
 
         loadStaffList(dept);
+        setTimeout(function() {
+            const nameField = document.getElementById('new_staff_name');
+            if (nameField) {
+                nameField.focus();
+            }
+        }, 0);
     }
 
     // Hàm lấy tên hiển thị của bộ phận
@@ -900,21 +939,32 @@
                         if (response.success) {
                             const staffList = response.data;
                             let html = '';
+                            const countLabel = document.getElementById('staff_count_label');
 
                             if (!staffList.length) {
                                 html = buildTableMessageRow(4, 'muted', 'Chưa có người chịu trách nhiệm nào cho bộ phận này.');
                             }
 
+                            if (countLabel) {
+                                countLabel.textContent = staffList.length + ' người chịu trách nhiệm';
+                            }
+
                             staffList.forEach(function(staff, index) {
                                 html += `
-                                <tr id="staff_row_${staff.id}" class="tw-bg-white tw-transition hover:tw-bg-[#eef5ff]/60">
-                                    <td class="tw-whitespace-nowrap tw-px-4 tw-py-3 tw-font-bold tw-text-slate-700">${index + 1}</td>
-                                    <td class="tw-px-4 tw-py-3"><input type="text" id="staff_name_${staff.id}" class="form-control staff-modal__input tw-h-10 tw-rounded-lg tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-4 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.ten)}"></td>
-                                    <td class="tw-px-4 tw-py-3"><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input tw-h-10 tw-rounded-lg tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-4 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.chuc_vu || '')}"></td>
-                                    <td class="tw-px-4 tw-py-3">
-                                        <div class="tw-flex tw-flex-wrap tw-gap-2">
-                                            <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary staff-modal__action-btn tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-3 tw-text-xs tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">Cập nhật</button>
-                                            <button type="button" onclick="deleteStaff(${staff.id})" class="btn-add-criteria default-settings-modal__btn staff-modal__action-btn staff-modal__action-btn--danger tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-lg tw-border tw-border-rose-200 tw-bg-rose-50 tw-px-3 tw-text-xs tw-font-bold tw-text-rose-800 tw-shadow-sm tw-transition hover:tw-bg-rose-100">Xóa</button>
+                                <tr id="staff_row_${staff.id}" class="staff-modal__row tw-bg-white tw-transition hover:tw-bg-[#eef5ff]/60">
+                                    <td class="staff-modal__index-cell tw-whitespace-nowrap tw-px-2 tw-py-2">${index + 1}</td>
+                                    <td class="tw-px-2 tw-py-2"><input type="text" id="staff_name_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.ten)}"></td>
+                                    <td class="tw-px-2 tw-py-2"><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.chuc_vu || '')}"></td>
+                                    <td class="tw-px-2 tw-py-2">
+                                        <div class="staff-modal__action-list">
+                                            <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary staff-modal__action-btn tw-inline-flex tw-h-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-2 tw-text-xs tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">
+                                                <i class="fas fa-floppy-disk" aria-hidden="true"></i>
+                                                Cập nhật
+                                            </button>
+                                            <button type="button" onclick="deleteStaff(${staff.id})" class="btn-add-criteria default-settings-modal__btn staff-modal__action-btn staff-modal__action-btn--danger tw-inline-flex tw-h-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-rose-200 tw-bg-rose-50 tw-px-2 tw-text-xs tw-font-bold tw-text-rose-800 tw-shadow-sm tw-transition hover:tw-bg-rose-100">
+                                                <i class="fas fa-trash" aria-hidden="true"></i>
+                                                Xóa
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>`;

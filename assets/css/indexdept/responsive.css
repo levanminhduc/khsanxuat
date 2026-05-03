@@ -167,8 +167,9 @@
 /* Default settings modal - responsive tier */
 @media screen and (max-width: 1024px) {
     .default-settings-modal__content {
-        width: 95vw;
-        max-height: 90vh;
+        width: 96vw;
+        max-width: 96vw;
+        max-height: 92vh;
     }
 
     .default-settings-modal__title {
@@ -180,22 +181,27 @@
         font-size: 12px;
     }
 
-    .default-settings-modal__col--criteria {
-        width: 28%;
-    }
-
-    .default-settings-modal__col--owner {
-        width: 22%;
+    .default-settings-modal__table {
+        min-width: 1020px;
     }
 }
 
 @media screen and (max-width: 768px) {
+    .default-settings-modal__content {
+        width: 96vw !important;
+        max-width: 96vw !important;
+        max-height: 94vh;
+        margin: 3vh auto !important;
+        padding: 0 !important;
+    }
+
     .default-settings-modal__header {
-        padding: 16px 16px 12px;
+        padding: 12px 44px 10px 10px;
     }
 
     .default-settings-modal__body {
-        padding: 12px;
+        padding: 8px;
+        gap: 8px;
     }
 
     .default-settings-modal__toolbar,
@@ -205,7 +211,7 @@
         width: 100%;
         flex-direction: column;
         align-items: stretch !important;
-        gap: 10px;
+        gap: 8px;
     }
 
     .default-settings-modal__select-xuong,
@@ -216,23 +222,32 @@
 
     .default-settings-modal__table-wrap {
         overflow: auto;
-        border-radius: 4px;
+        border-radius: 6px;
     }
 
     .default-settings-modal__table {
-        min-width: 900px;
+        min-width: 980px;
     }
 
     .default-settings-modal__table th,
     .default-settings-modal__table td {
-        padding: 8px 4px !important;
+        padding: 6px 6px !important;
         font-size: 12px !important;
     }
 
     /* Owner select specific in default settings */
     .default-settings-modal__owner-select {
-        width: 100% !important;
-        font-size: 11px !important;
+        min-width: 200px !important;
+        font-size: 12px !important;
+    }
+
+    .default-settings-modal__toolbar--bottom,
+    .default-settings-modal__footer-actions {
+        width: 100%;
+    }
+
+    .default-settings-modal__footer-actions {
+        align-items: stretch;
     }
 }
 
@@ -256,17 +271,18 @@
 
 @media screen and (max-width: 768px) {
     .staff-modal__header {
-        padding: 16px 16px 12px;
+        padding: 12px 44px 10px 10px;
     }
 
     .staff-modal__body {
-        padding: 12px;
+        padding: 10px;
+        gap: 10px;
     }
 
     .staff-modal__form-row {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .staff-modal__btn-add {
@@ -276,14 +292,14 @@
 
     .staff-modal__table-wrap {
         overflow: auto;
-        border-radius: 4px;
+        border-radius: 6px;
     }
 
     .staff-modal__table {
-        min-width: 600px;
+        min-width: 640px;
     }
 
-    .staff-modal__footer .default-settings-modal__btn {
+    .staff-modal__footer .score-options-modal__btn {
         width: 100%;
     }
 }
@@ -303,15 +319,15 @@
 
 @media screen and (max-width: 768px) {
     .add-criteria-modal__header {
-        padding: 16px 16px 12px;
+        padding: 12px 44px 10px 10px;
     }
 
     .add-criteria-modal__body {
-        padding: 12px;
+        padding: 10px;
     }
 
     .add-criteria-modal__title {
-        font-size: 17px;
+        font-size: 18px;
     }
 
     .add-criteria-modal__group--sm {
@@ -352,26 +368,59 @@
 
 @media screen and (max-width: 768px) {
     .deadline-modal__content {
-        width: 94vw;
-        max-height: 90vh;
-        margin: 4vh auto;
+        width: 96vw !important;
+        max-width: 96vw !important;
+        max-height: 94vh;
+        margin: 3vh auto !important;
+        padding: 0 !important;
     }
 
     .deadline-modal__header {
-        padding: 18px 16px 12px;
+        padding: 12px 44px 10px 10px;
     }
 
     .deadline-modal__body {
-        padding: 14px 12px 16px;
-        gap: 12px;
+        padding: 8px;
+        gap: 8px;
     }
 
     .deadline-modal__title {
         font-size: 18px;
     }
 
+    .deadline-modal__controls {
+        grid-template-columns: 1fr;
+        gap: 7px;
+        padding: 8px;
+    }
+
+    .deadline-modal__quick-field {
+        min-width: 0;
+    }
+
+    .deadline-modal__criteria-list {
+        max-height: calc(94vh - 330px);
+    }
+
+    .deadline-modal__criteria-toolbar,
+    .deadline-modal__group--actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .deadline-modal__criteria-table-head,
+    .deadline-modal__criteria-item {
+        grid-template-columns: 38px 42px minmax(0, 1fr);
+    }
+
+    .deadline-modal__criteria-item .deadline-modal__criteria-label {
+        padding: 7px 6px;
+        font-size: 12px;
+    }
+
     .deadline-modal__actions {
         flex-direction: column;
+        width: 100%;
     }
 
     .deadline-modal__action-btn {
