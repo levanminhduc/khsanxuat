@@ -71,7 +71,7 @@ foreach ($dept_stats as $dept => $completed) {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleindex.css">
     
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/header.css?v=<?php echo filemtime('assets/css/header.css'); ?>">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -657,7 +657,15 @@ foreach ($dept_stats as $dept => $completed) {
             'month' => $selected_month,
             'year' => $selected_year,
             'search_type' => isset($_GET['search_type']) ? $_GET['search_type'] : 'xuong',
-            'search_value' => isset($_GET['search_value']) ? $_GET['search_value'] : ''
+            'search_value' => isset($_GET['search_value']) ? $_GET['search_value'] : '',
+            'placeholder_suggestions' => [
+                'Nhập từ khóa tìm kiếm...',
+                'Tìm xưởng...',
+                'Tìm line...',
+                'Tìm PO...',
+                'Tìm style...',
+                'Tìm model...'
+            ]
         ],
         'actions' => [
             [
@@ -1361,7 +1369,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-<script src="assets/js/header.js"></script>
+<script src="assets/js/header.js?v=<?php echo filemtime('assets/js/header.js'); ?>"></script>
 
 
 <?php include 'components/back-to-top.php'; ?>

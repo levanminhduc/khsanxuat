@@ -267,6 +267,65 @@
     transition: background-color 0.2s ease;
 }
 
+.header-component .search-input-wrap {
+    position: relative;
+    width: 180px;
+    height: 100%;
+    flex: 0 0 180px;
+}
+
+.header-component .search-input-wrap .search-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.header-component .search-input-wrap .search-input::placeholder,
+.header-component .mobile-search-input-wrap .mobile-search-input::placeholder {
+    color: transparent;
+}
+
+.header-component .search-placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.16s ease;
+}
+
+.header-component .search-input-wrap.has-value .search-placeholder-text,
+.header-component .mobile-search-input-wrap.has-value .search-placeholder-text {
+    opacity: 0;
+}
+
+.header-component .search-input-wrap.is-rotating .search-placeholder-text,
+.header-component .mobile-search-input-wrap.is-rotating .search-placeholder-text {
+    animation: searchPlaceholderJump 280ms cubic-bezier(0.2, 0.75, 0.3, 1);
+}
+
+@keyframes searchPlaceholderJump {
+    0% {
+        opacity: 0;
+        transform: translateY(calc(-50% + 7px));
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(calc(-50% - 2px));
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%);
+    }
+}
+
 .header-component .search-input:focus {
     outline: none;
     background-color: #fff;
@@ -441,6 +500,19 @@
     font-family: inherit;
 }
 
+.header-component .mobile-search-input-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.header-component .mobile-search-input-wrap .mobile-search-input {
+    box-sizing: border-box;
+}
+
+.header-component .mobile-search-input-wrap .search-placeholder-text {
+    font-size: 16px;
+}
+
 .header-component .mobile-search-input:focus {
     outline: 2px solid var(--header-text);
     outline-offset: 1px;
@@ -469,6 +541,13 @@
 .header-component .mobile-search-button:focus {
     outline: 2px solid var(--header-text);
     outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header-component .search-input-wrap.is-rotating .search-placeholder-text,
+    .header-component .mobile-search-input-wrap.is-rotating .search-placeholder-text {
+        animation: none;
+    }
 }
 
 /* Mobile Navigation Items */

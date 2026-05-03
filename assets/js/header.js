@@ -18,7 +18,8 @@
         elements: {
             toggle: null,
             dropdown: null,
-            navbar: null
+            navbar: null,
+            placeholderRotators: null
         },
 
         // Configuration
@@ -35,6 +36,7 @@
          */
         init: function() {
             this.cacheElements();
+            this.initSearchPlaceholderRotation();
             
             if (!this.elements.toggle || !this.elements.dropdown) {
                 // Elements not found, component may not be on this page
@@ -52,6 +54,7 @@
             this.elements.toggle = document.getElementById(this.config.toggleId);
             this.elements.dropdown = document.getElementById(this.config.dropdownId);
             this.elements.navbar = document.querySelector('.header-component .navbar');
+            this.elements.placeholderRotators = document.querySelectorAll('.header-component [data-placeholder-rotator]');
         },
 
         /**
@@ -197,6 +200,98 @@
 
                 item.addEventListener('touchcancel', function() {
                     this.style.opacity = '1';
+                });
+            });
+        },
+
+        /**
+         * Rotate search hint text when configured by the page.
+         */
+        initSearchPlaceholderRotation: function() {
+            var rotators = this.elements.placeholderRotators;
+
+            if (!rotators || !rotators.length) {
+                return;
+            }
+
+            rotators.forEach(function(rotator) {
+                var input = rotator.querySelector('input[type="text"]');
+                var text = rotator.querySelector('.search-placeholder-text');
+                var phrases = [];
+                var phraseIndex = 0;
+                var timerId = null;
+
+                if (!input || !text) {
+                    return;
+                }
+
+                try {
+                    phrases = JSON.parse(rotator.getAttribute('data-placeholder-phrases') || '[]');
+                } catch (error) {
+                    phrases = [];
+                }
+
+                phrases = phrases.filter(function(phrase) {
+                    return String(phrase).trim() !== '';
+                });
+
+                if (!phrases.length) {
+                    return;
+                }
+
+                function syncValueState() {
+                    rotator.classList.toggle('has-value', input.value.length > 0);
+                }
+
+                function setPhrase(nextPhrase) {
+                    text.textContent = nextPhrase;
+                    rotator.classList.remove('is-rotating');
+                    void rotator.offsetWidth;
+                    rotator.classList.add('is-rotating');
+
+                    window.setTimeout(function() {
+                        rotator.classList.remove('is-rotating');
+                    }, 320);
+                }
+
+                function rotatePhrase() {
+                    if (input.value.length > 0 || phrases.length < 2) {
+                        return;
+                    }
+
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    setPhrase(phrases[phraseIndex]);
+                }
+
+                function startRotation() {
+                    if (timerId || phrases.length < 2) {
+                        return;
+                    }
+
+                    timerId = window.setInterval(rotatePhrase, 2200);
+                }
+
+                function stopRotation() {
+                    if (!timerId) {
+                        return;
+                    }
+
+                    window.clearInterval(timerId);
+                    timerId = null;
+                }
+
+                text.textContent = phrases[0];
+                syncValueState();
+                startRotation();
+
+                input.addEventListener('input', syncValueState);
+
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        stopRotation();
+                    } else {
+                        startRotation();
+                    }
                 });
             });
         }

@@ -20,7 +20,9 @@ $defaults = [
         'month' => '',
         'year' => '',
         'search_type' => 'xuong',
-        'search_value' => ''
+        'search_value' => '',
+        'placeholder' => 'Nhập từ khóa tìm kiếm...',
+        'placeholder_suggestions' => []
     ],
     'actions' => []
 ];
@@ -55,6 +57,26 @@ $search_month = header_escape($config['search_params']['month']);
 $search_year = header_escape($config['search_params']['year']);
 $search_type = $config['search_params']['search_type'] ?? 'xuong';
 $search_value = header_escape($config['search_params']['search_value']);
+$search_placeholder = header_escape($config['search_params']['placeholder']);
+$search_placeholder_suggestions = [];
+
+if (is_array($config['search_params']['placeholder_suggestions'])) {
+    $search_placeholder_suggestions = array_values(array_filter(
+        $config['search_params']['placeholder_suggestions'],
+        function($suggestion) {
+            return trim((string)$suggestion) !== '';
+        }
+    ));
+}
+
+if (empty($search_placeholder_suggestions)) {
+    $search_placeholder_suggestions = [];
+}
+
+$search_placeholder_json = header_escape(json_encode(
+    $search_placeholder_suggestions,
+    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+));
 
 $actions = is_array($config['actions']) ? $config['actions'] : [];
 
@@ -116,14 +138,32 @@ $search_types = [
                             </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if (!empty($search_placeholder_suggestions)): ?>
+                        <div
+                            class="search-input-wrap<?php echo $search_value !== '' ? ' has-value' : ''; ?>"
+                            data-placeholder-rotator
+                            data-placeholder-phrases="<?php echo $search_placeholder_json; ?>"
+                        >
+                            <input
+                                type="text"
+                                name="search_value"
+                                placeholder=""
+                                value="<?php echo $search_value; ?>"
+                                class="search-input"
+                                aria-label="Search input"
+                            >
+                            <span class="search-placeholder-text" aria-hidden="true"><?php echo header_escape($search_placeholder_suggestions[0]); ?></span>
+                        </div>
+                        <?php else: ?>
                         <input
                             type="text"
                             name="search_value"
-                            placeholder="Nhập từ khóa tìm kiếm..."
+                            placeholder="<?php echo $search_placeholder; ?>"
                             value="<?php echo $search_value; ?>"
                             class="search-input"
                             aria-label="Search input"
                         >
+                        <?php endif; ?>
                         <button type="submit" class="search-button" aria-label="Search">🔍</button>
                     </div>
                 </form>
@@ -172,14 +212,32 @@ $search_types = [
                         </option>
                         <?php endforeach; ?>
                     </select>
+                    <?php if (!empty($search_placeholder_suggestions)): ?>
+                    <div
+                        class="mobile-search-input-wrap<?php echo $search_value !== '' ? ' has-value' : ''; ?>"
+                        data-placeholder-rotator
+                        data-placeholder-phrases="<?php echo $search_placeholder_json; ?>"
+                    >
+                        <input
+                            type="text"
+                            name="search_value"
+                            placeholder=""
+                            value="<?php echo $search_value; ?>"
+                            class="mobile-search-input"
+                            aria-label="Search input"
+                        >
+                        <span class="search-placeholder-text" aria-hidden="true"><?php echo header_escape($search_placeholder_suggestions[0]); ?></span>
+                    </div>
+                    <?php else: ?>
                     <input
                         type="text"
                         name="search_value"
-                        placeholder="Nhập từ khóa tìm kiếm..."
+                        placeholder="<?php echo $search_placeholder; ?>"
                         value="<?php echo $search_value; ?>"
                         class="mobile-search-input"
                         aria-label="Search input"
                     >
+                    <?php endif; ?>
                     <button type="submit" class="mobile-search-button">🔍 Tìm kiếm</button>
                 </div>
             </form>
