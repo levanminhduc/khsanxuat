@@ -100,8 +100,15 @@
                 }
             });
 
-            // Prevent dropdown content clicks from closing menu
+            // Prevent dropdown content clicks from bubbling to the document.
             this.elements.dropdown.addEventListener('click', function(e) {
+                var closeTrigger = e.target.closest('[data-mobile-menu-close="true"]');
+                if (closeTrigger) {
+                    window.setTimeout(function() {
+                        self.closeMenu();
+                    }, 0);
+                }
+
                 e.stopPropagation();
             });
 

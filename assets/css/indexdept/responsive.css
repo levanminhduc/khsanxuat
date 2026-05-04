@@ -34,10 +34,7 @@
 
     .action-buttons > .header-actions {
         width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
+        display: none;
     }
 
     .action-buttons .btn-add-criteria {
@@ -71,9 +68,7 @@
     }
 
     .action-buttons > .header-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        display: none;
     }
 
     .action-buttons .btn-add-criteria {

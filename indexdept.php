@@ -330,6 +330,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
 <body>
     <!-- Thanh điều hướng -->
 <?php
+$dept_js_arg = json_encode((string)$dept, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+$xuong_js_arg = json_encode((string)$xuong, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+
 $header_config = [
     'title' => isset($dept_display_name) ? $dept_display_name : 'Chi tiết Bộ phận',
     'title_short' => 'Bộ phận',
@@ -356,6 +359,29 @@ $header_config = [
             'title' => 'Biểu mẫu',
             'tooltip' => 'Biểu mẫu'
         ]
+    ],
+    'mobile_actions' => [
+        [
+            'title' => 'Thêm tiêu chí',
+            'icon_class' => 'fas fa-plus',
+            'onclick' => 'openModal()'
+        ],
+        [
+            'title' => 'Cài đặt mặc định',
+            'icon_class' => 'fas fa-cog',
+            'onclick' => 'openDefaultSettingModal()'
+        ],
+        [
+            'title' => 'Cài mốc điểm',
+            'icon_class' => 'fas fa-sliders-h',
+            'onclick' => 'openScoreOptionsModal()'
+        ],
+        [
+            'title' => 'Áp dụng giá trị mặc định',
+            'icon_class' => 'fas fa-sync-alt',
+            'onclick' => 'syncTieuChiWithDefaultSettings(' . $dept_js_arg . ', ' . $xuong_js_arg . ')',
+            'class' => 'mobile-nav-item--warning'
+        ]
     ]
 ];
 ?>
@@ -378,5 +404,6 @@ window.INDEXDEPT_BOOTSTRAP = {
 </script>
 <script src="assets/js/indexdept/indexdept.js"></script>
 <script src="assets/js/header.js?v=<?php echo filemtime('assets/js/header.js'); ?>"></script>
+<?php include 'components/back-to-top.php'; ?>
 </body>
 </html>

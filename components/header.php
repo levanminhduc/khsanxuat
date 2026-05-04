@@ -24,7 +24,8 @@ $defaults = [
         'placeholder' => 'Nhập từ khóa tìm kiếm...',
         'placeholder_suggestions' => []
     ],
-    'actions' => []
+    'actions' => [],
+    'mobile_actions' => []
 ];
 
 $config = array_merge($defaults, $header_config);
@@ -82,7 +83,15 @@ $actions = is_array($config['actions']) ? $config['actions'] : [];
 $actions = array_values(array_filter($actions, function($action) {
     return is_array($action) && !empty($action['url']) && !empty($action['icon']);
 }));
-$show_mobile_menu = $show_mobile_menu && ($show_search || !empty($actions));
+
+$mobile_actions = is_array($config['mobile_actions']) ? $config['mobile_actions'] : [];
+$mobile_actions = array_values(array_filter($mobile_actions, function($action) {
+    return is_array($action)
+        && !empty($action['title'])
+        && (!empty($action['url']) || !empty($action['onclick']))
+        && (!empty($action['icon']) || !empty($action['icon_class']));
+}));
+$show_mobile_menu = $show_mobile_menu && ($show_search || !empty($actions) || !empty($mobile_actions));
 
 $search_types = [
     'xuong' => 'Xưởng',
@@ -263,6 +272,57 @@ $search_types = [
                 >
                 <?php echo header_escape($action['title'] ?? ''); ?>
             </a>
+            <?php endif; ?>
+            <?php endforeach; ?>
+
+            <?php foreach ($mobile_actions as $action): ?>
+            <?php
+            $mobile_item_class = 'mobile-nav-item';
+            if (empty($action['url'])) {
+                $mobile_item_class .= ' mobile-nav-item--button';
+            }
+            if (!empty($action['class'])) {
+                $mobile_item_class .= ' ' . trim((string)$action['class']);
+            }
+            ?>
+            <?php if (!empty($action['url'])): ?>
+            <a
+                href="<?php echo header_escape($action['url']); ?>"
+                class="<?php echo header_escape($mobile_item_class); ?>"
+                role="menuitem"
+            >
+                <?php if (!empty($action['icon'])): ?>
+                <img
+                    src="<?php echo header_escape($action['icon']); ?>"
+                    alt=""
+                    aria-hidden="true"
+                >
+                <?php else: ?>
+                <i class="<?php echo header_escape($action['icon_class']); ?> mobile-nav-item-icon" aria-hidden="true"></i>
+                <?php endif; ?>
+                <?php echo header_escape($action['title']); ?>
+            </a>
+            <?php else: ?>
+            <button
+                type="button"
+                class="<?php echo header_escape($mobile_item_class); ?>"
+                role="menuitem"
+                data-mobile-menu-close="true"
+                <?php if (!empty($action['onclick'])): ?>
+                onclick="<?php echo header_escape($action['onclick']); ?>"
+                <?php endif; ?>
+            >
+                <?php if (!empty($action['icon'])): ?>
+                <img
+                    src="<?php echo header_escape($action['icon']); ?>"
+                    alt=""
+                    aria-hidden="true"
+                >
+                <?php else: ?>
+                <i class="<?php echo header_escape($action['icon_class']); ?> mobile-nav-item-icon" aria-hidden="true"></i>
+                <?php endif; ?>
+                <?php echo header_escape($action['title']); ?>
+            </button>
             <?php endif; ?>
             <?php endforeach; ?>
         </div>
