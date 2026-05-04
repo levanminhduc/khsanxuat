@@ -699,7 +699,7 @@
     }
 
     .header-component .navbar-brand {
-        font-size: 15px;
+        font-size: 24px;
     }
 
     .header-component .search-input {
@@ -750,7 +750,7 @@
     }
 
     .header-component .navbar-brand {
-        font-size: 15px;
+        font-size: 24px;
     }
 
     /* Hide desktop navigation */
@@ -787,7 +787,7 @@
     }
 
     .header-component .navbar-brand {
-        font-size: 14px;
+        font-size: 24px;
     }
 
     .header-component .mobile-menu {
@@ -822,7 +822,7 @@
     }
 
     .header-component .navbar-brand {
-        font-size: 12px;
+        font-size: 24px;
     }
 
     .header-component .mobile-menu {

@@ -335,12 +335,13 @@ $xuong_js_arg = json_encode((string)$xuong, JSON_HEX_TAG | JSON_HEX_APOS | JSON_
 
 $header_config = [
     'title' => isset($dept_display_name) ? $dept_display_name : 'Chi tiết Bộ phận',
-    'title_short' => 'Bộ phận',
+    'title_short' => 'BỘ PHẬN',
     'logo_path' => 'img/logoht.png',
     'logo_link' => '/trangchu/',
     'show_search' => false,
     'show_mobile_menu' => true,
-    'actions' => [
+    'actions' => [],
+    'mobile_actions' => [
         [
             'url' => 'index.php',
             'icon' => 'img/back.png',
@@ -358,9 +359,7 @@ $header_config = [
             'icon' => 'img/doc.gif',
             'title' => 'Biểu mẫu',
             'tooltip' => 'Biểu mẫu'
-        ]
-    ],
-    'mobile_actions' => [
+        ],
         [
             'title' => 'Thêm tiêu chí',
             'icon_class' => 'fas fa-plus',

@@ -7,9 +7,12 @@
 
     select[name^="nguoi_thuchien_"] {
         width: 140px;
-        padding: 2px;
+        padding: 5px 24px 5px 8px;
         font-size: 12px;
-        height: 28px;
+        line-height: 1.35;
+        height: 45px;
+        min-height: 45px;
+        box-sizing: border-box;
     }
 
     .diem-select {

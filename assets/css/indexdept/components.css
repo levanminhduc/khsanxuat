@@ -792,6 +792,15 @@
     box-sizing: border-box;
 }
 
+.evaluation-actions .btn-save {
+    background-color: #143583;
+}
+
+.evaluation-actions .btn-save:hover,
+.evaluation-actions .btn-save:focus {
+    background-color: #1a4299;
+}
+
 .evaluation-section--wide {
     max-width: 1600px;
     margin: 0 auto;

@@ -19,13 +19,13 @@ CREATE TABLE IF NOT EXISTS tieuchi_score_options (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO tieuchi_score_options (id_tieuchi, score_value, label, sort_order)
-SELECT tc.id, options.score_value, options.label, options.sort_order
+SELECT tc.id, score_opts.score_value, score_opts.label, score_opts.sort_order
 FROM tieuchi_dept tc
 JOIN (
     SELECT 0.00 AS score_value, '0' AS label, 1 AS sort_order
     UNION ALL SELECT 0.50, '0.5', 2
     UNION ALL SELECT 1.50, '1.5', 3
-) options
+) AS score_opts
 LEFT JOIN (
     SELECT DISTINCT id_tieuchi
     FROM tieuchi_score_options

@@ -11,21 +11,27 @@
 
 .nguoi-thuchien-select {
     width: 160px;
-    padding: 5px;
+    padding: 6px 25px 6px 10px;
     border: 1px solid #ddd;
     border-radius: 3px;
     font-size: 13px;
-    height: 40px;
+    line-height: 1.35;
+    height: 45px;
+    min-height: 45px;
+    box-sizing: border-box;
     white-space: normal;
 }
 
 select[name^="nguoi_thuchien_"] {
     width: 160px;
-    padding: 3px;
+    padding: 6px 25px 6px 10px;
     border: 1px solid #ddd;
     border-radius: 3px;
     font-size: 13px;
-    height: 40px;
+    line-height: 1.35;
+    height: 45px;
+    min-height: 45px;
+    box-sizing: border-box;
     white-space: normal;
 }
 
