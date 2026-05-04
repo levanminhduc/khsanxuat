@@ -17,7 +17,7 @@
     --header-text: #FFFFFF;
     --header-hover: rgba(255, 255, 255, 0.1);
     --header-height: 64px;
-    --header-height-mobile: 56px;
+    --header-height-mobile: 60px;
     --header-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     --header-transition: 0.25s ease-in-out;
     --header-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -369,11 +369,14 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 8px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     color: var(--header-text);
     z-index: 1001;
     transition: transform var(--header-transition);
     border-radius: 6px;
+    flex: 0 0 44px;
 }
 
 .header-component .mobile-toggle:hover {
@@ -391,6 +394,10 @@
     position: relative;
     width: 24px;
     height: 18px;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
 }
 
 .header-component .hamburger-icon span {
@@ -465,25 +472,33 @@
 .header-component .mobile-search-container {
     margin-bottom: 1rem;
     background: rgba(255, 255, 255, 0.05);
-    padding: 0.75rem;
+    padding: 0.875rem;
     border-radius: 8px;
 }
 
-.header-component .mobile-search-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
+.header-component .mobile-search-container .search-form {
+    display: block;
     width: 100%;
 }
 
-.header-component .mobile-search-select {
+.header-component .mobile-search-group {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.75fr) minmax(220px, 1fr) max-content;
+    align-items: center;
+    gap: 0.75rem;
     width: 100%;
-    padding: 0.75rem;
-    font-size: 16px;
+}
+
+.header-component .mobile-search-container .mobile-search-select {
+    width: 100%;
+    height: 46px;
+    padding: 0 0.875rem;
+    font-size: 15px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.95);
     font-family: inherit;
+    min-width: 0;
 }
 
 .header-component .mobile-search-select:focus {
@@ -491,18 +506,29 @@
     outline-offset: 1px;
 }
 
-.header-component .mobile-search-input {
+.header-component .mobile-search-container .mobile-search-input {
     width: 100%;
-    padding: 0.75rem;
-    font-size: 16px;
+    height: 46px;
+    padding: 0 0.875rem;
+    font-size: 15px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: inherit;
+    min-width: 0;
+}
+
+.header-component .mobile-search-container .search-form input[type="text"].mobile-search-input {
+    width: 100%;
+    min-width: 0;
+    background-color: #fff;
+    color: #111827;
+    box-shadow: none;
 }
 
 .header-component .mobile-search-input-wrap {
     position: relative;
     width: 100%;
+    min-width: 0;
 }
 
 .header-component .mobile-search-input-wrap .mobile-search-input {
@@ -510,7 +536,7 @@
 }
 
 .header-component .mobile-search-input-wrap .search-placeholder-text {
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .header-component .mobile-search-input:focus {
@@ -518,19 +544,22 @@
     outline-offset: 1px;
 }
 
-.header-component .mobile-search-button {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 16px;
+.header-component .mobile-search-container .mobile-search-button {
+    width: auto;
+    min-width: 138px;
+    height: 46px;
+    padding: 0 1.125rem;
+    font-size: 15px;
     background-color: var(--header-primary);
     color: var(--header-text);
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-family: inherit;
-    font-weight: 500;
+    font-weight: 600;
     transition: background-color 0.2s ease;
-    min-height: 44px;
+    min-height: 46px;
+    white-space: nowrap;
 }
 
 .header-component .mobile-search-button:hover,
@@ -661,9 +690,9 @@
 }
 
 /* ========================================
-   Responsive: Mobile (< 768px)
+   Responsive: Mobile and Tablet (<= 1024px)
    ======================================== */
-@media (max-width: 767.98px) {
+@media (max-width: 1024.98px) {
     .header-component .navbar {
         height: var(--header-height-mobile);
         padding: 0 0.75rem;
@@ -675,7 +704,7 @@
     }
 
     .header-component .navbar-left img {
-        width: 35px;
+        width: 38px;
     }
 
     /* Center section takes remaining space */
@@ -694,7 +723,7 @@
     }
 
     .header-component .navbar-brand {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     /* Hide desktop navigation */
@@ -717,9 +746,39 @@
         max-height: calc(100vh - var(--header-height-mobile));
     }
 
-    /* Single column for small mobile */
     .header-component .mobile-nav-items {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* ========================================
+   Responsive: Mobile (< 768px)
+   ======================================== */
+@media (max-width: 767.98px) {
+    .header-component .navbar-left img {
+        width: 35px;
+    }
+
+    .header-component .navbar-brand {
+        font-size: 14px;
+    }
+
+    .header-component .mobile-menu {
+        padding: 0.875rem;
+    }
+
+    .header-component .mobile-nav-items {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 639.98px) {
+    .header-component .mobile-search-group {
+        grid-template-columns: 1fr;
+    }
+
+    .header-component .mobile-search-container .mobile-search-button {
+        width: 100%;
     }
 }
 
@@ -737,6 +796,22 @@
 
     .header-component .navbar-brand {
         font-size: 12px;
+    }
+
+    .header-component .mobile-menu {
+        padding: 0.75rem;
+    }
+
+    .header-component .mobile-search-container {
+        padding: 0.75rem;
+    }
+
+    .header-component .mobile-search-container .mobile-search-select,
+    .header-component .mobile-search-container .mobile-search-input,
+    .header-component .mobile-search-container .mobile-search-button {
+        height: 44px;
+        min-height: 44px;
+        font-size: 14px;
     }
 
     /* Single column layout for mobile nav items */

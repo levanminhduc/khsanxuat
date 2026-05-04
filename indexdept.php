@@ -305,11 +305,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["save"])) {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/indexdept/base.css">
-    <link rel="stylesheet" href="assets/css/indexdept/layout.css">
-    <link rel="stylesheet" href="assets/css/indexdept/components.css">
-    <link rel="stylesheet" href="assets/css/indexdept/responsive.css">
+    <link rel="stylesheet" href="assets/css/header.css?v=<?php echo filemtime('assets/css/header.css'); ?>">
+    <link rel="stylesheet" href="assets/css/indexdept/base.css?v=<?php echo filemtime('assets/css/indexdept/base.css'); ?>">
+    <link rel="stylesheet" href="assets/css/indexdept/layout.css?v=<?php echo filemtime('assets/css/indexdept/layout.css'); ?>">
+    <link rel="stylesheet" href="assets/css/indexdept/components.css?v=<?php echo filemtime('assets/css/indexdept/components.css'); ?>">
+    <link rel="stylesheet" href="assets/css/indexdept/responsive.css?v=<?php echo filemtime('assets/css/indexdept/responsive.css'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -337,7 +337,26 @@ $header_config = [
     'logo_link' => '/trangchu/',
     'show_search' => false,
     'show_mobile_menu' => true,
-    'actions' => []
+    'actions' => [
+        [
+            'url' => 'index.php',
+            'icon' => 'img/back.png',
+            'title' => 'Quay lại',
+            'tooltip' => 'Quay lại danh sách'
+        ],
+        [
+            'url' => 'image_handler.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
+            'icon' => 'img/open.png',
+            'title' => 'Hình ảnh',
+            'tooltip' => 'Quản lý hình ảnh'
+        ],
+        [
+            'url' => 'file_templates.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
+            'icon' => 'img/doc.gif',
+            'title' => 'Biểu mẫu',
+            'tooltip' => 'Biểu mẫu'
+        ]
+    ]
 ];
 ?>
 <?php include 'components/header.php'; ?>
@@ -358,6 +377,6 @@ window.INDEXDEPT_BOOTSTRAP = {
 };
 </script>
 <script src="assets/js/indexdept/indexdept.js"></script>
-<script src="assets/js/header.js"></script>
+<script src="assets/js/header.js?v=<?php echo filemtime('assets/js/header.js'); ?>"></script>
 </body>
 </html>

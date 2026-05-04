@@ -79,6 +79,10 @@ $search_placeholder_json = header_escape(json_encode(
 ));
 
 $actions = is_array($config['actions']) ? $config['actions'] : [];
+$actions = array_values(array_filter($actions, function($action) {
+    return is_array($action) && !empty($action['url']) && !empty($action['icon']);
+}));
+$show_mobile_menu = $show_mobile_menu && ($show_search || !empty($actions));
 
 $search_types = [
     'xuong' => 'Xưởng',
@@ -238,7 +242,7 @@ $search_types = [
                         aria-label="Search input"
                     >
                     <?php endif; ?>
-                    <button type="submit" class="mobile-search-button">🔍 Tìm kiếm</button>
+                    <button type="submit" class="mobile-search-button" aria-label="Tìm kiếm">🔍 Tìm kiếm</button>
                 </div>
             </form>
         </div>

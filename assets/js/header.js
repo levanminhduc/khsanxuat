@@ -24,7 +24,7 @@
 
         // Configuration
         config: {
-            mobileBreakpoint: 768,
+            mobileBreakpoint: 1025,
             toggleId: 'navbar-toggle',
             dropdownId: 'navbar-dropdown',
             activeClass: 'is-active',

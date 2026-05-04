@@ -69,7 +69,7 @@ foreach ($dept_stats as $dept => $completed) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="styleindex.css">
+    <link rel="stylesheet" href="styleindex.css?v=<?php echo filemtime('styleindex.css'); ?>">
     
     <link rel="stylesheet" href="assets/css/header.css?v=<?php echo filemtime('assets/css/header.css'); ?>">
     

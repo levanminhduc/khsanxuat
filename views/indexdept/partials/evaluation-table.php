@@ -266,8 +266,9 @@
                         </tr>
                     </tfoot>
                 </table>
+                </div>
 
-                <div class="button-group">
+                <div class="button-group evaluation-actions">
                     <button type="submit" class="btn-save">Lưu đánh giá</button>
                     <a href="index.php" class="btn-back">Quay lại</a>
                 </div>
