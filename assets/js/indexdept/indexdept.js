@@ -67,16 +67,56 @@
         hideElement(document.getElementById('staffModal'));
     }
 
+    function getBackdropCloseHandler(modalId) {
+        const closeHandlers = {
+            addCriteriaModal: closeModal,
+            deadlineModal: closeDeadlineModal,
+            defaultSettingModal: closeDefaultSettingModal,
+            scoreOptionsModal: closeScoreOptionsModal,
+            staffModal: closeStaffModal
+        };
+
+        return closeHandlers[modalId] || null;
+    }
+
+    function handleModalBackdropClick(event) {
+        if (event.target !== event.currentTarget) return;
+
+        const closeHandler = getBackdropCloseHandler(event.currentTarget.id);
+        if (closeHandler) {
+            closeHandler();
+        }
+    }
+
+    function initializeModalBackdropDismissal() {
+        document.querySelectorAll('.indexdept-modern-modal').forEach(function(modal) {
+            modal.addEventListener('click', handleModalBackdropClick);
+        });
+    }
+
+    function syncModernModalOpenState() {
+        const hasOpenModernModal = Array.prototype.some.call(
+            document.querySelectorAll('.indexdept-modern-modal'),
+            function(modal) {
+                return !modal.hidden && modal.style.display !== 'none';
+            }
+        );
+
+        document.body.classList.toggle('indexdept-modal-open', hasOpenModernModal);
+    }
+
     function showElement(element, displayValue) {
         if (!element) return;
         element.hidden = false;
         element.style.display = element.classList.contains('indexdept-modern-modal') ? 'flex' : (displayValue || 'block');
+        syncModernModalOpenState();
     }
 
     function hideElement(element) {
         if (!element) return;
         element.style.display = 'none';
         element.hidden = true;
+        syncModernModalOpenState();
     }
 
     function escapeHtml(value) {
@@ -529,6 +569,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        initializeModalBackdropDismissal();
         initializeScoreEditors();
         updateDeadlineSelectionSummary();
 

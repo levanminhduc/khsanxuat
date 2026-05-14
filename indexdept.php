@@ -401,7 +401,7 @@ window.INDEXDEPT_BOOTSTRAP = {
     autoSelectTieuchiId: <?php echo json_encode(isset($_REQUEST['tieuchi_id']) ? (int) $_REQUEST['tieuchi_id'] : null); ?>
 };
 </script>
-<script src="assets/js/indexdept/indexdept.js"></script>
+<script src="assets/js/indexdept/indexdept.js?v=<?php echo filemtime('assets/js/indexdept/indexdept.js'); ?>"></script>
 <script src="assets/js/header.js?v=<?php echo filemtime('assets/js/header.js'); ?>"></script>
 <?php include 'components/back-to-top.php'; ?>
 </body>

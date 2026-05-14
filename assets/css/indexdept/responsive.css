@@ -506,7 +506,8 @@
     }
 
     .score-options-modal__body {
-        padding: 0;
+        gap: 6px !important;
+        padding: 6px !important;
     }
 
     .score-options-modal__toolbar,
@@ -523,8 +524,8 @@
     }
 
     .score-options-modal__table-wrap {
-        margin: 8px 8px 0;
-        max-height: calc(94vh - 160px);
+        margin: 0 !important;
+        max-height: calc(94vh - 140px);
         border-radius: 6px 6px 0 0;
     }
 
@@ -569,6 +570,50 @@
     }
 
     .score-options-modal__toolbar--bottom {
-        padding: 8px;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px !important;
+        padding: 6px 0 0 !important;
+    }
+
+}
+
+/* Unified modal footer action order for indexdept mobile dialogs */
+@media screen and (max-width: 768px) {
+    .add-criteria-modal__actions,
+    .deadline-modal__actions,
+    .default-settings-modal__footer-actions,
+    .score-options-modal__footer-actions {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+
+    .add-criteria-modal__actions .score-options-modal__btn,
+    .deadline-modal__actions .score-options-modal__btn,
+    .default-settings-modal__footer-actions .score-options-modal__btn,
+    .score-options-modal__footer-actions .score-options-modal__btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        margin-right: 0 !important;
+        white-space: nowrap;
+    }
+
+    .add-criteria-modal__actions .score-options-modal__btn--secondary,
+    .deadline-modal__actions .score-options-modal__btn--secondary,
+    .default-settings-modal__footer-actions .score-options-modal__btn--secondary,
+    .score-options-modal__footer-actions .score-options-modal__btn--secondary {
+        min-width: 92px;
+    }
+
+    .add-criteria-modal__actions .score-options-modal__btn--primary,
+    .deadline-modal__actions .score-options-modal__btn--primary,
+    .default-settings-modal__footer-actions .score-options-modal__btn--primary,
+    .score-options-modal__footer-actions .score-options-modal__btn--primary {
+        max-width: calc(100% - 108px);
+        min-width: min(220px, calc(100% - 108px));
     }
 }
