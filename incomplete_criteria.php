@@ -681,7 +681,13 @@ $dept_counts = $sorted_dept_counts;
                                 echo '<td style="width: 5%; text-align: center;">' . $stt_display++ . '</td>';
                                 echo '<td style="width: 18%;">' . $dept_display . '</td>';
                                 echo '<td style="width: 42%;">' . $row['thutu'] . '. ' . htmlspecialchars($row['tieuchi_noidung']) . '</td>';
-                                echo '<td style="width: 15%; text-align: center;">' . htmlspecialchars($nhanvien[$row['nguoi_thuchien']] ?? 'Chưa phân công') . '</td>';
+                                // Người chịu trách nhiệm: parse CSV id → ghép nhiều tên
+                                $nguoi_ids = array_filter(array_map('intval', explode(',', (string) $row['nguoi_thuchien'])));
+                                $ten_list = array_filter(array_map(function ($nv_id) use ($nhanvien) {
+                                    return $nhanvien[$nv_id] ?? '';
+                                }, $nguoi_ids));
+                                $nguoi_display = !empty($ten_list) ? implode(', ', $ten_list) : 'Chưa phân công';
+                                echo '<td style="width: 15%; text-align: center;">' . htmlspecialchars($nguoi_display) . '</td>';
                                 echo '<td style="width: 10%; text-align: center;"><span class="status-incomplete">Chưa hoàn thành</span></td>';
                                 echo '<td style="width: 10%;">' . htmlspecialchars($row['ghichu'] ?? '') . '</td>';
                                 echo '</tr>';

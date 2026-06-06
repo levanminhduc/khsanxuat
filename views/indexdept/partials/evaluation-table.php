@@ -59,6 +59,17 @@
                         $total_points = 0; // Biến lưu tổng điểm
                         $max_possible_points = 0; // Biến lưu tổng điểm tối đa có thể đạt được
 
+                        // Query 1 lần dùng chung cho checkbox mọi dòng tiêu chí
+                        $staff_list = [];
+                        $sql_staff_all = "SELECT id, ten FROM nhan_vien WHERE phong_ban = ? AND active = 1 ORDER BY ten";
+                        $stmt_staff_all = $connect->prepare($sql_staff_all);
+                        $stmt_staff_all->bind_param("s", $dept);
+                        $stmt_staff_all->execute();
+                        $result_staff_all = $stmt_staff_all->get_result();
+                        while ($staff_row = $result_staff_all->fetch_assoc()) {
+                            $staff_list[] = $staff_row;
+                        }
+
                         while ($row = $result->fetch_assoc()) {
                             if ($current_nhom != $row['nhom']) {
                                 $current_nhom = $row['nhom'];
@@ -159,38 +170,40 @@
                                     </div>
                                     <?php /* endif; */ ?>
                                 </td>
-                                <td>
-                                    <!-- Thêm hidden input để lưu giá trị gốc của người thực hiện -->
-                                    <input type="hidden" name="old_nguoi_thuchien_<?php echo $row['id']; ?>"
-                                           value="<?php echo $row['nguoi_thuchien']; ?>">
-                                    <select name="nguoi_thuchien_<?php echo $row['id']; ?>" required class="nguoi-thuchien-select">
-                                        <?php
-                                        // Lấy danh sách người thực hiện từ cơ sở dữ liệu
-                                        $sql_staff = "SELECT id, ten FROM nhan_vien WHERE phong_ban = ? AND active = 1 ORDER BY ten";
-                                        $stmt_staff = $connect->prepare($sql_staff);
-                                        $stmt_staff->bind_param("s", $dept);
-                                        $stmt_staff->execute();
-                                        $result_staff = $stmt_staff->get_result();
-
-                                        if ($result_staff->num_rows > 0) {
-                                            while ($staff = $result_staff->fetch_assoc()) {
-                                                $selected = ($row['nguoi_thuchien'] == $staff['id']) ? 'selected' : '';
-                                                echo "<option value='" . $staff['id'] . "' $selected>" . htmlspecialchars($staff['ten']) . "</option>";
-                                            }
-                                        } else {
-                                            // Dùng danh sách mặc định nếu không có dữ liệu
-                                            $nguoi_thuchien = ($dept == 'kehoach')
-                                                ? ['Nguyễn Văn A', 'Trần Thị B']
-                                                : ['Phạm Văn X', 'Lê Thị Y'];
-
-                                            foreach ($nguoi_thuchien as $nguoi) {
-                                                $selected = ($row['nguoi_thuchien'] == $nguoi) ? 'selected' : '';
-                                                echo "<option value='" . htmlspecialchars($nguoi) . "' $selected>" . htmlspecialchars($nguoi) . "</option>";
-                                            }
-                                        }
-                                        ?>
-                                    </select>
+                                <td class="owner-cell">
+                                    <!-- Marker phân biệt "đã submit nhưng bỏ chọn hết" với "không submit" -->
+                                    <input type="hidden" name="nguoi_thuchien_present_<?php echo $row['id']; ?>" value="1">
+                                    <?php
+                                    // Parse CSV id (tương thích dữ liệu cũ chỉ 1 id)
+                                    $selected_ids = array_filter(array_map('intval', explode(',', (string) $row['nguoi_thuchien'])));
+                                    ?>
+                                    <?php if (!empty($staff_list)) : ?>
+                                        <div class="owner-select" data-owner-select>
+                                            <button type="button" class="owner-select__toggle" data-owner-toggle
+                                                    title="Thêm người chịu trách nhiệm"
+                                                    aria-label="Thêm người chịu trách nhiệm">
+                                                <i class="fas fa-user-plus" aria-hidden="true"></i>
+                                            </button>
+                                            <div class="owner-select__chips" data-owner-chips></div>
+                                            <div class="owner-select__panel" data-owner-panel hidden>
+                                                <?php foreach ($staff_list as $staff) : ?>
+                                                    <?php $checked = in_array((int) $staff['id'], $selected_ids, true) ? 'checked' : ''; ?>
+                                                    <label class="owner-checklist__item <?php echo $checked ? 'owner-checklist__item--checked' : ''; ?>">
+                                                        <input type="checkbox"
+                                                               name="nguoi_thuchien_<?php echo $row['id']; ?>[]"
+                                                               value="<?php echo (int) $staff['id']; ?>"
+                                                               <?php echo $checked; ?>>
+                                                        <span class="owner-checklist__name"><?php echo htmlspecialchars($staff['ten']); ?></span>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    <?php else : ?>
+                                        <span class="owner-checklist__empty">Chưa có nhân sự cho bộ phận này</span>
+                                    <?php endif; ?>
                                 </td>
+
+
                                 <td>
                                     <!-- Thêm hidden input để lưu giá trị gốc của điểm -->
                                     <input type="hidden" name="old_diem_<?php echo $row['id']; ?>"

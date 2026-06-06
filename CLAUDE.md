@@ -1,88 +1,72 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Hướng dẫn cho Claude Code khi làm việc với repo này.
 
-## Role & Responsibilities
+## Project Context
 
-Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
+**khsanxuat** — Hệ thống đánh giá sản xuất nhà máy.
 
-## Workflows
+- **Stack**: PHP 7.4+ thuần (không framework), MySQL 5.7+ (mysqli), HTML/CSS/JS vanilla, Apache via Laragon.
+- **Mục đích**: Theo dõi đơn hàng qua 10 bộ phận sản xuất (kế hoạch → kỹ thuật → kho → cắt → ép keo → cơ điện → chuyền may → KCS → ủi thành phẩm → hoàn thành), đánh giá tiêu chí, quản lý hạn xử lý, upload hình ảnh minh hoạ.
+- **Trang chính**: `index.php` (dashboard), `indexdept.php` (chi tiết bộ phận), `theodoi.php`, `settings.php`, `save_danhgia_with_log.php`, `import.php`, `dept_statistics.php`.
+- **Modules**: `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `account/`.
+- **DB connection**: `contdb.php`, `db_connect.php` (Laragon mặc định: `localhost`/`root`/blank/`mysqli`).
 
-- Primary workflow: `./.claude/rules/primary-workflow.md`
-- Development rules: `./.claude/rules/development-rules.md`
-- Orchestration protocols: `./.claude/rules/orchestration-protocol.md`
-- Documentation management: `./.claude/rules/documentation-management.md`
-- And other workflows: `./.claude/rules/*`
+Chi tiết kiến trúc, code standards, schema xem trong `./docs/`.
 
-**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
-**IMPORTANT:** You must follow strictly the development rules in `./.claude/rules/development-rules.md` file.
-**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
-**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+## Language
 
-## Hook Response Protocol
+- Code, commits, technical terms: tiếng Anh.
+- Giải thích, báo cáo, trao đổi với user: **tiếng Việt**.
 
-### Privacy Block Hook (`@@PRIVACY_PROMPT@@`)
+## Code Comment Convention (Backend)
 
-When a tool call is blocked by the privacy-block hook, the output contains a JSON marker between `@@PRIVACY_PROMPT_START@@` and `@@PRIVACY_PROMPT_END@@`. **You MUST use the `AskUserQuestion` tool** to get proper user approval.
+- **KHÔNG comment** code self-explanatory (tên hàm/biến rõ ý, getter/setter, boilerplate hiển nhiên).
+- **CHỈ comment** logic backend quan trọng/phức tạp:
+  - Quy tắc nghiệp vụ phi hiển nhiên (vd: cách tính `han_xuly` từ `ngay_tinh_han`, logic CSV ID `nguoi_thuchien`).
+  - Lý do bypass / workaround (link issue/ticket nếu có).
+  - Invariants ràng buộc CSDL (vd: tại sao normalize CSV ID, tại sao `INSERT ... ON DUPLICATE KEY` thay UPDATE).
+  - Bảo mật (CSRF token check, prepared statement edge case, escape user input).
+  - Performance trade-off có ý đồ (vd: denormalize cột để giảm JOIN).
+- Comment bằng **tiếng Việt**, ngắn gọn, focus "**tại sao**" thay vì "cái gì".
+- Frontend (CSS/JS vanilla) chỉ comment khi có hack browser hoặc convention không rõ.
 
-**Required Flow:**
+## Code Style
 
-1. Parse the JSON from the hook output
-2. Use `AskUserQuestion` with the question data from the JSON
-3. Based on user's selection:
-   - **"Yes, approve access"** → Use `bash cat "filepath"` to read the file (bash is auto-approved)
-   - **"No, skip this file"** → Continue without accessing the file
+- **File naming**: kebab-case, tên dài mô tả rõ ý (vd: `save-danhgia-with-log.php`).
+- **PHP functions**: camelCase (`checkDeptStatus`, `getEarliestDeadline`).
+- **PHP variables**: snake_case (`$id_sanxuat`, `$search_value`).
+- **Constants**: UPPER_SNAKE_CASE (`DB_SERVER`, `DB_NAME`).
+- **File size**: giữ < 800 lines; vượt thì tách module sang `includes/{area}/`.
+- **DB**: luôn dùng `mysqli` prepared statements + bind params. Tuyệt đối không nội suy biến vào SQL string.
 
-**Example AskUserQuestion call:**
-```json
-{
-  "questions": [{
-    "question": "I need to read \".env\" which may contain sensitive data. Do you approve?",
-    "header": "File Access",
-    "options": [
-      { "label": "Yes, approve access", "description": "Allow reading .env this time" },
-      { "label": "No, skip this file", "description": "Continue without accessing this file" }
-    ],
-    "multiSelect": false
-  }]
-}
-```
+## Modularization
 
-**IMPORTANT:** Always ask the user via `AskUserQuestion` first. Never try to work around the privacy block without explicit user approval.
+- File code > 200 lines → cân nhắc tách.
+- Check module hiện có (`includes/`, `components/`) trước khi tạo mới.
+- Markdown/text/config/env không cần tách.
 
-## Python Scripts (Skills)
+## Documentation
 
-When running Python scripts from `.claude/skills/`, use the venv Python interpreter:
-- **Linux/macOS:** `.claude/skills/.venv/bin/python3 scripts/xxx.py`
-- **Windows:** `.claude\skills\.venv\Scripts\python.exe scripts\xxx.py`
+Docs dự án trong `./docs/`:
 
-This ensures packages installed by `install.sh` (google-genai, pypdf, etc.) are available.
+- `project-overview-pdr.md` — PDR
+- `codebase-summary.md` — Index file/function chính
+- `system-architecture.md` — Stack, schema DB, request flow
+- `code-standards.md` — Naming, error handling, file structure
+- `design-guidelines.md` — UI principles, color, components
+- `deployment-guide.md` — Local + production deploy
+- `development-roadmap.md` — Roadmap & changelog phases
+- `project-changelog.md` — Lịch sử thay đổi
+- `indexdept-flow-overview.md`, `indexdept-refactor-plan.md` — Tài liệu module indexdept
 
-**IMPORTANT:** When scripts of skills failed, don't stop, try to fix them directly.
+Cập nhật docs tương ứng khi feature/schema thay đổi.
 
-## [IMPORTANT] Consider Modularization
-- If a code file exceeds 200 lines of code, consider modularizing it
-- Check existing modules before creating new
-- Analyze logical separation boundaries (functions, classes, concerns)
-- Use kebab-case naming with long descriptive names, it's fine if the file name is long because this ensures file names are self-documenting for LLM tools (Grep, Glob, Search)
-- Write descriptive code comments
-- After modularization, continue with main task
-- When not to modularize: Markdown files, plain text files, bash scripts, configuration files, environment variables files, etc.
+## Working Principles
 
-## Documentation Management
-
-We keep all important docs in `./docs` folder and keep updating them, structure like below:
-
-```
-./docs
-├── project-overview-pdr.md
-├── code-standards.md
-├── codebase-summary.md
-├── design-guidelines.md
-├── deployment-guide.md
-├── system-architecture.md
-└── project-roadmap.md
-```
-
-**IMPORTANT:** *MUST READ* and *MUST COMPLY* all *INSTRUCTIONS* in project `./CLAUDE.md`, especially *WORKFLOWS* section is *CRITICALLY IMPORTANT*, this rule is *MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!*
+- **YAGNI / KISS / DRY**.
+- Đọc `./README.md` + `./docs/` trước khi plan hoặc implement.
+- Sửa file hiện có thay vì tạo file enhanced/v2.
+- Không commit secrets (`.env`, credentials, API keys).
+- Conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`...). Mô tả tiếng Việt OK.
+- Không skip failing tests/linter để pass build.

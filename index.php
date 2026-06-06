@@ -711,7 +711,9 @@ foreach ($dept_stats as $dept => $completed) {
             'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
             'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
             'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
-            'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF']
+            'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF'],
+            'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#14B8A6'],
+            'KCS' => ['code' => 'kcs', 'color' => '#F97316']
 
         ];
 
@@ -877,9 +879,16 @@ foreach ($dept_stats as $dept => $completed) {
                                 Cơ Điện
                             </a>
                         </th>
-                        
-                        
-                        
+                        <th style="width: 120px;">
+                            <a href="dept_statistics.php?dept=chuyen_may&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                                Chuyền May
+                            </a>
+                        </th>
+                        <th style="width: 110px;">
+                            <a href="dept_statistics.php?dept=kcs&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                                KCS
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -996,7 +1005,9 @@ foreach ($dept_stats as $dept => $completed) {
 
             $departments = [
                 'cat' => 'Cắt',
-                'co_dien' => 'Cơ Điện'
+                'co_dien' => 'Cơ Điện',
+                'chuyen_may' => 'Chuyền May',
+                'kcs' => 'KCS'
 
             ];
 
@@ -1079,7 +1090,9 @@ document.addEventListener('DOMContentLoaded', function() {
         'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
         'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
         'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
-        'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF']
+        'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF'],
+        'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#14B8A6'],
+        'KCS' => ['code' => 'kcs', 'color' => '#F97316']
 
     ];
 

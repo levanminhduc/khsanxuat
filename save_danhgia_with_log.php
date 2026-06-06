@@ -51,6 +51,38 @@ if (!$connect) {
 // Lấy logger
 $logger = getActivityLogger($connect);
 
+/**
+ * CSV id ("3,7,12") → chuỗi tên ("Nguyễn A, Trần B") để ghi log.
+ * id ép intval trước khi nội suy IN(...) nên an toàn SQL injection.
+ */
+function resolveNamesFromCsv($connect, $csv)
+{
+    $ids = array_filter(array_map('intval', explode(',', (string) $csv)));
+    if (empty($ids)) {
+        return '';
+    }
+    $in = implode(',', $ids);
+    $res = $connect->query("SELECT ten FROM nhan_vien WHERE id IN ($in)");
+    $names = [];
+    if ($res) {
+        while ($r = $res->fetch_assoc()) {
+            $names[] = $r['ten'];
+        }
+    }
+    return implode(', ', $names);
+}
+
+/**
+ * Chuẩn hoá chuỗi CSV id (loại trùng/rỗng, sort tăng dần) để so sánh nhất quán.
+ */
+function normalizeCsvIds($csv)
+{
+    $ids = array_values(array_unique(array_filter(array_map('intval', explode(',', (string) $csv)))));
+    sort($ids);
+    return implode(',', $ids);
+}
+
+
 // Đọc giá trị dept từ URL
 $dept = isset($_GET['dept']) ? $_GET['dept'] : (isset($_POST['dept']) ? $_POST['dept'] : '');
 // Thiết lập danh sách các giá trị dept hợp lệ
@@ -135,7 +167,16 @@ try {
         
         // Kiểm tra các thay đổi
         $diem_danhgia = isset($_POST['diem_danhgia_' . $id_tieuchi]) ? $_POST['diem_danhgia_' . $id_tieuchi] : null;
-        $nguoi_thuchien = isset($_POST['nguoi_thuchien_' . $id_tieuchi]) ? $_POST['nguoi_thuchien_' . $id_tieuchi] : null;
+        // Người chịu trách nhiệm: nhiều người dạng mảng checkbox → CSV id.
+        // Marker present để phân biệt "đã submit (kể cả bỏ hết)" với "không submit dòng này".
+        if (isset($_POST['nguoi_thuchien_present_' . $id_tieuchi])) {
+            $nguoi_ids = $_POST['nguoi_thuchien_' . $id_tieuchi] ?? [];
+            $nguoi_ids = array_values(array_unique(array_filter(array_map('intval', (array) $nguoi_ids))));
+            sort($nguoi_ids);
+            $nguoi_thuchien = implode(',', $nguoi_ids); // '' nếu bỏ chọn hết → xoá hết
+        } else {
+            $nguoi_thuchien = null; // không submit → giữ giá trị cũ qua COALESCE
+        }
         $ghichu = isset($_POST['ghichu_' . $id_tieuchi]) ? $_POST['ghichu_' . $id_tieuchi] : null;
 
         if ($diem_danhgia !== null) {
@@ -171,12 +212,12 @@ try {
                               ghichu = COALESCE(?, ghichu)
                               WHERE id_sanxuat = ? AND id_tieuchi = ?";
                 $stmt_update = $connect->prepare($sql_update);
-                $stmt_update->bind_param("diisii", $diem_danhgia, $da_thuchien, $nguoi_thuchien, $ghichu, $id_sanxuat, $id_tieuchi);
+                $stmt_update->bind_param("dissii", $diem_danhgia, $da_thuchien, $nguoi_thuchien, $ghichu, $id_sanxuat, $id_tieuchi);
             } else {
                 $sql_insert = "INSERT INTO danhgia_tieuchi (id_sanxuat, id_tieuchi, diem_danhgia, da_thuchien, nguoi_thuchien, ghichu) 
                               VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt_insert = $connect->prepare($sql_insert);
-                $stmt_insert->bind_param("iidiis", $id_sanxuat, $id_tieuchi, $diem_danhgia, $da_thuchien, $nguoi_thuchien, $ghichu);
+                $stmt_insert->bind_param("iidiss", $id_sanxuat, $id_tieuchi, $diem_danhgia, $da_thuchien, $nguoi_thuchien, $ghichu);
             }
             
             // Thực thi câu lệnh SQL
@@ -192,18 +233,15 @@ try {
                 $old_note = $old_data[$id_tieuchi]['ghichu'];
                 
                 if ($diem_danhgia !== null && $diem_danhgia != $old_score) {
-                    // Lấy tên người thực hiện
-                    $sql_old_name = "SELECT ten FROM nhan_vien WHERE id = ?";
-                    $stmt_old = $connect->prepare($sql_old_name);
-                    $stmt_old->bind_param("i", $old_person);
-                    $stmt_old->execute();
-                    $old_name = $stmt_old->get_result()->fetch_assoc()['ten'] ?? $old_person;
-                    
-                    $sql_new_name = "SELECT ten FROM nhan_vien WHERE id = ?";
-                    $stmt_new = $connect->prepare($sql_new_name);
-                    $stmt_new->bind_param("i", $nguoi_thuchien);
-                    $stmt_new->execute();
-                    $new_name = $stmt_new->get_result()->fetch_assoc()['ten'] ?? $nguoi_thuchien;
+                    // Lấy tên người thực hiện (hỗ trợ nhiều người dạng CSV)
+                    $old_name = resolveNamesFromCsv($connect, $old_person);
+                    if ($old_name === '') {
+                        $old_name = 'Chưa phân công';
+                    }
+                    $new_name = resolveNamesFromCsv($connect, $nguoi_thuchien);
+                    if ($new_name === '') {
+                        $new_name = 'Chưa phân công';
+                    }
 
                     $all_changes[] = "tiêu chí {$thutu}";
                     $all_old_values[] = "tiêu chí {$thutu}: điểm {$old_score}, người thực hiện {$old_name}" . 
@@ -215,21 +253,17 @@ try {
                         'noidung' => $noidung
                     ];
                 }
-                // Kiểm tra nếu chỉ có người thực hiện thay đổi
-                else if ($nguoi_thuchien !== null && $nguoi_thuchien != $old_person) {
-                    // Lấy tên người thực hiện cũ
-                    $sql_old_name = "SELECT ten FROM nhan_vien WHERE id = ?";
-                    $stmt_old = $connect->prepare($sql_old_name);
-                    $stmt_old->bind_param("i", $old_person);
-                    $stmt_old->execute();
-                    $old_name = $stmt_old->get_result()->fetch_assoc()['ten'] ?? $old_person;
-                    
-                    // Lấy tên người thực hiện mới
-                    $sql_new_name = "SELECT ten FROM nhan_vien WHERE id = ?";
-                    $stmt_new = $connect->prepare($sql_new_name);
-                    $stmt_new->bind_param("i", $nguoi_thuchien);
-                    $stmt_new->execute();
-                    $new_name = $stmt_new->get_result()->fetch_assoc()['ten'] ?? $nguoi_thuchien;
+                // Kiểm tra nếu chỉ có người thực hiện thay đổi (so sánh CSV đã chuẩn hoá)
+                else if ($nguoi_thuchien !== null && normalizeCsvIds($nguoi_thuchien) != normalizeCsvIds($old_person)) {
+                    // Lấy tên người thực hiện cũ & mới (hỗ trợ nhiều người dạng CSV)
+                    $old_name = resolveNamesFromCsv($connect, $old_person);
+                    if ($old_name === '') {
+                        $old_name = 'Chưa phân công';
+                    }
+                    $new_name = resolveNamesFromCsv($connect, $nguoi_thuchien);
+                    if ($new_name === '') {
+                        $new_name = 'Chưa phân công';
+                    }
 
                     $all_changes[] = "tiêu chí {$thutu} (người thực hiện)";
                     $all_old_values[] = "tiêu chí {$thutu}: điểm {$old_score}, người thực hiện {$old_name}" . 
@@ -243,12 +277,11 @@ try {
                 }
                 // Kiểm tra nếu chỉ có ghi chú thay đổi
                 else if ($ghichu != $old_note) {
-                    $sql_old_name = "SELECT ten FROM nhan_vien WHERE id = ?";
-                    $stmt_old = $connect->prepare($sql_old_name);
-                    $stmt_old->bind_param("i", $old_person);
-                    $stmt_old->execute();
-                    $old_name = $stmt_old->get_result()->fetch_assoc()['ten'] ?? $old_person;
-                    
+                    $old_name = resolveNamesFromCsv($connect, $old_person);
+                    if ($old_name === '') {
+                        $old_name = 'Chưa phân công';
+                    }
+
                     $all_changes[] = "tiêu chí {$thutu} (ghi chú)";
                     $all_old_values[] = "tiêu chí {$thutu}: điểm {$old_score}, người thực hiện {$old_name}" . 
                                        (empty($old_note) ? "" : ", ghi chú: " . $old_note);
