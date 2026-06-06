@@ -7,6 +7,8 @@ ini_set('log_errors', 1);
 // Kết nối database và logger
 include 'db_connect.php';
 include 'activity_logger.php';
+require_once 'check_tieuchi_image.php';
+ini_set('display_errors', 0);
 
 // CSRF protection
 require_once 'includes/security/csrf-helper.php';
@@ -93,6 +95,8 @@ if ($id_sanxuat <= 0 || empty($dept)) {
     die("Thiếu thông tin cần thiết");
 }
 
+$required_image_criteria = array_flip(array_map('intval', getRequiredImagesCriteria($connect, $dept)));
+
 // Lấy dữ liệu cũ để so sánh
 $old_data = [];
 $sql_old = "SELECT dt.id_tieuchi, dt.diem_danhgia, dt.nguoi_thuchien, dt.ghichu 
@@ -143,6 +147,14 @@ try {
             }
 
             $diem_danhgia = (float) $diem_danhgia;
+
+            if (
+                $diem_danhgia > 0
+                && isset($required_image_criteria[(int) $id_tieuchi])
+                && !checkTieuchiHasImage($connect, $id_sanxuat, (int) $id_tieuchi)
+            ) {
+                throw new Exception("Bạn cần đính kèm hình ảnh cho tiêu chí {$thutu} trước khi cập nhật điểm đánh giá.");
+            }
         }
         $da_thuchien = ($diem_danhgia !== null && $diem_danhgia > 0) ? 1 : 0;
         
