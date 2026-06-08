@@ -43,6 +43,64 @@
     .action-buttons .btn-add-criteria {
         margin-right: 0;
     }
+
+    .evaluation-section--wide {
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .evaluation-section--wide .table-responsive {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .evaluation-section--wide .evaluation-table {
+        width: 905px;
+        min-width: 905px;
+        table-layout: fixed;
+    }
+
+    .evaluation-section--wide .evaluation-table th.resizable {
+        resize: none;
+        overflow: visible;
+    }
+
+    .evaluation-section--wide .col-stt {
+        width: 40px;
+        min-width: 40px;
+    }
+
+    .evaluation-section--wide .col-criteria-wide {
+        width: 250px;
+        min-width: 250px;
+    }
+
+    .evaluation-section--wide .col-deadline {
+        width: 124px;
+        min-width: 124px;
+    }
+
+    .evaluation-section--wide .col-owner {
+        width: 180px;
+        min-width: 180px;
+    }
+
+    .evaluation-section--wide .col-score {
+        width: 110px;
+        min-width: 110px;
+    }
+
+    .evaluation-section--wide .col-status {
+        width: 76px;
+        min-width: 76px;
+    }
+
+    .evaluation-section--wide .col-note {
+        width: 125px;
+        min-width: 125px;
+    }
 }
 
 /* General Layout Responsive */
