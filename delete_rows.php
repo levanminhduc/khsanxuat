@@ -1,5 +1,7 @@
 <?php
 require "contdb.php";
+require_once 'includes/security/csrf-helper.php';
+verifyCsrfOrDie();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['selected_rows']) && !empty($_POST['selected_rows'])) {
     $selected_rows = $_POST['selected_rows'];

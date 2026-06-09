@@ -131,10 +131,7 @@ $missing_files = checkMissingFiles($required_settings_files);
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/header.css?v=<?php echo filemtime('assets/css/header.css'); ?>">
-    <link rel="stylesheet" href="assets/css/indexdept/base.css?v=<?php echo filemtime('assets/css/indexdept/base.css'); ?>">
-    <link rel="stylesheet" href="assets/css/indexdept/layout.css?v=<?php echo filemtime('assets/css/indexdept/layout.css'); ?>">
-    <link rel="stylesheet" href="assets/css/indexdept/components.css?v=<?php echo filemtime('assets/css/indexdept/components.css'); ?>">
-    <link rel="stylesheet" href="assets/css/indexdept/responsive.css?v=<?php echo filemtime('assets/css/indexdept/responsive.css'); ?>">
+    <link rel="stylesheet" href="assets/css/indexdept/indexdept.css?v=<?php echo filemtime('assets/css/indexdept/indexdept.css'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

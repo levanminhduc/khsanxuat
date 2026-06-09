@@ -267,3 +267,69 @@ function calculateDeadlineDate($ngayin, $days_before = 7)
     $date->modify("-{$days_before} days");
     return $date->format('d/m/Y');
 }
+
+function batchLoadDeptStatus($connect, $rows)
+{
+    if (empty($rows)) {
+        return [];
+    }
+
+    $ids = array_column($rows, 'stt');
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $types = str_repeat('i', count($ids));
+
+    $sql = "SELECT id_sanxuat, dept, completed FROM dept_status WHERE id_sanxuat IN ($placeholders)";
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param($types, ...$ids);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $status_map = [];
+    while ($row = $result->fetch_assoc()) {
+        $status_map[$row['id_sanxuat']][$row['dept']] = (bool)$row['completed'];
+    }
+    $stmt->close();
+
+    return $status_map;
+}
+
+function batchLoadDeadlines($connect, $rows)
+{
+    if (empty($rows)) {
+        return [];
+    }
+
+    $ids = array_column($rows, 'stt');
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $types = str_repeat('i', count($ids));
+
+    $sql = "SELECT dg.id_sanxuat, tc.dept, MIN(dg.han_xuly) AS earliest_deadline
+            FROM danhgia_tieuchi dg
+            JOIN tieuchi_dept tc ON dg.id_tieuchi = tc.id
+            WHERE dg.id_sanxuat IN ($placeholders)
+            AND dg.han_xuly IS NOT NULL
+            GROUP BY dg.id_sanxuat, tc.dept";
+
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param($types, ...$ids);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $deadline_map = [];
+    while ($row = $result->fetch_assoc()) {
+        $deadline_map[$row['id_sanxuat']][$row['dept']] = $row['earliest_deadline'];
+    }
+    $stmt->close();
+
+    return $deadline_map;
+}
+
+function getDeptStatusFromCache($status_map, $id_sanxuat, $dept)
+{
+    return isset($status_map[$id_sanxuat][$dept]) ? $status_map[$id_sanxuat][$dept] : false;
+}
+
+function getDeadlineFromCache($deadline_map, $id_sanxuat, $dept)
+{
+    return isset($deadline_map[$id_sanxuat][$dept]) ? $deadline_map[$id_sanxuat][$dept] : null;
+}
