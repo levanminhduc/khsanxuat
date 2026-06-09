@@ -2104,3 +2104,75 @@ select[id^="ngay_tinh_han_"] {
         opacity: 0;
     }
 }
+
+/* --- Row completed: ẩn tiêu chí đã hoàn thành --- */
+.row-completed {
+    display: none;
+}
+
+.show-completed .row-completed {
+    display: table-row;
+    background-color: #f0fdf4;
+}
+
+.evaluation-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.evaluation-section__header h2 {
+    margin: 0;
+}
+
+.btn-toggle-completed {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-toggle-completed:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-toggle-completed.active {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #166534;
+}
+
+/* --- Auto-save toast --- */
+.autosave-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #166534;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+
+.autosave-toast--visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.autosave-toast--error {
+    background: #991b1b;
+}

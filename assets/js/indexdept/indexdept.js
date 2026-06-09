@@ -615,7 +615,13 @@
 
         // Cập nhật tổng điểm sau khi thay đổi điểm
         updateTotalPoints();
+
+        // Auto-save điểm
+        window._autoSaveScore(tieuchi_id, element.value);
     }
+
+    function autoSaveScore() {}
+    function showAutoSaveToast() {}
 
     // Hàm cập nhật tổng điểm
     function updateTotalPoints() {
@@ -1851,3 +1857,68 @@
     }
 })();
 
+// Toggle hiển thị/ẩn tiêu chí đã hoàn thành
+function toggleCompletedRows() {
+    const table = document.querySelector('#danhgiaForm .evaluation-table');
+    const btn = document.getElementById('toggleCompletedRows');
+    const label = document.getElementById('toggleCompletedLabel');
+
+    if (!table) return;
+
+    const isShowing = table.classList.toggle('show-completed');
+    btn.classList.toggle('active', isShowing);
+    label.textContent = isShowing ? 'Ẩn đã hoàn thành' : 'Hiện đã hoàn thành';
+}
+
+// Auto-save score khi user chọn điểm
+window._autoSaveScore = function(id_tieuchi, diem) {
+    var form = document.getElementById('danhgiaForm');
+    if (!form) return;
+    var csrfToken = form.querySelector('input[name="csrf_token"]').value;
+    var body = new URLSearchParams({
+        id_sanxuat: INDEXDEPT_BOOTSTRAP.id,
+        id_tieuchi: id_tieuchi,
+        dept: INDEXDEPT_BOOTSTRAP.dept,
+        diem_danhgia: diem,
+        csrf_token: csrfToken
+    });
+
+    fetch('includes/indexdept/save_score.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body.toString()
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.success) {
+            window._showAutoSaveToast('Đã lưu');
+        } else {
+            window._showAutoSaveToast(data.message || 'Lỗi lưu', true);
+            if (data.require_image) {
+                window.location.href = 'image_handler.php?id=' + INDEXDEPT_BOOTSTRAP.id +
+                    '&dept=' + INDEXDEPT_BOOTSTRAP.dept +
+                    '&tieuchi_id=' + id_tieuchi;
+            }
+        }
+    })
+    .catch(function() {
+        window._showAutoSaveToast('Lỗi kết nối', true);
+    });
+};
+
+window._showAutoSaveToast = function(msg, isError) {
+    var existing = document.getElementById('autosave-toast');
+    if (existing) existing.remove();
+
+    var toast = document.createElement('div');
+    toast.id = 'autosave-toast';
+    toast.className = 'autosave-toast' + (isError ? ' autosave-toast--error' : '');
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+
+    setTimeout(function() { toast.classList.add('autosave-toast--visible'); }, 10);
+    setTimeout(function() {
+        toast.classList.remove('autosave-toast--visible');
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 2000);
+};

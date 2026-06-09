@@ -6,7 +6,12 @@
         <?php endif; ?>
 
         <div class="evaluation-section evaluation-section--wide">
-            <h2>Tiêu chí đánh giá</h2>
+            <div class="evaluation-section__header">
+                <h2>Tiêu chí đánh giá</h2>
+                <button type="button" id="toggleCompletedRows" class="btn-toggle-completed" onclick="toggleCompletedRows()">
+                    <i class="fas fa-eye"></i> <span id="toggleCompletedLabel">Hiện đã hoàn thành</span>
+                </button>
+            </div>
             <form action="save_danhgia_with_log.php" method="POST" id="danhgiaForm">
                 <?php echo getCsrfInput(); ?>
                 <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
@@ -146,8 +151,10 @@
 
                             // Biến kiểm tra tiêu chí đã hoàn thành hay chưa (để hiển thị khác nhau)
                             $is_completed = ($effective_score > 0);
+                            // Ẩn tiêu chí có default score >= 1 (set mặc định sẵn, không phải user chọn)
+                            $has_high_default = (floatval($default_score_value) >= 1);
                             ?>
-                            <tr>
+                            <tr class="<?php echo $has_high_default ? 'row-completed' : ''; ?>" data-has-default="<?php echo $has_high_default ? '1' : '0'; ?>">
                                 <td><?php echo $row['thutu']; ?></td>
                                 <td class="text-left;"><?php echo htmlspecialchars($row['noidung']); ?></td>
                                 <td class="deadline-info">
