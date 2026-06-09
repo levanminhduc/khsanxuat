@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Lấy thông tin tháng từ URL
 $month = isset($_GET['month']) ? $_GET['month'] : date('m');
@@ -427,7 +427,7 @@ if ($total_avg_score < 267) {
         'show_mobile_menu' => true,
         'actions' => []
     ];
-    include 'components/header.php';
+    include BASE_PATH . '/components/header.php';
     ?>
 
     <div class="container">

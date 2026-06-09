@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Mảng ánh xạ tên bộ phận
 $dept_names = [
@@ -125,7 +125,7 @@ $dept_names = [
         'actions' => []
     ];
     ?>
-    <?php include 'components/header.php'; ?>
+    <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
         <?php

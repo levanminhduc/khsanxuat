@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Lấy thông tin bộ phận và tháng từ URL
 $dept = isset($_GET['dept']) ? $_GET['dept'] : '';
@@ -443,7 +443,7 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
         'show_mobile_menu' => true,
         'actions' => []
     ];
-    include 'components/header.php';
+    include BASE_PATH . '/components/header.php';
     ?>
 
     <div class="container">

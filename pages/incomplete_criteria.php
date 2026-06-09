@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -603,7 +603,7 @@ $dept_counts = $sorted_dept_counts;
         'actions' => []
     ];
     ?>
-    <?php include 'components/header.php'; ?>
+    <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
         <div class="style-info">

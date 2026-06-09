@@ -3,7 +3,7 @@
 session_start();
 
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Header Config
 $header_config = [
@@ -222,7 +222,7 @@ $departments = [
     </style>
 </head>
 <body>
-    <?php include 'components/header.php'; ?>
+    <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
         

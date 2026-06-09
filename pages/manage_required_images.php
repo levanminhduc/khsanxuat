@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra và tạo bảng nếu chưa tồn tại
 $sql_create_table = "CREATE TABLE IF NOT EXISTS required_images_criteria (
@@ -141,7 +141,7 @@ $result = $connect->query($sql);
         'actions' => []
     ];
     ?>
-    <?php include 'components/header.php'; ?>
+    <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
         <?php if (isset($success_message)): ?>

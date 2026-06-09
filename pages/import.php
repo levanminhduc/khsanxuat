@@ -1,6 +1,6 @@
 <?php
 // Kết nối cơ sở dữ liệu sử dụng mysqli
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 /**
  * Hàm chuyển đổi định dạng ngày từ d/m/Y sang Y-m-d
@@ -1027,7 +1027,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         'show_mobile_menu' => true,
         'actions' => []
     ];
-    include 'components/header.php';
+    include BASE_PATH . '/components/header.php';
     ?>
 
     <!-- Hiển thị thông báo -->

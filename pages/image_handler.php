@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -725,7 +725,7 @@ $dept_names = array(
         'actions' => []
     ];
     ?>
-    <?php include 'components/header.php'; ?>
+    <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
         <a href="indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">

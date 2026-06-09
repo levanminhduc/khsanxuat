@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Header Config
 $header_config = [
@@ -87,7 +87,7 @@ $header_config = [
     </style>
 </head>
 <body>
-    <?php include 'components/header.php'; ?>
+    <?php include BASE_PATH . '/components/header.php'; ?>
     
     <div class="container">
         <div class="row">

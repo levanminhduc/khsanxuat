@@ -1,6 +1,6 @@
 <?php
 // Kết nối cơ sở dữ liệu
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Xử lý POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -641,7 +641,7 @@ $dept_names = array(
         'show_mobile_menu' => true,
         'actions' => []
     ];
-    include 'components/header.php';
+    include BASE_PATH . '/components/header.php';
     ?>
 
     <div class="container">

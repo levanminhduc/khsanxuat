@@ -10,7 +10,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 // Kết nối + cấu hình (cần BASE_URL cho redirect đăng nhập)
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/helpers/activity_logger.php';
 
 // Kiểm tra kết nối
@@ -268,7 +268,7 @@ $dept_names = [
         'show_mobile_menu' => true,
         'actions' => []
     ];
-    include 'components/header.php';
+    include BASE_PATH . '/components/header.php';
     ?>
 
     <div class="container">

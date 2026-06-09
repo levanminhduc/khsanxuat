@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/bootstrap.php';
-include 'components/modal.php';
-require_once 'components/form-page.php';
+require_once __DIR__ . '/../bootstrap.php';
+include BASE_PATH . '/components/modal.php';
+require_once BASE_PATH . '/components/form-page.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
             ]
         ]
     ];
-    include 'components/header.php';
+    include BASE_PATH . '/components/header.php';
     ?>
 
     <div class="form-page-component">
