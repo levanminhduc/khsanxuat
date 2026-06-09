@@ -1,24 +1,18 @@
 <?php
+require_once __DIR__ . '/bootstrap.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
-// Bắt đầu session nếu chưa được bắt đầu
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     // Lưu URL hiện tại để redirect sau khi đăng nhập
     $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "/account/login.php");
     exit();
 }
 
-// Kết nối database
-require_once __DIR__ . '/bootstrap.php';
 include 'activity_logger.php';
 
 // Kiểm tra kết nối

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Lấy dữ liệu từ form
 $name = $_POST['name'];
@@ -10,7 +10,7 @@ $confirm_password = $_POST['confirm_password'];
 
 // Kiểm tra mật khẩu xác nhận
 if ($password !== $confirm_password) {
-    header("Location: register.php?error_message=Mật khẩu xác nhận không khớp");
+    header("Location: " . BASE_URL . "/account/register.php?error_message=Mật khẩu xác nhận không khớp");
     exit();
 }
 
@@ -24,7 +24,7 @@ mysqli_stmt_store_result($check_stmt);
 if (mysqli_stmt_num_rows($check_stmt) > 0) {
     // Tên đăng nhập đã tồn tại
     mysqli_stmt_close($check_stmt);
-    header("Location: register.php?error_message=Tên đăng nhập đã tồn tại");
+    header("Location: " . BASE_URL . "/account/register.php?error_message=Tên đăng nhập đã tồn tại");
     exit();
 }
 
@@ -39,13 +39,13 @@ if (mysqli_stmt_execute($insert_stmt)) {
     // Đăng ký thành công
     mysqli_stmt_close($insert_stmt);
     mysqli_close($connect);
-    header("Location: login.php?success_message=Đăng ký thành công! Vui lòng đăng nhập");
+    header("Location: " . BASE_URL . "/account/login.php?success_message=Đăng ký thành công! Vui lòng đăng nhập");
     exit();
 } else {
     // Lỗi khi thêm người dùng
     $error = mysqli_error($connect);
     mysqli_stmt_close($insert_stmt);
     mysqli_close($connect);
-    header("Location: register.php?error_message=Lỗi khi đăng ký: " . urlencode($error));
+    header("Location: " . BASE_URL . "/account/register.php?error_message=Lỗi khi đăng ký: " . urlencode($error));
     exit();
 } 

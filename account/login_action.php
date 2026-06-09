@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 $name = $_POST['name'];
 $pass = $_POST['password'];
@@ -33,19 +33,19 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
             unset($_SESSION['redirect_url']); // Xóa redirect_url sau khi sử dụng
             header("Location: " . $redirect_to);
         } else {
-            header("Location: index.php");
+            header("Location: " . BASE_URL . "/index.php");
         }
         exit();
     } else {
         // Trả về lỗi mật khẩu sai
         error_log("Đăng nhập thất bại - Sai mật khẩu cho username: {$name}");
-        header("Location: login.php?error_message=Sai tên đăng nhập hoặc mật khẩu");
+        header("Location: " . BASE_URL . "/account/login.php?error_message=Sai tên đăng nhập hoặc mật khẩu");
         exit();
     }
 } else {
     // Trả về lỗi tên đăng nhập không tồn tại
     error_log("Đăng nhập thất bại - Username không tồn tại: {$name}");
-    header("Location: login.php?error_message=Sai tên đăng nhập hoặc mật khẩu");
+    header("Location: " . BASE_URL . "/account/login.php?error_message=Sai tên đăng nhập hoặc mật khẩu");
     exit();
 }
 

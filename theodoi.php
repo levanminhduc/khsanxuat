@@ -9,11 +9,14 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Kết nối + cấu hình (cần BASE_URL cho redirect đăng nhập)
+require_once __DIR__ . '/bootstrap.php';
+
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     // Lưu URL hiện tại để redirect sau khi đăng nhập
     $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-    header("Location: login.php");
+    header("Location: " . BASE_URL . "/account/login.php");
     exit();
 }
 

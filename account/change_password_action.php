@@ -10,7 +10,7 @@ $confirm_password = $_POST['confirm_password'];
 
 // Kiểm tra mật khẩu xác nhận
 if ($new_password !== $confirm_password) {
-    header("Location: change_password.php?error_message=Mật khẩu xác nhận không khớp");
+    header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu xác nhận không khớp");
     exit();
 }
 
@@ -28,7 +28,7 @@ if (mysqli_stmt_num_rows($check_stmt) > 0) {
     // Kiểm tra mật khẩu hiện tại có đúng không
     if ($current_password !== $db_password) {
         mysqli_stmt_close($check_stmt);
-        header("Location: change_password.php?error_message=Mật khẩu hiện tại không đúng");
+        header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu hiện tại không đúng");
         exit();
     }
     
@@ -43,19 +43,19 @@ if (mysqli_stmt_num_rows($check_stmt) > 0) {
         // Cập nhật thành công
         mysqli_stmt_close($update_stmt);
         mysqli_close($connect);
-        header("Location: login.php?success_message=Mật khẩu đã được thay đổi thành công! Vui lòng đăng nhập lại");
+        header("Location: " . BASE_URL . "/account/login.php?success_message=Mật khẩu đã được thay đổi thành công! Vui lòng đăng nhập lại");
         exit();
     } else {
         // Lỗi khi cập nhật
         $error = mysqli_error($connect);
         mysqli_stmt_close($update_stmt);
         mysqli_close($connect);
-        header("Location: change_password.php?error_message=Lỗi khi thay đổi mật khẩu: " . urlencode($error));
+        header("Location: " . BASE_URL . "/account/change_password.php?error_message=Lỗi khi thay đổi mật khẩu: " . urlencode($error));
         exit();
     }
 } else {
     // Tên đăng nhập không tồn tại
     mysqli_stmt_close($check_stmt);
-    header("Location: change_password.php?error_message=Tên đăng nhập không tồn tại");
+    header("Location: " . BASE_URL . "/account/change_password.php?error_message=Tên đăng nhập không tồn tại");
     exit();
 } 

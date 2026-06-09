@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../bootstrap.php'; ?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -102,7 +103,7 @@
 <body>
     <div class="login-container">
         <div class="logo-container">
-            <a href="./"><img width="300px" src="../img/logo.png" alt="Logo" /></a>
+            <a href="<?php echo BASE_URL; ?>/"><img width="300px" src="<?php echo BASE_URL; ?>/img/logo.png" alt="Logo" /></a>
         </div>
         <h2>Đăng Ký</h2>
 
@@ -114,7 +115,7 @@
             <div class="success-message"><?php echo htmlspecialchars($_GET['success_message']); ?></div>
         <?php endif; ?>
 
-        <form action="register_action.php" method="POST">
+        <form action="<?php echo BASE_URL; ?>/account/register_action.php" method="POST">
             <label for="name">Tên đăng nhập</label>
             <input type="text" id="name" name="name" required><br>
             
@@ -129,8 +130,8 @@
 
             <button type="submit">Đăng ký</button>
         </form>
-        <a href="../login.php">Đã có tài khoản? Đăng nhập ngay</a>
-        <a href="../account/change_password.php">Quên mật khẩu? Thay đổi mật khẩu</a>
+        <a href="<?php echo BASE_URL; ?>/account/login.php">Đã có tài khoản? Đăng nhập ngay</a>
+        <a href="<?php echo BASE_URL; ?>/account/change_password.php">Quên mật khẩu? Thay đổi mật khẩu</a>
     </div>
 </body>
 
