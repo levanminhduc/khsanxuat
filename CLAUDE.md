@@ -12,9 +12,9 @@ When you need to read a specific file but don't know the exact line range, use t
 
 - **Stack**: PHP 7.4+ thuần (không framework), MySQL 5.7+ (mysqli), HTML/CSS/JS vanilla, Apache via Laragon.
 - **Mục đích**: Theo dõi đơn hàng qua 10 bộ phận sản xuất (kế hoạch → kỹ thuật → kho → cắt → ép keo → cơ điện → chuyền may → KCS → ủi thành phẩm → hoàn thành), đánh giá tiêu chí, quản lý hạn xử lý, upload hình ảnh minh hoạ.
-- **Trang chính**: `index.php` (dashboard), `indexdept.php` (chi tiết bộ phận), `theodoi.php`, `settings.php`, `save_danhgia_with_log.php`, `import.php`, `dept_statistics.php`.
-- **Modules**: `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `account/`.
-- **DB connection**: `contdb.php`, `db_connect.php` (Laragon mặc định: `localhost`/`root`/blank/`mysqli`).
+- **Trang chính**: `index.php` (dashboard), `indexdept.php` (chi tiết bộ phận), `pages/theodoi.php`, `pages/settings.php`, `actions/save_danhgia_with_log.php`, `pages/import.php`, `pages/dept_statistics.php`.
+- **Modules**: `config/`, `pages/`, `actions/`, `api/`, `helpers/`, `sql/`, `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `account/`.
+- **DB connection**: `config/database.php` (1 nguồn `$connect`, nạp qua `bootstrap.php`; Laragon mặc định: `localhost`/`root`/blank/`mysqli`). Link/redirect/form qua hằng `BASE_URL` (`config/app.php`); JS fetch qua `window.BASE_URL`.
 
 ## Language
 
@@ -28,6 +28,23 @@ When you need to read a specific file but don't know the exact line range, use t
 - **PHP variables**: snake_case (`$id_sanxuat`, `$search_value`).
 - **Constants**: UPPER_SNAKE_CASE (`DB_SERVER`, `DB_NAME`).
 - **DB**: luôn dùng `mysqli` prepared statements + bind params.
+
+## Architecture layers (sau tái cấu trúc 2026-06)
+
+- `index.php`, `indexdept.php` — entry point GIỮ URL ở root.
+- `bootstrap.php` — define BASE_PATH, nạp config/app.php + config/database.php.
+- `config/` — database.php ($connect), app.php (BASE_URL, error config).
+- `pages/` — trang giao diện (URL: /khsanxuat/pages/xxx.php).
+- `actions/` — handler ghi (POST: save/update/delete/add).
+- `api/` — handler đọc (GET/AJAX trả data).
+- `helpers/` — lib dùng chung (activity_logger).
+- `includes/` — config+function theo area, check_tieuchi_image, display_deadline.
+- `components/`, `views/` — UI partial + template.
+- `account/` — auth (login/register/password + action).
+- `sql/` — script SQL.
+
+Đường dẫn: include qua `BASE_PATH`/`__DIR__`; link/redirect/form qua `BASE_URL`;
+JS fetch qua `window.BASE_URL`.
 
 ## Rules Reference
 
