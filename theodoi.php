@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Kết nối database
 require_once __DIR__ . '/bootstrap.php';
-include 'activity_logger.php';
+require_once BASE_PATH . '/helpers/activity_logger.php';
 
 // Kiểm tra kết nối
 if (!$connect) {

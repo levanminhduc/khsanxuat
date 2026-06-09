@@ -8,7 +8,7 @@ ini_set('log_errors', 1);
 require_once __DIR__ . '/../../bootstrap.php';
 require_once __DIR__ . '/../security/csrf-helper.php';
 require_once __DIR__ . '/score-options.php';
-require_once __DIR__ . '/../../check_tieuchi_image.php';
+require_once BASE_PATH . '/includes/check_tieuchi_image.php';
 
 session_start();
 

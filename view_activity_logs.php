@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-include 'activity_logger.php';
+include BASE_PATH . '/helpers/activity_logger.php';
 
 // Kiểm tra kết nối
 if (!$connect) {

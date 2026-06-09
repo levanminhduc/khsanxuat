@@ -57,7 +57,7 @@ function updateAllDeadlinesAfterImport($imported_ids, $connect)
 
     // Đảm bảo các hàm từ display_deadline.php được load
     if (!function_exists('getDeadlineInfo') || !function_exists('calculateDeadline')) {
-        include_once 'display_deadline.php';
+        require_once BASE_PATH . '/includes/display_deadline.php';
     }
 
     foreach ($imported_ids as $id_sanxuat) {
@@ -388,7 +388,7 @@ function processDefaultSettings($batch_ids, $success, $errors)
                     // Include file xử lý cài đặt mặc định
     try {
         include_once 'apply_default_settings.php';
-        include_once 'display_deadline.php'; // Include file tính toán hạn xử lý
+        require_once BASE_PATH . '/includes/display_deadline.php'; // Include file tính toán hạn xử lý
 
         // Debug - kiểm tra xem hàm có tồn tại không
         if (!function_exists('applyDefaultSettings')) {
@@ -729,12 +729,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
                 error_log("Đã commit transaction sau khi import dữ liệu thành công.");
 
                 // Đảm bảo bao gồm file display_deadline.php
-                include_once 'display_deadline.php';
+                require_once BASE_PATH . '/includes/display_deadline.php';
 
                 // Đoạn code để cập nhật date_display sau khi import dữ liệu
                     // Load file display_deadline.php nếu chưa được load
             if (!function_exists('updateImportDateDisplay')) {
-                include_once 'display_deadline.php';
+                require_once BASE_PATH . '/includes/display_deadline.php';
             }
 
                     // Đảm bảo biến $message đã được khởi tạo

@@ -11,7 +11,7 @@ require_once __DIR__ . '/bootstrap.php';
 require_once 'includes/security/csrf-helper.php';
 require_once 'includes/indexdept/config.php';
 require_once 'includes/indexdept/functions.php';
-include 'check_tieuchi_image.php';
+include BASE_PATH . '/includes/check_tieuchi_image.php';
 require_once 'includes/indexdept/score-options.php';
 
 if (!$connect) {

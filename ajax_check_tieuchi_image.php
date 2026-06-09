@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 
 // Kết nối database
 require_once __DIR__ . '/bootstrap.php';
-include 'check_tieuchi_image.php';
+include BASE_PATH . '/includes/check_tieuchi_image.php';
 
 // Lấy tham số từ URL
 $id_khsanxuat = isset($_GET['id_khsanxuat']) ? intval($_GET['id_khsanxuat']) : 0;

@@ -6,7 +6,7 @@ ini_set('display_startup_errors', 1);
 
 // Kết nối database
 require_once __DIR__ . '/bootstrap.php';
-include 'display_deadline.php';
+require_once BASE_PATH . '/includes/display_deadline.php';
 
 // Khởi tạo biến
 $success_message = "";
