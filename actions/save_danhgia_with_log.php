@@ -5,14 +5,14 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // Kết nối database và logger
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/helpers/activity_logger.php';
 require_once BASE_PATH . '/includes/check_tieuchi_image.php';
 ini_set('display_errors', 0);
 
 // CSRF protection
-require_once 'includes/security/csrf-helper.php';
-require_once 'includes/indexdept/score-options.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+require_once BASE_PATH . '/includes/indexdept/score-options.php';
 
 // Khởi tạo phiên làm việc
 session_start();

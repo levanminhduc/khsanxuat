@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 echo "<h1>Cập nhật cấu trúc bảng khsanxuat</h1>";
 

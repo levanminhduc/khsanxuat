@@ -11,7 +11,7 @@ ini_set('display_startup_errors', 1);
 
 // Kết nối database - Sử dụng cùng file kết nối với import.php để đảm bảo tính nhất quán
 if (!isset($connect)) {
-    require_once __DIR__ . '/bootstrap.php';
+    require_once __DIR__ . '/../bootstrap.php';
 }
 
 /**

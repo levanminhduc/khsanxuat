@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/includes/display_deadline.php';
 
 // Khởi tạo biến
@@ -245,7 +245,7 @@ if (isset($_POST['batch_update'])) {
                 <i class="fas fa-filter"></i> Lọc đơn hàng
             </div>
             <div class="card-body">
-                <form method="post" action="batch_update_deadline.php">
+                <form method="post" action="<?php echo BASE_URL; ?>/actions/batch_update_deadline.php">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">

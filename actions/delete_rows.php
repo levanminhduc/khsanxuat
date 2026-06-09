@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/bootstrap.php';
-require_once 'includes/security/csrf-helper.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
 verifyCsrfOrDie();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['selected_rows']) && !empty($_POST['selected_rows'])) {

@@ -3,7 +3,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h3 class="modal-title">Thêm tiêu chí mới cho <?php echo $dept_display_name; ?></h3>
-        <form action="add_criteria.php" method="POST">
+        <form action="<?php echo BASE_URL; ?>/actions/add_criteria.php" method="POST">
             <input type="hidden" name="dept" value="<?php echo htmlspecialchars($dept); ?>">
             <input type="hidden" name="id_sanxuat" value="<?php echo intval($id); ?>">
 

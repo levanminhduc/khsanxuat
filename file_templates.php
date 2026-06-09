@@ -878,7 +878,7 @@ $dept_names = array(
                             <a href="<?php echo $file['file_path']; ?>" download class="btn btn-success">
                                 <i class="fas fa-download"></i> Tải về
                             </a>
-                            <a href="delete_template_file.php?id=<?php echo $file['id']; ?>&id_sanxuat=<?php echo $id; ?>&dept=<?php echo $dept; ?>"
+                            <a href="<?php echo BASE_URL; ?>/actions/delete_template_file.php?id=<?php echo $file['id']; ?>&id_sanxuat=<?php echo $id; ?>&dept=<?php echo $dept; ?>"
                                class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa file này?');">
                                 <i class="fas fa-trash-alt"></i> Xóa
                             </a>

@@ -90,7 +90,7 @@ require_once __DIR__ . '/bootstrap.php';
                         </div>
                         <h5 class="card-title">Cập nhật Hàng loạt Hạn Xử lý</h5>
                         <p class="card-text">Cập nhật hạn xử lý cho nhiều đơn hàng cùng một lúc dựa trên điều kiện lọc.</p>
-                        <a href="batch_update_deadline.php" class="btn btn-primary mt-auto btn-feature">Mở công cụ</a>
+                        <a href="<?php echo BASE_URL; ?>/actions/batch_update_deadline.php" class="btn btn-primary mt-auto btn-feature">Mở công cụ</a>
                     </div>
                 </div>
             </div>

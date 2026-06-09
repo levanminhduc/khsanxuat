@@ -12,7 +12,7 @@
                     <i class="fas fa-eye"></i> <span id="toggleCompletedLabel">Hiện đã hoàn thành</span>
                 </button>
             </div>
-            <form action="save_danhgia_with_log.php" method="POST" id="danhgiaForm">
+            <form action="<?php echo BASE_URL; ?>/actions/save_danhgia_with_log.php" method="POST" id="danhgiaForm">
                 <?php echo getCsrfInput(); ?>
                 <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
                 <input type="hidden" name="dept" value="<?php echo $dept; ?>">

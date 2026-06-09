@@ -962,7 +962,7 @@ $dept_names = array(
                            data-title="<strong>Tiêu chí:</strong> <?php echo htmlspecialchars($image['tieuchi_name'] ?? 'Không xác định'); ?><br><strong>Ngày upload:</strong> <?php echo date('d/m/Y H:i', strtotime($image['upload_date'])); ?>">
                            Xem
                         </a>
-                        <a href="delete_image.php?id_image=<?php echo $image['id']; ?>&id=<?php echo $id; ?>&dept=<?php echo urlencode($dept); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')">Xóa</a>
+                        <a href="<?php echo BASE_URL; ?>/actions/delete_image.php?id_image=<?php echo $image['id']; ?>&id=<?php echo $id; ?>&dept=<?php echo urlencode($dept); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')">Xóa</a>
                         <?php if (isset($image['id_tieuchi'])): ?>
                         <a href="javascript:void(0)" onclick="editScore(<?php echo $image['id_tieuchi']; ?>)">Đánh giá</a>
                         <?php endif; ?>

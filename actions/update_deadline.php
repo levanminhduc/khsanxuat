@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 } */
 
 // Kết nối database
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra kết nối
 if (!isset($connect) || $connect === null) {

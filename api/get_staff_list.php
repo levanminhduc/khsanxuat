@@ -1,6 +1,6 @@
 <?php
 // Kết nối cơ sở dữ liệu
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra tham số bộ phận
 if (!isset($_GET['dept']) || empty($_GET['dept'])) {

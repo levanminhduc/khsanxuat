@@ -57,7 +57,7 @@ if ($so_ngay_xuly <= 0 || $so_ngay_xuly > 30) {
 }
 
 // Kết nối đến cơ sở dữ liệu
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra kết nối
 if (!$connect) {

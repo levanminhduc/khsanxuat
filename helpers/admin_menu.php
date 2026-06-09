@@ -27,7 +27,7 @@
                 <i class="fas fa-clock"></i> Quản lý Hạn Xử lý
             </a>
             <div class="dropdown-menu" aria-labelledby="deadlineDropdown">
-                <a class="dropdown-item" href="batch_update_deadline.php"><i class="fas fa-sync-alt"></i> Cập nhật Hàng loạt Hạn Xử lý</a>
+                <a class="dropdown-item" href="<?php echo BASE_URL; ?>/actions/batch_update_deadline.php"><i class="fas fa-sync-alt"></i> Cập nhật Hàng loạt Hạn Xử lý</a>
                 <a class="dropdown-item" href="help_deadline.php"><i class="fas fa-question-circle"></i> Hướng dẫn Hạn Xử lý</a>
             </div>
         </li>

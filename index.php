@@ -219,7 +219,7 @@ $kho_percent = $stats['kho_percent'];
         echo '<div class="error-message">' . htmlspecialchars($error_message) . '</div>';
     }
     ?>
-    <form id="deleteForm" action="delete_rows.php" method="post">
+    <form id="deleteForm" action="<?php echo BASE_URL; ?>/actions/delete_rows.php" method="post">
         <?php echo getCsrfInput(); ?>
         <div class="action-container">
             <div class="action-buttons">
