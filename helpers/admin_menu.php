@@ -10,7 +10,7 @@
         <h5 class="mb-0"><i class="fas fa-cogs"></i> Quản lý hệ thống</h5>
     </div>
     <div class="list-group list-group-flush">
-        <a href="settings.php" class="list-group-item list-group-item-action">
+        <a href="<?php echo BASE_URL; ?>/pages/settings.php" class="list-group-item list-group-item-action">
             <i class="far fa-clock"></i> Cài đặt hạn xử lý tiêu chí
         </a>
         <a href="manage_users.php" class="list-group-item list-group-item-action">
@@ -28,7 +28,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="deadlineDropdown">
                 <a class="dropdown-item" href="<?php echo BASE_URL; ?>/actions/batch_update_deadline.php"><i class="fas fa-sync-alt"></i> Cập nhật Hàng loạt Hạn Xử lý</a>
-                <a class="dropdown-item" href="help_deadline.php"><i class="fas fa-question-circle"></i> Hướng dẫn Hạn Xử lý</a>
+                <a class="dropdown-item" href="<?php echo BASE_URL; ?>/pages/help_deadline.php"><i class="fas fa-question-circle"></i> Hướng dẫn Hạn Xử lý</a>
             </div>
         </li>
     </div>

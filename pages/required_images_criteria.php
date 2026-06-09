@@ -19,9 +19,9 @@ $dept_names = [
 <html>
 <head>
     <title>Quản lý Tiêu Chí Bắt Buộc Hình Ảnh</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style2.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style2.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .container {
@@ -118,7 +118,7 @@ $dept_names = [
     $header_config = [
         'title' => 'QUẢN LÝ TIÊU CHÍ BẮT BUỘC HÌNH ẢNH',
         'title_short' => 'Bắt buộc hình ảnh',
-        'logo_path' => 'img/logoht.png',
+        'logo_path' => BASE_URL . '/img/logoht.png',
         'logo_link' => '/trangchu/',
         'show_search' => false,
         'show_mobile_menu' => true,
@@ -308,6 +308,6 @@ $dept_names = [
             }
         });
     </script>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html> 

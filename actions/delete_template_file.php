@@ -56,7 +56,7 @@ try {
     
     if ($stmt_delete->execute()) {
         // Chuyển hướng về trang file_templates.php với thông báo thành công
-        header("Location: file_templates.php?id=$id_sanxuat&dept=$dept&success=deleted");
+        header("Location: " . BASE_URL . "/pages/file_templates.php?id=$id_sanxuat&dept=$dept&success=deleted");
         exit;
     } else {
         die("Lỗi khi xóa file: " . $connect->error);

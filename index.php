@@ -160,7 +160,7 @@ $kho_percent = $stats['kho_percent'];
                 <p>
                     <?php foreach ($best_dept_names as $index => $dept) : ?>
                         <strong>
-                            <a href="dept_statistics.php?dept=<?php echo $chart_departments[$dept]['code']; ?>&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: underline;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=<?php echo $chart_departments[$dept]['code']; ?>&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: underline;">
                                 <?php echo $dept; ?>
                             </a>
                         </strong>
@@ -182,7 +182,7 @@ $kho_percent = $stats['kho_percent'];
                 <p>
                     <?php foreach ($worst_dept_names as $index => $dept) : ?>
                         <strong>
-                            <a href="dept_statistics.php?dept=<?php echo $chart_departments[$dept]['code']; ?>&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: underline;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=<?php echo $chart_departments[$dept]['code']; ?>&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: underline;">
                                 <?php echo $dept; ?>
                             </a>
                         </strong>
@@ -263,37 +263,37 @@ $kho_percent = $stats['kho_percent'];
                         <th style="width: 90px;">In</th>
                         <th style="width: 90px;">Out</th>
                         <th style="width: 110px;">
-                            <a href="dept_statistics.php?dept=kehoach&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=kehoach&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Kế Hoạch
                             </a>
                         </th>
                         <th style="width: 110px;">
-                            <a href="dept_statistics.php?dept=chuanbi_sanxuat_phong_kt&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=chuanbi_sanxuat_phong_kt&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Kỹ Thuật
                             </a>
                         </th>
                         <th style="width: 110px;">
-                            <a href="dept_statistics.php?dept=kho&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=kho&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Kho
                             </a>
                         </th>
                         <th style="width: 110px;">
-                            <a href="dept_statistics.php?dept=cat&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=cat&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Cắt
                             </a>
                         </th>
                         <th style="width: 110px;">
-                            <a href="dept_statistics.php?dept=co_dien&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=co_dien&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Cơ Điện
                             </a>
                         </th>
                         <th style="width: 120px;">
-                            <a href="dept_statistics.php?dept=chuyen_may&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=chuyen_may&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Chuyền May
                             </a>
                         </th>
                         <th style="width: 110px;">
-                            <a href="dept_statistics.php?dept=kcs&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=kcs&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 KCS
                             </a>
                         </th>
@@ -348,12 +348,12 @@ $kho_percent = $stats['kho_percent'];
 
             echo "<tr {$row_class}>";
             echo "<td><input type='checkbox' name='selected_rows[]' value='" . intval($row['stt']) . "'></td>";
-            echo "<td><a href='danhgia_hethong.php?id=" . intval($row['stt']) . "' style='color: inherit; text-decoration: underline;'>{$stt}</a></td>";
-            echo "<td><a href='factory_templates.php?xuong=" . urlencode($row['xuong']) . "&month=" . $selected_month . "&year=" . $selected_year . "' style='color: inherit; text-decoration: underline;'>" . htmlspecialchars($row['xuong'], ENT_QUOTES, 'UTF-8') . "</a></td>";
+            echo "<td><a href='" . BASE_URL . "/pages/danhgia_hethong.php?id=" . intval($row['stt']) . "' style='color: inherit; text-decoration: underline;'>{$stt}</a></td>";
+            echo "<td><a href='" . BASE_URL . "/pages/factory_templates.php?xuong=" . urlencode($row['xuong']) . "&month=" . $selected_month . "&year=" . $selected_year . "' style='color: inherit; text-decoration: underline;'>" . htmlspecialchars($row['xuong'], ENT_QUOTES, 'UTF-8') . "</a></td>";
             echo "<td>" . htmlspecialchars($row['line1'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "<td>" . htmlspecialchars($row['po'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "<td>
-                    <a href='incomplete_criteria.php?style=" . urlencode($row['style']) . "&stt=" . intval($row['stt']) . "'
+                    <a href='" . BASE_URL . "/pages/incomplete_criteria.php?style=" . urlencode($row['style']) . "&stt=" . intval($row['stt']) . "'
                        class='style-link" . (hasIncompleteCriteria($connect, $row['style'], $row['stt']) ? " has-incomplete" : "") . "'
                        title='Xem tiêu chí chưa hoàn thành'>
                         " . htmlspecialchars($row['style'], ENT_QUOTES, 'UTF-8') . "
@@ -361,7 +361,7 @@ $kho_percent = $stats['kho_percent'];
                 </td>";
             echo "<td>" . htmlspecialchars($row['model'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "<td class='text-center'>" . intval($row['qty']) . "</td>";
-            echo "<td><a href='edit_date_clone.php?id=" . intval($row['stt']) . "' title='Chỉnh sửa ngày in' style='color:inherit; text-decoration:underline;'>" . htmlspecialchars($ngayin_formatted, ENT_QUOTES, 'UTF-8') . "</a></td>";
+            echo "<td><a href='" . BASE_URL . "/pages/edit_date_clone.php?id=" . intval($row['stt']) . "' title='Chỉnh sửa ngày in' style='color:inherit; text-decoration:underline;'>" . htmlspecialchars($ngayin_formatted, ENT_QUOTES, 'UTF-8') . "</a></td>";
             echo "<td>" . htmlspecialchars($ngayout_formatted, ENT_QUOTES, 'UTF-8') . "</td>";
 
             echo "<td>";

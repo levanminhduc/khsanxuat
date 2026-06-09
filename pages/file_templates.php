@@ -293,7 +293,7 @@ $dept_names = array(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Template - <?php echo htmlspecialchars($style); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -635,8 +635,8 @@ $dept_names = array(
     $header_config = [
         'title' => 'Quản Lý Hồ Sơ SA',
         'title_short' => 'Hồ Sơ SA',
-        'logo_path' => 'img/logoht.png',
-        'logo_link' => '/khsanxuat/index.php',
+        'logo_path' => BASE_URL . '/img/logoht.png',
+        'logo_link' => BASE_URL . '/index.php',
         'show_search' => false,
         'show_mobile_menu' => true,
         'actions' => []
@@ -645,7 +645,7 @@ $dept_names = array(
     ?>
 
     <div class="container">
-        <a href="indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">
+        <a href="<?php echo BASE_URL; ?>/indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">
             &larr; Quay lại trang chi tiết
         </a>
 
@@ -834,7 +834,7 @@ $dept_names = array(
                     <div class="file-list-header" style="display: flex; justify-content: space-between; align-items: center;">
                         <div>Tổng cộng: <?php echo count($template_files); ?> files</div>
                         <?php if (count($template_files) > 0): ?>
-                        <a href="download_all_files.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn btn-success" style="margin-left: 10px;">
+                        <a href="<?php echo BASE_URL; ?>/pages/download_all_files.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn btn-success" style="margin-left: 10px;">
                             <i class="fas fa-cloud-download-alt"></i> Tải xuống tất cả
                         </a>
                         <?php endif; ?>
@@ -921,6 +921,6 @@ $dept_names = array(
             });
         });
     </script>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>

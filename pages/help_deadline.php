@@ -6,13 +6,13 @@ require_once __DIR__ . '/../bootstrap.php';
 $header_config = [
     'title' => 'Hướng dẫn sử dụng hệ thống hạn xử lý',
     'title_short' => 'Hướng dẫn',
-    'logo_path' => 'img/logoht.png',
+    'logo_path' => BASE_URL . '/img/logoht.png',
     'logo_link' => '/trangchu/',
     'show_search' => false,
     'show_mobile_menu' => true,
     'actions' => [
-        ['url' => 'settings.php', 'icon' => 'img/settings.png', 'title' => 'Cài đặt', 'tooltip' => 'Trang cài đặt'],
-        ['url' => 'index.php', 'icon' => 'img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
+        ['url' => BASE_URL . '/pages/settings.php', 'icon' => BASE_URL . '/img/settings.png', 'title' => 'Cài đặt', 'tooltip' => 'Trang cài đặt'],
+        ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
 ?>
@@ -31,7 +31,7 @@ $header_config = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     
     <!-- Header CSS -->
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     
     <style>
         body {
@@ -106,10 +106,10 @@ $header_config = [
                         <h5>Liên kết hữu ích</h5>
                     </div>
                     <div class="list-group list-group-flush">
-                        <a href="settings.php" class="list-group-item list-group-item-action">
+                        <a href="<?php echo BASE_URL; ?>/pages/settings.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-cog"></i> Trang cài đặt
                         </a>
-                        <a href="index.php" class="list-group-item list-group-item-action">
+                        <a href="<?php echo BASE_URL; ?>/index.php" class="list-group-item list-group-item-action">
                             <i class="fas fa-home"></i> Trang chủ
                         </a>
                     </div>
@@ -181,14 +181,14 @@ $header_config = [
                     
                     <h5>Cách truy cập cài đặt mặc định:</h5>
                     <ol>
-                        <li>Truy cập trang <a href="settings.php">Cài đặt hệ thống</a></li>
+                        <li>Truy cập trang <a href="<?php echo BASE_URL; ?>/pages/settings.php">Cài đặt hệ thống</a></li>
                         <li>Chọn bộ phận muốn cài đặt từ menu bên trái</li>
                         <li>Sử dụng công cụ bên trái để áp dụng cài đặt cho tất cả tiêu chí của bộ phận</li>
                     </ol>
                     
                     <h5>Cách reset về cài đặt mặc định ban đầu:</h5>
                     <ol>
-                        <li>Truy cập trang <a href="settings.php">Cài đặt hệ thống</a></li>
+                        <li>Truy cập trang <a href="<?php echo BASE_URL; ?>/pages/settings.php">Cài đặt hệ thống</a></li>
                         <li>Chọn bộ phận muốn reset từ menu bên trái</li>
                         <li>Nhấn nút "Reset về mặc định" và xác nhận</li>
                     </ol>

@@ -387,7 +387,7 @@ $dept_names = array(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xử Lý Hình Ảnh - <?php echo htmlspecialchars($style); ?></title>
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
 
     <!-- Thêm CSS Lightbox từ CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
@@ -718,7 +718,7 @@ $dept_names = array(
     $header_config = [
         'title' => 'Xử Lý Hình Ảnh',
         'title_short' => 'Hình Ảnh',
-        'logo_path' => 'img/logoht.png',
+        'logo_path' => BASE_URL . '/img/logoht.png',
         'logo_link' => '/trangchu/',
         'show_search' => false,
         'show_mobile_menu' => true,
@@ -728,7 +728,7 @@ $dept_names = array(
     <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
-        <a href="indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">
+        <a href="<?php echo BASE_URL; ?>/indexdept.php?dept=<?php echo urlencode($dept); ?>&id=<?php echo $id; ?>" class="back-link">
             &larr; Quay lại trang chi tiết
         </a>
 
@@ -1098,6 +1098,6 @@ $dept_names = array(
         <?php endif; ?>
     });
     </script>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>

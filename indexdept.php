@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_diem'])) {
 
                 $error_message = "Bạn cần đính kèm ảnh cho tiêu chí số " . htmlspecialchars($tieuchi_info['thutu'], ENT_QUOTES, 'UTF-8') .
                                " (" . htmlspecialchars($tieuchi_info['noidung'], ENT_QUOTES, 'UTF-8') . ") trước khi cập nhật điểm đánh giá. " .
-                               "<a href='image_handler.php?dept=" . urlencode($dept) . "&id=" . intval($id) . "'>Upload hình ảnh</a>";
+                               "<a href='" . BASE_URL . "/pages/image_handler.php?dept=" . urlencode($dept) . "&id=" . intval($id) . "'>Upload hình ảnh</a>";
 
                 unset($_POST['diem'][$tieuchi_id]);
             }
@@ -168,19 +168,19 @@ $header_config = [
     'actions' => [],
     'mobile_actions' => [
         [
-            'url' => 'index.php',
+            'url' => BASE_URL . '/index.php',
             'icon' => 'img/back.png',
             'title' => 'Quay lại',
             'tooltip' => 'Quay lại danh sách'
         ],
         [
-            'url' => 'image_handler.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
+            'url' => BASE_URL . '/pages/image_handler.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
             'icon' => 'img/open.png',
             'title' => 'Hình ảnh',
             'tooltip' => 'Quản lý hình ảnh'
         ],
         [
-            'url' => 'file_templates.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
+            'url' => BASE_URL . '/pages/file_templates.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
             'icon' => 'img/doc.gif',
             'title' => 'Biểu mẫu',
             'tooltip' => 'Biểu mẫu'

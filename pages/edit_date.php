@@ -231,7 +231,7 @@ if ($id > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cập nhật ngày in</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
     <!-- Thêm jQuery UI CSS -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <!-- Thêm jQuery và jQuery UI JavaScript -->
@@ -511,12 +511,12 @@ if ($id > 0) {
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn">Cập nhật</button>
-                    <a href="index.php" class="btn btn-secondary">Quay lại</a>
+                    <a href="<?php echo BASE_URL; ?>/index.php" class="btn btn-secondary">Quay lại</a>
                 </div>
             </form>
         <?php else: ?>
             <div class="alert alert-danger">Không thể lấy thông tin mã hàng.</div>
-            <a href="index.php" class="btn">Quay lại</a>
+            <a href="<?php echo BASE_URL; ?>/index.php" class="btn">Quay lại</a>
         <?php endif; ?>
     </div>
 

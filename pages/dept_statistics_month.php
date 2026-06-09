@@ -173,8 +173,8 @@ if ($total_avg_score < 267) {
 <head>
     <meta charset="UTF-8">
     <title>Thống Kê Điểm Trung Bình Các Bộ Phận</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         .container {
             max-width: 1200px;
@@ -421,8 +421,8 @@ if ($total_avg_score < 267) {
     $header_config = [
         'title' => 'THỐNG KÊ ĐIỂM TRUNG BÌNH CÁC BỘ PHẬN',
         'title_short' => 'Thống Kê BP',
-        'logo_path' => 'img/logoht.png',
-        'logo_link' => 'index.php',
+        'logo_path' => BASE_URL . '/img/logoht.png',
+        'logo_link' => BASE_URL . '/index.php',
         'show_search' => false,
         'show_mobile_menu' => true,
         'actions' => []
@@ -510,7 +510,7 @@ if ($total_avg_score < 267) {
                     <tr<?php echo $row_style; ?>>
                         <td style="text-align: center;"><?php echo $stt++; ?></td>
                         <td style="text-align: left;">
-                            <a href="dept_statistics.php?dept=<?php echo $dept['code']; ?>&month=<?php echo $month; ?>&year=<?php echo $year; ?>" style="color: inherit; text-decoration: underline;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=<?php echo $dept['code']; ?>&month=<?php echo $month; ?>&year=<?php echo $year; ?>" style="color: inherit; text-decoration: underline;">
                                 <?php echo $dept['name']; ?>
                             </a>
                         </td>
@@ -576,9 +576,9 @@ if ($total_avg_score < 267) {
         </div>
 
         <div class="button-group">
-            <a href="index.php" class="btn-back">Quay lại</a>
+            <a href="<?php echo BASE_URL; ?>/index.php" class="btn-back">Quay lại</a>
         </div>
     </div>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>

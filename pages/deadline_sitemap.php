@@ -63,7 +63,7 @@ require_once __DIR__ . '/../bootstrap.php';
             <p class="lead">Trang này giúp bạn tìm thấy tất cả các tính năng liên quan đến hạn xử lý trong hệ thống.</p>
             <hr class="my-4">
             <p>Hãy chọn tính năng bạn muốn sử dụng từ các mục bên dưới.</p>
-            <a class="btn btn-primary btn-lg" href="index.php" role="button"><i class="fas fa-home"></i> Trang chính</a>
+            <a class="btn btn-primary btn-lg" href="<?php echo BASE_URL; ?>/index.php" role="button"><i class="fas fa-home"></i> Trang chính</a>
         </div>
         
         <h3 class="section-title"><i class="fas fa-tools"></i> Công cụ Quản lý Hạn Xử lý</h3>
@@ -77,7 +77,7 @@ require_once __DIR__ . '/../bootstrap.php';
                         </div>
                         <h5 class="card-title">Cài đặt Hạn Xử lý</h5>
                         <p class="card-text">Quản lý cài đặt mặc định cho hệ thống hạn xử lý theo bộ phận và xưởng.</p>
-                        <a href="settings.php" class="btn btn-primary mt-auto btn-feature">Mở cài đặt</a>
+                        <a href="<?php echo BASE_URL; ?>/pages/settings.php" class="btn btn-primary mt-auto btn-feature">Mở cài đặt</a>
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@ require_once __DIR__ . '/../bootstrap.php';
                         </div>
                         <h5 class="card-title">Hướng dẫn Hạn Xử lý</h5>
                         <p class="card-text">Tìm hiểu cách sử dụng các tính năng hạn xử lý trong hệ thống.</p>
-                        <a href="help_deadline.php" class="btn btn-primary mt-auto btn-feature">Xem hướng dẫn</a>
+                        <a href="<?php echo BASE_URL; ?>/pages/help_deadline.php" class="btn btn-primary mt-auto btn-feature">Xem hướng dẫn</a>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@ require_once __DIR__ . '/../bootstrap.php';
                         </div>
                         <h5 class="card-title">Import Dữ liệu từ Excel</h5>
                         <p class="card-text">Nhập dữ liệu đơn hàng từ file Excel và tự động áp dụng cài đặt hạn xử lý.</p>
-                        <a href="import.php" class="btn btn-primary mt-auto btn-feature">Nhập dữ liệu</a>
+                        <a href="<?php echo BASE_URL; ?>/pages/import.php" class="btn btn-primary mt-auto btn-feature">Nhập dữ liệu</a>
                     </div>
                 </div>
             </div>
@@ -133,7 +133,7 @@ require_once __DIR__ . '/../bootstrap.php';
                         </div>
                         <h5 class="card-title">Cài đặt Mặc định</h5>
                         <p class="card-text">Quản lý cài đặt mặc định cho hệ thống hạn xử lý theo bộ phận và xưởng.</p>
-                        <a href="settings.php" class="btn btn-primary mt-auto btn-feature">Quản lý cài đặt</a>
+                        <a href="<?php echo BASE_URL; ?>/pages/settings.php" class="btn btn-primary mt-auto btn-feature">Quản lý cài đặt</a>
                     </div>
                 </div>
             </div>
@@ -146,7 +146,7 @@ require_once __DIR__ . '/../bootstrap.php';
                         </div>
                         <h5 class="card-title">Danh sách Đơn hàng</h5>
                         <p class="card-text">Quay lại trang chính để theo dõi tiến độ và trạng thái hạn xử lý của đơn hàng.</p>
-                        <a href="index.php" class="btn btn-primary mt-auto btn-feature">Mở trang chính</a>
+                        <a href="<?php echo BASE_URL; ?>/index.php" class="btn btn-primary mt-auto btn-feature">Mở trang chính</a>
                     </div>
                 </div>
             </div>
@@ -221,7 +221,7 @@ require_once __DIR__ . '/../bootstrap.php';
         </div>
         
         <div class="mt-4 text-center">
-            <a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại Trang chủ</a>
+            <a href="<?php echo BASE_URL; ?>/index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại Trang chủ</a>
         </div>
     </div>
 

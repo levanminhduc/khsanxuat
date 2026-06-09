@@ -9,13 +9,13 @@ require_once __DIR__ . '/../bootstrap.php';
 $header_config = [
     'title' => 'Cài đặt hệ thống hạn xử lý',
     'title_short' => 'Cài đặt',
-    'logo_path' => 'img/logoht.png',
+    'logo_path' => BASE_URL . '/img/logoht.png',
     'logo_link' => '/trangchu/',
     'show_search' => false,
     'show_mobile_menu' => true,
     'actions' => [
-        ['url' => 'help_deadline.php', 'icon' => 'img/help_icon.png', 'title' => 'Hướng dẫn', 'tooltip' => 'Hướng dẫn sử dụng'],
-        ['url' => 'index.php', 'icon' => 'img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
+        ['url' => BASE_URL . '/pages/help_deadline.php', 'icon' => BASE_URL . '/img/help_icon.png', 'title' => 'Hướng dẫn', 'tooltip' => 'Hướng dẫn sử dụng'],
+        ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
 
@@ -178,7 +178,7 @@ $departments = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     
     <!-- Header CSS -->
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     
     <style>
         body {

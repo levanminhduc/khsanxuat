@@ -62,7 +62,7 @@ try {
     }
     
     // Chuyển hướng về trang image_handler.php với thông báo thành công
-    header("Location: image_handler.php?id=" . $id . "&dept=" . urlencode($dept) . "&success=deleted");
+    header("Location: " . BASE_URL . "/pages/image_handler.php?id=" . $id . "&dept=" . urlencode($dept) . "&success=deleted");
     exit();
     
 } catch (Exception $e) {

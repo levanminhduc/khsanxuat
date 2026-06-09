@@ -140,8 +140,8 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thống Kê Điểm Trung Bình - <?php echo $dept_display_name; ?></title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         /* CSS từ danhgia_hethong.php để tối ưu hiển thị trên điện thoại */
         .navbar {
@@ -437,8 +437,8 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
     $header_config = [
         'title' => 'ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT NHÀ MÁY',
         'title_short' => 'Đánh Giá SX',
-        'logo_path' => 'img/logoht.png',
-        'logo_link' => 'index.php',
+        'logo_path' => BASE_URL . '/img/logoht.png',
+        'logo_link' => BASE_URL . '/index.php',
         'show_search' => false,
         'show_mobile_menu' => true,
         'actions' => []
@@ -545,7 +545,7 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
                                 </span>
                             </td>
                             <td class="score-cell">
-                                <a href="indexdept.php?dept=<?php echo $dept; ?>&id=<?php echo $product['stt']; ?>" class="btn-view">Xem</a>
+                                <a href="<?php echo BASE_URL; ?>/indexdept.php?dept=<?php echo $dept; ?>&id=<?php echo $product['stt']; ?>" class="btn-view">Xem</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -557,6 +557,6 @@ $available_months = mysqli_fetch_all($months_result, MYSQLI_ASSOC);
             </div>
         <?php endif; ?>
     </div>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>

@@ -193,7 +193,7 @@
                         var deptName = this.data.labels[index];
                         var deptCode = getDeptCode(deptName);
                         if (deptCode) {
-                            window.location.href = 'dept_statistics.php?dept=' + deptCode +
+                            window.location.href = window.BASE_URL + '/pages/dept_statistics.php?dept=' + deptCode +
                                 '&month=' + config.selectedMonth + '&year=' + config.selectedYear;
                         }
                     }

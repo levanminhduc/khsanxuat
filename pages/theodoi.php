@@ -90,7 +90,7 @@ $dept_names = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THEO DÕI THÔNG TIN CẬP NHẬP ĐÁNH GIÁ</title>
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -262,8 +262,8 @@ $dept_names = [
     $header_config = [
         'title' => 'THEO DÕI THÔNG TIN CẬP NHẬP ĐÁNH GIÁ',
         'title_short' => 'Theo Dõi',
-        'logo_path' => 'img/logoht.png',
-        'logo_link' => '/khsanxuat/index.php',
+        'logo_path' => BASE_URL . '/img/logoht.png',
+        'logo_link' => BASE_URL . '/index.php',
         'show_search' => false,
         'show_mobile_menu' => true,
         'actions' => []
@@ -619,6 +619,6 @@ $dept_names = [
         }
     });
     </script>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html> 

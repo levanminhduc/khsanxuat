@@ -206,11 +206,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cập nhật ngày in</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/form-page.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/form-page.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
@@ -220,13 +220,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
     $header_config = [
         'title' => 'CẬP NHẬP NGÀY VÀO CHUYỀN',
         'title_short' => 'Cập nhật',
-        'logo_path' => 'img/logoht.png',
+        'logo_path' => BASE_URL . '/img/logoht.png',
         'logo_link' => '/trangchu/',
         'show_search' => false,
         'show_mobile_menu' => true,
         'actions' => [
             [
-                'url' => 'index.php',
+                'url' => BASE_URL . '/index.php',
                 // 'icon' => 'img/back.png',
                 'title' => 'Quay lại',
                 'tooltip' => 'Quay lại trang chủ'
@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Cập nhật</button>
-                        <a href="index.php" class="btn btn-secondary">Quay lại</a>
+                        <a href="<?php echo BASE_URL; ?>/index.php" class="btn btn-secondary">Quay lại</a>
                     </div>
                 </form>
             <?php else: ?>
@@ -323,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
                     <span class="alert-content">Không thể lấy thông tin mã hàng.</span>
                 </div>
                 <div class="form-actions">
-                    <a href="index.php" class="btn btn-primary">Quay lại</a>
+                    <a href="<?php echo BASE_URL; ?>/index.php" class="btn btn-primary">Quay lại</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -363,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
             }
         });
     </script>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 
 </html>

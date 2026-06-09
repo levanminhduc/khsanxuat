@@ -810,8 +810,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Import Dữ Liệu</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         .error-container, .success-container {
             margin: 20px;
@@ -1021,8 +1021,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $header_config = [
         'title' => 'Import Dữ Liệu',
         'title_short' => 'Import',
-        'logo_path' => 'img/logoht.png',
-        'logo_link' => '/khsanxuat/index.php',
+        'logo_path' => BASE_URL . '/img/logoht.png',
+        'logo_link' => BASE_URL . '/index.php',
         'show_search' => false,
         'show_mobile_menu' => true,
         'actions' => []
@@ -1052,7 +1052,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     <!-- Form nhập dữ liệu từ Excel -->
     <div class="container">
         <h3>NHẬP DỮ LIỆU TỪ FILE EXCEL</h3>
-        <form action="import.php" method="post" enctype="multipart/form-data">
+        <form action="<?php echo BASE_URL; ?>/pages/import.php" method="post" enctype="multipart/form-data">
             <input type="file" name="excel_file" accept=".xls,.xlsx,.csv" required>
             <button type="submit">Tải lên</button>
         </form>
@@ -1153,7 +1153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
 
     // Thêm event listener cho form submit
     document.addEventListener('DOMContentLoaded', function() {
-        const importForm = document.querySelector('form[action="import.php"]');
+        const importForm = document.querySelector('form[action="<?php echo BASE_URL; ?>/pages/import.php"]');
         if (importForm) {
             importForm.addEventListener('submit', function() {
                 const fileInput = document.querySelector('input[name="excel_file"]');
@@ -1168,6 +1168,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         showSuccessModal("Đã tải lên thành công <strong><?php echo count($imported_ids); ?></strong> đơn hàng!<br><?php echo $message ?? ''; ?>");
     <?php endif; ?>
     </script>
-    <script src="assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>

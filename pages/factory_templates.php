@@ -221,7 +221,7 @@ while ($month_row = $result_months->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biểu Mẫu Xưởng <?php echo htmlspecialchars($xuong); ?> - Tháng <?php echo $selected_month; ?>/<?php echo $selected_year; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -730,7 +730,7 @@ while ($month_row = $result_months->fetch_assoc()) {
 $header_config = [
     'title' => 'Biểu Mẫu Xưởng ' . htmlspecialchars($xuong) . ' - Tháng ' . $selected_month . '/' . $selected_year,
     'title_short' => 'Biểu mẫu',
-    'logo_path' => 'img/logoht.png',
+    'logo_path' => BASE_URL . '/img/logoht.png',
     'logo_link' => '/trangchu/',
     'show_search' => false,
     'show_mobile_menu' => true,
@@ -740,7 +740,7 @@ $header_config = [
 <?php include BASE_PATH . '/components/header.php'; ?>
     
     <div class="container">
-        <a href="index.php?month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" class="back-link">
+        <a href="<?php echo BASE_URL; ?>/index.php?month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" class="back-link">
             &larr; Quay lại trang chủ
         </a>
         
@@ -819,7 +819,7 @@ $header_config = [
             
             <?php if ($total_files > 0): ?>
             <div style="text-align: center; margin-top: 20px;">
-                <a href="download_all_files.php?id=<?php echo $id_sanxuat; ?>&dept=all" class="btn btn-success">
+                <a href="<?php echo BASE_URL; ?>/pages/download_all_files.php?id=<?php echo $id_sanxuat; ?>&dept=all" class="btn btn-success">
                     <i class="fas fa-cloud-download-alt"></i> Tải xuống tất cả files (<?php echo $total_files; ?> files)
                 </a>
             </div>
@@ -873,7 +873,7 @@ $header_config = [
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="file_templates.php?id=<?php echo $id_sanxuat; ?>&dept=<?php echo $dept_code; ?>" class="btn btn-sm btn-info">
+                                        <a href="<?php echo BASE_URL; ?>/pages/file_templates.php?id=<?php echo $id_sanxuat; ?>&dept=<?php echo $dept_code; ?>" class="btn btn-sm btn-info">
                                             <i class="fas fa-eye"></i> Quản lý Files
                                         </a>
                                     </td>
@@ -938,7 +938,7 @@ $header_config = [
                             <?php endif; ?>
                         </td>
                         <td data-label="Thao tác">
-                            <a href="factory_templates.php?xuong=<?php echo urlencode($xuong); ?>&id=<?php echo $product['stt']; ?>" class="btn btn-sm btn-info">
+                            <a href="<?php echo BASE_URL; ?>/pages/factory_templates.php?xuong=<?php echo urlencode($xuong); ?>&id=<?php echo $product['stt']; ?>" class="btn btn-sm btn-info">
                                 <i class="fas fa-eye"></i> Xem biểu mẫu
                             </a>
                         </td>
@@ -1051,6 +1051,6 @@ $header_config = [
             }
         });
     </script>
-<script src="assets/js/header.js"></script>
+<script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>

@@ -23,7 +23,7 @@
                     <td><?php echo $ngayin_formatted; ?></td>
                     <td><?php echo $ngayout_formatted; ?></td>
                     <td>
-                        <a href="image_handler.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn-upload-image">
+                        <a href="<?php echo BASE_URL; ?>/pages/image_handler.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn-upload-image">
                             <?php if ($image_count > 0) : ?>
                             <i class="fas fa-exclamation-triangle warning-icon"></i>
                             <span class="image-count-badge"><?php echo $image_count; ?></span>
@@ -32,7 +32,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="file_templates.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn-upload-file">
+                        <a href="<?php echo BASE_URL; ?>/pages/file_templates.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn-upload-file">
                             <?php
                             // Kiểm tra số file đã upload
                             $file_count = 0;

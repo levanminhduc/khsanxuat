@@ -83,8 +83,8 @@ $sanxuat = $result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <title>Đánh Giá Hệ Thống Sản Xuất</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <style>
         .evaluation-table {
             width: 100%;
@@ -161,7 +161,7 @@ $sanxuat = $result->fetch_assoc();
 $header_config = [
     'title' => 'TỔNG ĐIỂM ĐÁNH GIÁ HỆ THỐNG SẢN XUẤT',
     'title_short' => 'Đánh giá',
-    'logo_path' => 'img/logoht.png',
+    'logo_path' => BASE_URL . '/img/logoht.png',
     'logo_link' => '/trangchu/',
     'show_search' => false,
     'show_mobile_menu' => true,
@@ -237,6 +237,6 @@ $header_config = [
             <p>- Từ 431 điểm trở lên: Nhà máy quản lý và thực hiện tốt, cần duy trì .</p>
         </div>
     </div>
-<script src="assets/js/header.js"></script>
+<script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>
