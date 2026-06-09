@@ -16,24 +16,10 @@ When you need to read a specific file but don't know the exact line range, use t
 - **Modules**: `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `account/`.
 - **DB connection**: `contdb.php`, `db_connect.php` (Laragon mặc định: `localhost`/`root`/blank/`mysqli`).
 
-Chi tiết kiến trúc, code standards, schema xem trong `./docs/`.
-
 ## Language
 
 - Code, commits, technical terms: tiếng Anh.
 - Giải thích, báo cáo, trao đổi với user: **tiếng Việt**.
-
-## Code Comment Convention (Backend)
-
-- **KHÔNG comment** code self-explanatory (tên hàm/biến rõ ý, getter/setter, boilerplate hiển nhiên).
-- **CHỈ comment** logic backend quan trọng/phức tạp:
-  - Quy tắc nghiệp vụ phi hiển nhiên (vd: cách tính `han_xuly` từ `ngay_tinh_han`, logic CSV ID `nguoi_thuchien`).
-  - Lý do bypass / workaround (link issue/ticket nếu có).
-  - Invariants ràng buộc CSDL (vd: tại sao normalize CSV ID, tại sao `INSERT ... ON DUPLICATE KEY` thay UPDATE).
-  - Bảo mật (CSRF token check, prepared statement edge case, escape user input).
-  - Performance trade-off có ý đồ (vd: denormalize cột để giảm JOIN).
-- Comment bằng **tiếng Việt**, ngắn gọn, focus "**tại sao**" thay vì "cái gì".
-- Frontend (CSS/JS vanilla) chỉ comment khi có hack browser hoặc convention không rõ.
 
 ## Code Style
 
@@ -41,30 +27,21 @@ Chi tiết kiến trúc, code standards, schema xem trong `./docs/`.
 - **PHP functions**: camelCase (`checkDeptStatus`, `getEarliestDeadline`).
 - **PHP variables**: snake_case (`$id_sanxuat`, `$search_value`).
 - **Constants**: UPPER_SNAKE_CASE (`DB_SERVER`, `DB_NAME`).
-- **File size**: giữ < 800 lines; vượt thì tách module sang `includes/{area}/`.
-- **DB**: luôn dùng `mysqli` prepared statements + bind params. Tuyệt đối không nội suy biến vào SQL string.
+- **DB**: luôn dùng `mysqli` prepared statements + bind params.
 
-## Modularization
+## Rules Reference
 
-- File code > 200 lines → cân nhắc tách.
-- Check module hiện có (`includes/`, `components/`) trước khi tạo mới.
-- Markdown/text/config/env không cần tách.
+Đọc rule chi tiết trong `.claude/docs/` trước khi thực hiện task liên quan:
+
+- `.claude/docs/coding-rules.md` — Nguyên tắc code, clean code, architecture, comment convention
+- `.claude/docs/security-rules.md` — Checklist bảo mật (đọc khi sửa auth, DB, form, upload)
+- `.claude/docs/database-rules.md` — Query, migration, schema changes
+- `.claude/docs/business-logic-rules.md` — Quy tắc nghiệp vụ (đọc khi sửa logic đơn hàng, tiêu chí, workflow)
+- `.claude/docs/dependency-rules.md` — Chính sách thêm thư viện
 
 ## Documentation
 
-Docs dự án trong `./docs/`:
-
-- `project-overview-pdr.md` — PDR
-- `codebase-summary.md` — Index file/function chính
-- `system-architecture.md` — Stack, schema DB, request flow
-- `code-standards.md` — Naming, error handling, file structure
-- `design-guidelines.md` — UI principles, color, components
-- `deployment-guide.md` — Local + production deploy
-- `development-roadmap.md` — Roadmap & changelog phases
-- `project-changelog.md` — Lịch sử thay đổi
-- `indexdept-flow-overview.md`, `indexdept-refactor-plan.md` — Tài liệu module indexdept
-
-Cập nhật docs tương ứng khi feature/schema thay đổi.
+Docs dự án trong `./docs/` — cập nhật khi feature/schema thay đổi.
 
 ## Working Principles
 
@@ -73,4 +50,3 @@ Cập nhật docs tương ứng khi feature/schema thay đổi.
 - Sửa file hiện có thay vì tạo file enhanced/v2.
 - Không commit secrets (`.env`, credentials, API keys).
 - Conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`...). Mô tả tiếng Việt OK.
-- Không skip failing tests/linter để pass build.

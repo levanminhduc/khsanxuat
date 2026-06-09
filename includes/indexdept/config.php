@@ -43,3 +43,8 @@ function getNhomDisplayName($dept, $nhom) {
     }
     return '';
 }
+
+function getValidDepts() {
+    global $dept_names;
+    return array_keys($dept_names);
+}

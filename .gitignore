@@ -31,3 +31,4 @@ specs/
 playwright_test/
 .augment/
 node_modules/
+dev-tools/
