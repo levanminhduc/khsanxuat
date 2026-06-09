@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 // Kết nối database
-include 'contdb.php';
+require_once __DIR__ . '/bootstrap.php';
 include 'display_deadline.php';
 
 // Thiết lập header để trả về JSON

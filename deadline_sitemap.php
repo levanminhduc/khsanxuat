@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-include 'contdb.php';
+require_once __DIR__ . '/bootstrap.php';
 ?>
 
 <!DOCTYPE html>

@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Kết nối database
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 include 'activity_logger.php';
 
 // Kiểm tra kết nối

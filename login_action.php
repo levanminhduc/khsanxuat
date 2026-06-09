@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('contdb.php');
+require_once __DIR__ . '/bootstrap.php';
 
 $name = $_POST['name'];
 $pass = $_POST['password'];

@@ -1,5 +1,5 @@
 <?php
-require "contdb.php";
+require_once __DIR__ . '/bootstrap.php';
 
 $id_sanxuat = isset($_GET['id']) ? $_GET['id'] : 0;
 

@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 require_once 'includes/security/csrf-helper.php';
 require_once 'includes/indexdept/config.php';
 require_once 'includes/indexdept/functions.php';

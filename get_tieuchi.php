@@ -1,5 +1,5 @@
 <?php
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 
 if ($connect->connect_error) {
     die("Kết nối thất bại: " . $connect->connect_error);

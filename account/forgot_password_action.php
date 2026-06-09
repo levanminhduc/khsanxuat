@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../contdb.php');
+require_once __DIR__ . '/../bootstrap.php';
 
 // Lấy dữ liệu từ form
 $name = $_POST['name'];

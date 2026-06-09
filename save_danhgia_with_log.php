@@ -5,7 +5,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // Kết nối database và logger
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 include 'activity_logger.php';
 require_once 'check_tieuchi_image.php';
 ini_set('display_errors', 0);

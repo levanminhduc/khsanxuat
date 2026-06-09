@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Kiểm tra và tạo bảng nếu chưa tồn tại
 $sql_create_table = "CREATE TABLE IF NOT EXISTS required_images_criteria (

@@ -1,6 +1,6 @@
 <?php
 // Kết nối cơ sở dữ liệu sử dụng mysqli
-require "contdb.php"; // Đảm bảo rằng bạn đã kết nối với cơ sở dữ liệu qua contdb.php
+require_once __DIR__ . '/bootstrap.php';
 
 /**
  * Hàm chuyển đổi định dạng ngày từ d/m/Y sang Y-m-d

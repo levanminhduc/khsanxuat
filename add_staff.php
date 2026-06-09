@@ -1,6 +1,6 @@
 <?php
 // Kết nối cơ sở dữ liệu
-require "contdb.php";
+require_once __DIR__ . '/bootstrap.php';
 
 // Kiểm tra dữ liệu đầu vào
 if (!isset($_POST['ten']) || empty($_POST['ten']) || !isset($_POST['phong_ban']) || empty($_POST['phong_ban'])) {

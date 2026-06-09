@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Bật hiển thị lỗi để dễ debug
 error_reporting(E_ALL);

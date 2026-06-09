@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 } */
 
 // Kết nối database
-include 'contdb.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Kiểm tra kết nối
 if (!isset($connect) || $connect === null) {

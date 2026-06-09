@@ -1,5 +1,5 @@
 <?php
-require "contdb.php";
+require_once __DIR__ . '/bootstrap.php';
 
 // Lấy thông tin bộ phận và tháng từ URL
 $dept = isset($_GET['dept']) ? $_GET['dept'] : '';

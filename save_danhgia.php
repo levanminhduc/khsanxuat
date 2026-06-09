@@ -1,5 +1,5 @@
 <?php
-require "contdb.php";
+require_once __DIR__ . '/bootstrap.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_sanxuat = $_POST['id_sanxuat'];

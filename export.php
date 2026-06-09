@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-require "contdb.php";
+require_once __DIR__ . '/bootstrap.php';
 
 // Sử dụng thư viện PhpSpreadsheet
 require 'vendor/autoload.php';

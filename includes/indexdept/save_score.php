@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-include __DIR__ . '/../../db_connect.php';
+require_once __DIR__ . '/../../bootstrap.php';
 require_once __DIR__ . '/../security/csrf-helper.php';
 require_once __DIR__ . '/score-options.php';
 require_once __DIR__ . '/../../check_tieuchi_image.php';

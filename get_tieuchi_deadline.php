@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Kết nối database
-include 'contdb.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Kiểm tra kết nối
 if (!$connect) {

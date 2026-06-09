@@ -1,5 +1,5 @@
 <?php
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // Đọc nội dung file SQL
 $sql_content = file_get_contents('update_chuanbi_tieuchi_correct.sql');

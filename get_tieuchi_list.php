@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include 'db_connect.php';
+require_once __DIR__ . '/bootstrap.php';
 
 if (!isset($_GET['dept'])) {
     echo json_encode(['success' => false, 'message' => 'Thiếu tham số bộ phận']);
