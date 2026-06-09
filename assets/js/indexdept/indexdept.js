@@ -4,7 +4,7 @@
 
     function buildCheckImageUrl(tieuchiId) {
         const id = encodeURIComponent(INDEXDEPT_BOOTSTRAP.id || '');
-        return 'ajax_check_tieuchi_image.php?id_khsanxuat=' + id + '&id_tieuchi=' + encodeURIComponent(tieuchiId);
+        return window.BASE_URL + '/api/ajax_check_tieuchi_image.php?id_khsanxuat=' + id + '&id_tieuchi=' + encodeURIComponent(tieuchiId);
     }
 
     function buildAutoSelectImageUrl(tieuchiId) {
@@ -459,7 +459,7 @@
 
     function sendScoreOptionsRequest(payload, onSuccess) {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'save_score_options.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/save_score_options.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (xhr.readyState !== 4) {
@@ -733,7 +733,7 @@
 
         // Thực hiện cập nhật bằng AJAX
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'update_deadline_tieuchi.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/update_deadline_tieuchi.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -814,7 +814,7 @@
         });
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'update_deadline_all.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/update_deadline_all.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -918,7 +918,7 @@
             dateDisplay.innerHTML = '<span class="loading-indicator">Đang tải...</span>';
         }
 
-        fetch('get_tieuchi_deadline.php?id_tieuchi=' + id_tieuchi + '&id_sanxuat=' + id_sanxuat)
+        fetch(window.BASE_URL + '/api/get_tieuchi_deadline.php?id_tieuchi=' + id_tieuchi + '&id_sanxuat=' + id_sanxuat)
         .then(response => response.json())
         .then(data => {
             console.log("Dữ liệu nhận từ server:", data);
@@ -977,7 +977,7 @@
     // Hàm tải danh sách người thực hiện
     function loadStaffList(dept) {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'get_staff_list.php?dept=' + encodeURIComponent(dept), true);
+        xhr.open('GET', window.BASE_URL + '/api/get_staff_list.php?dept=' + encodeURIComponent(dept), true);
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
                 if (this.status === 200) {
@@ -1049,7 +1049,7 @@
         setStatusMessage(statusDiv, 'info', 'Đang thêm người chịu trách nhiệm...');
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'add_staff.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/add_staff.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -1188,7 +1188,7 @@
         setStatusMessage(statusDiv, 'info', 'Đang cập nhật thông tin...');
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'manage_staff.php', true);
+        xhr.open('POST', window.BASE_URL + '/pages/manage_staff.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -1241,7 +1241,7 @@
         setStatusMessage(statusDiv, 'info', 'Đang xóa người chịu trách nhiệm...');
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'manage_staff.php', true);
+        xhr.open('POST', window.BASE_URL + '/pages/manage_staff.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -1296,7 +1296,7 @@
     // Hàm tải dữ liệu cài đặt mặc định theo xưởng
     function loadDefaultSettings(dept, xuong) {
         const xhr = new XMLHttpRequest();
-        const url = 'get_default_settings.php?dept=' + encodeURIComponent(dept) + '&xuong=' + encodeURIComponent(xuong || '');
+        const url = window.BASE_URL + '/api/get_default_settings.php?dept=' + encodeURIComponent(dept) + '&xuong=' + encodeURIComponent(xuong || '');
 
         xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
@@ -1351,7 +1351,7 @@
     // Hàm đồng bộ số ngày xử lý từ cài đặt mặc định vào các ô nhập ngày
     function syncTieuChiWithDefaultSettings(dept, xuong) {
         const xhr = new XMLHttpRequest();
-        const url = 'get_default_settings.php?dept=' + encodeURIComponent(dept) + '&xuong=' + encodeURIComponent(xuong || '');
+        const url = window.BASE_URL + '/api/get_default_settings.php?dept=' + encodeURIComponent(dept) + '&xuong=' + encodeURIComponent(xuong || '');
 
         xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
@@ -1394,7 +1394,7 @@
         setStatusMessage(statusDiv, 'info', 'Đang lưu cài đặt...');
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'save_default_setting.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/save_default_setting.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -1454,7 +1454,7 @@
         setStatusMessage(statusDiv, 'info', 'Đang lưu tất cả cài đặt...');
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'save_all_default_settings.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/save_all_default_settings.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -1498,7 +1498,7 @@
         setStatusMessage(statusDiv, 'info', 'Đang áp dụng cài đặt mặc định...');
 
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'apply_default_setting.php', true);
+        xhr.open('POST', window.BASE_URL + '/actions/apply_default_setting.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (this.readyState === 4) {
@@ -1549,7 +1549,7 @@
             const id_tieuchi = row.id.replace('ds_row_', '');
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'apply_default_setting.php', true);
+            xhr.open('POST', window.BASE_URL + '/actions/apply_default_setting.php', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onreadystatechange = function() {
                 if (this.readyState === 4) {

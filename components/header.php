@@ -101,6 +101,7 @@ $search_types = [
     'model' => 'Model'
 ];
 ?>
+<script>window.BASE_URL = <?php echo json_encode(defined('BASE_URL') ? BASE_URL : ''); ?>;</script>
 <div class="header-component">
     <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="navbar-left">
