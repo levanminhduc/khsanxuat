@@ -23,7 +23,8 @@ debug.log
 *.txt
 !assets/**/*.png
 openspec/
-template_files/
+template_files/*
+!template_files/.htaccess
 images/
 img/
 vendor/

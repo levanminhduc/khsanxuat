@@ -1,0 +1,5 @@
+# Chặn thực thi mọi script trong thư mục upload (defense-in-depth).
+php_flag engine off
+<FilesMatch "\.(php|phtml|phar|cgi|pl|asp|aspx|jsp|sh)$">
+    Require all denied
+</FilesMatch>
