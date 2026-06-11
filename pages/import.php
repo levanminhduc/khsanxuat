@@ -812,6 +812,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     <title>Import Dữ Liệu</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/loading-overlay.css">
     <style>
         .error-container, .success-container {
             margin: 20px;
@@ -893,42 +894,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
             border-radius: 4px;
             cursor: pointer;
         }
-        /* Hiệu ứng loading */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        
-        .spinner {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        .loading-text {
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
+
         /* Thêm CSS cho responsive */
         @media screen and (max-width: 428px) {
             body {
@@ -1127,38 +1093,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     </div>
     </div>
 
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <div class="loading-text">Đang xử lý file Excel...</div>
-    </div>
+    <?php include BASE_PATH . '/components/loading-overlay.php'; ?>
 
     <script>
     function showSuccessModal(message) {
         document.getElementById('modalMessage').innerHTML = message;
         document.getElementById('successModal').style.display = 'block';
-        hideLoading(); // Ẩn loading khi hiển thị modal thành công
+        window.LoadingOverlay.hide(); // hide overlay when success modal appears
     }
 
     function closeModal() {
         document.getElementById('successModal').style.display = 'none';
     }
 
-    function showLoading() {
-        document.getElementById('loadingOverlay').style.display = 'flex';
-    }
-
-    function hideLoading() {
-        document.getElementById('loadingOverlay').style.display = 'none';
-    }
-
-    // Thêm event listener cho form submit
     document.addEventListener('DOMContentLoaded', function() {
         const importForm = document.querySelector('form[action="<?php echo BASE_URL; ?>/pages/import.php"]');
         if (importForm) {
             importForm.addEventListener('submit', function() {
                 const fileInput = document.querySelector('input[name="excel_file"]');
                 if (fileInput && fileInput.files.length > 0) {
-                    showLoading();
+                    window.LoadingOverlay.show('Đang xử lý file Excel...');
                 }
             });
         }
@@ -1168,6 +1122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         showSuccessModal("Đã tải lên thành công <strong><?php echo count($imported_ids); ?></strong> đơn hàng!<br><?php echo $message ?? ''; ?>");
     <?php endif; ?>
     </script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/loading-overlay.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>
