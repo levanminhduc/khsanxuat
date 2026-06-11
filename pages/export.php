@@ -4,7 +4,7 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/helpers/download_token.php';
 
 // Sử dụng thư viện PhpSpreadsheet
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

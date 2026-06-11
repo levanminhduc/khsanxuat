@@ -89,7 +89,7 @@ $kho_percent = $stats['kho_percent'];
                 'tooltip' => 'Nhập dữ liệu mới'
             ],
             [
-                'url' => 'export.php?month=' . $selected_month . '&year=' . $selected_year,
+                'url' => 'pages/export.php?month=' . $selected_month . '&year=' . $selected_year,
                 'icon' => 'img/export.jpg',
                 'title' => 'Xuất dữ liệu',
                 'tooltip' => 'Xuất dữ liệu',
