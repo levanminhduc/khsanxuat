@@ -275,7 +275,7 @@ try {
                     <div class="file-list-header" style="display: flex; justify-content: space-between; align-items: center;">
                         <div>Tổng cộng: <?php echo count($template_files); ?> files</div>
                         <?php if (count($template_files) > 0): ?>
-                        <a href="<?php echo BASE_URL; ?>/pages/download_all_files.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn btn-success" style="margin-left: 10px;">
+                        <a href="<?php echo BASE_URL; ?>/pages/download_all_files.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>" class="btn btn-success" style="margin-left: 10px;" data-loading-download data-loading-text="Đang nén và tải xuống...">
                             <i class="fas fa-cloud-download-alt"></i> Tải xuống tất cả
                         </a>
                         <?php endif; ?>
@@ -344,10 +344,7 @@ try {
         </div>
     </div>
 
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <div class="loading-text">Đang xử lý...</div>
-    </div>
+    <?php include BASE_PATH . '/components/loading-overlay.php'; ?>
 
     <script src="<?php echo BASE_URL; ?>/assets/js/file_templates.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/loading-overlay.js"></script>

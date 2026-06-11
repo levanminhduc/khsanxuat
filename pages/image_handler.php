@@ -660,10 +660,7 @@ $dept_names = array(
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Overlay loading chặn thao tác khi upload/lưu -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <div class="loading-text">Đang xử lý...</div>
-    </div>
+    <?php include BASE_PATH . '/components/loading-overlay.php'; ?>
 
     <!-- Thêm script Lightbox từ CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
