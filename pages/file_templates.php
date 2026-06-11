@@ -87,6 +87,7 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/file_templates.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/loading-overlay.css">
 </head>
 <body>
     <!-- Thanh điều hướng - Shared Header Component -->
@@ -195,7 +196,7 @@ try {
                 <?php endif; ?>
 
                 <h3 style="margin-top: 30px;">Thêm Biểu Mẫu Mới</h3>
-                <form action="<?php echo BASE_URL; ?>/actions/template_actions.php" method="post" class="upload-form">
+                <form action="<?php echo BASE_URL; ?>/actions/template_actions.php" method="post" class="upload-form" data-loading data-loading-text="Đang thêm biểu mẫu...">
                     <?php echo getCsrfInput(); ?>
                     <input type="hidden" name="action" value="add_template">
                     <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
@@ -227,7 +228,7 @@ try {
                     <p>Vui lòng tạo biểu mẫu trước khi upload files.</p>
                 </div>
                 <?php else: ?>
-                <form action="<?php echo BASE_URL; ?>/actions/template_actions.php" method="post" enctype="multipart/form-data" class="upload-form">
+                <form action="<?php echo BASE_URL; ?>/actions/template_actions.php" method="post" enctype="multipart/form-data" class="upload-form" data-loading data-loading-text="Đang tải file lên...">
                     <?php echo getCsrfInput(); ?>
                     <input type="hidden" name="action" value="upload">
                     <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
@@ -318,7 +319,7 @@ try {
                             <a href="<?php echo BASE_URL . '/' . htmlspecialchars($file['file_path']); ?>" download class="btn btn-success">
                                 <i class="fas fa-download"></i> Tải về
                             </a>
-                            <form action="<?php echo BASE_URL; ?>/actions/template_actions.php" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa file này?');">
+                            <form action="<?php echo BASE_URL; ?>/actions/template_actions.php" method="post" style="display:inline;" data-loading data-loading-text="Đang xóa file..." onsubmit="return confirm('Bạn có chắc chắn muốn xóa file này?');">
                                 <?php echo getCsrfInput(); ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="file_id" value="<?php echo $file['id']; ?>">
@@ -343,7 +344,13 @@ try {
         </div>
     </div>
 
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Đang xử lý...</div>
+    </div>
+
     <script src="<?php echo BASE_URL; ?>/assets/js/file_templates.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/loading-overlay.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>
