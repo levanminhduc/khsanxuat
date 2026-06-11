@@ -48,6 +48,7 @@ $kho_percent = $stats['kho_percent'];
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="assets/css/index/index.css?v=<?php echo filemtime('assets/css/index/index.css'); ?>">
+    <link rel="stylesheet" href="assets/css/loading-overlay.css">
 </head>
 <body>
     <?php
@@ -91,7 +92,9 @@ $kho_percent = $stats['kho_percent'];
                 'url' => 'export.php?month=' . $selected_month . '&year=' . $selected_year,
                 'icon' => 'img/export.jpg',
                 'title' => 'Xuất dữ liệu',
-                'tooltip' => 'Xuất dữ liệu'
+                'tooltip' => 'Xuất dữ liệu',
+                'download' => true,
+                'loading_text' => 'Đang xuất Excel...'
             ]
         ]
     ];
@@ -473,6 +476,9 @@ window.indexConfig = {
 
 
 <?php include 'components/back-to-top.php'; ?>
+
+<?php include 'components/loading-overlay.php'; ?>
+<script src="assets/js/loading-overlay.js"></script>
 
 </body>
 </html>

@@ -194,6 +194,9 @@ $search_types = [
                         <?php if (!empty($action['tooltip'])): ?>
                         title="<?php echo header_escape($action['tooltip']); ?>"
                         <?php endif; ?>
+                        <?php if (!empty($action['download'])): ?>
+                        data-loading-download data-loading-text="<?php echo header_escape($action['loading_text'] ?? 'Đang chuẩn bị tải xuống...'); ?>"
+                        <?php endif; ?>
                     >
                         <img
                             src="<?php echo header_escape($action['icon']); ?>"
@@ -265,6 +268,9 @@ $search_types = [
                 href="<?php echo header_escape($action['url']); ?>"
                 class="mobile-nav-item"
                 role="menuitem"
+                <?php if (!empty($action['download'])): ?>
+                data-loading-download data-loading-text="<?php echo header_escape($action['loading_text'] ?? 'Đang chuẩn bị tải xuống...'); ?>"
+                <?php endif; ?>
             >
                 <img
                     src="<?php echo header_escape($action['icon']); ?>"
