@@ -7,6 +7,9 @@ ini_set('display_errors', 1);
 require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/helpers/download_token.php';
 
+// File trong DB lưu path tương đối từ root; trang nằm ở pages/ nên đưa CWD về root.
+chdir(BASE_PATH);
+
 // Khởi tạo phiên làm việc nếu chưa có
 session_start();
 
