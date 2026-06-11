@@ -1,6 +1,7 @@
 <?php
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/helpers/download_token.php';
 
 // Sử dụng thư viện PhpSpreadsheet
 require 'vendor/autoload.php';
@@ -334,6 +335,9 @@ $sheet->getStyle('A' . ($row_count + 1))->getFont()->setBold(true);
 
 // Tạo tên file với timestamp và thông tin tháng/năm
 $filename = 'KH_RaiChuyen_Thang' . $selected_month . '_Nam' . $selected_year . '_' . date('Ymd_His') . '.xlsx';
+
+// Báo cho overlay phía client biết file đã sẵn sàng stream.
+emitDownloadTokenCookie();
 
 // Header để download file
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
