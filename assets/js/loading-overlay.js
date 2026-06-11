@@ -42,6 +42,9 @@
     function bindForms() {
         document.querySelectorAll('form[data-loading]').forEach(function (form) {
             form.addEventListener('submit', function (e) {
+                // Tôn trọng handler chạy trước (vd onsubmit="return confirm(...)"):
+                // nếu submit đã bị huỷ thì không hiện overlay (tránh kẹt overlay khi user bấm Cancel).
+                if (e.defaultPrevented) { return; }
                 if (form.__submitting) { e.preventDefault(); return; }
                 form.__submitting = true;
                 show(form.getAttribute('data-loading-text') || 'Đang xử lý...');
