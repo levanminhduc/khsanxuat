@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/helpers/download_token.php';
 
 // Khởi tạo phiên làm việc nếu chưa có
 session_start();
@@ -229,6 +230,9 @@ try {
         die("Không thể tạo file ZIP. Vui lòng thử lại sau.");
     }
     
+    // Báo cho overlay phía client biết file zip đã sẵn sàng stream.
+    emitDownloadTokenCookie();
+
     // Thiết lập header cho tải xuống
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename="' . $zip_filename . '"');
