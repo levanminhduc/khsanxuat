@@ -392,326 +392,8 @@ $dept_names = array(
     <!-- Thêm CSS Lightbox từ CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-        }
-
-        .navbar {
-            display: flex;
-            background-color: rgb(20, 53, 131);
-            color: white;
-            padding: 10px 20px;
-            align-items: center;
-        }
-
-        .navbar-left {
-            margin-right: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        h1 {
-            color: rgb(255, 255, 255);
-        }
-
-        h2, h3 {
-            color: rgb(20, 53, 131);
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: rgb(20, 53, 131);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .info-table th, .info-table td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-
-        .info-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-
-        .upload-form {
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        /* Style cho nhóm tiêu chí */
-        .tieuchi-group {
-            font-weight: bold;
-            color: #143583;
-            background-color: #f0f4ff;
-        }
-
-        select option[value=""] {
-            font-style: italic;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: rgb(20, 53, 131);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn:hover {
-            background-color: #0d2240;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .gallery-item {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item img:hover {
-            transform: scale(1.03);
-        }
-
-        .gallery-item .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover .overlay {
-            transform: translateY(0);
-        }
-
-        .gallery-item .overlay a {
-            color: white;
-            text-decoration: none;
-            margin: 0 5px;
-            padding: 5px 10px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 4px;
-            font-size: 14px;
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-
-        .gallery-item .overlay a:hover {
-            background: rgba(0,0,0,0.8);
-            transform: scale(1.05);
-        }
-
-        .gallery-item .overlay a:first-child {
-            background-color: #4caf50;
-        }
-
-        .gallery-item .overlay a:first-child:hover {
-            background-color: #388e3c;
-        }
-
-        .no-images {
-            text-align: center;
-            padding: 30px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            color: #6c757d;
-        }
-
-        /* Tùy chỉnh Lightbox */
-        .lb-data .lb-caption {
-            font-size: 16px;
-            font-weight: bold;
-            line-height: 1.5;
-            color: #fff;
-        }
-
-        .lb-data .lb-details {
-            width: 100%;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .lb-closeContainer {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        /* Tối ưu cho điện thoại */
-        @media only screen and (max-width: 700px) {
-            .gallery {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-
-            .gallery-item img {
-                height: 150px;
-            }
-
-            .gallery-item .detail-info {
-                font-size: 11px;
-                padding: 5px;
-            }
-        }
-
-        /* Style cho thông tin chi tiết mã hàng */
-        .product-info {
-            margin-bottom: 20px;
-            background-color: #f0f7ff;
-            border-radius: 4px;
-            border-left: 4px solid #1e40af;
-            padding: 15px;
-        }
-
-        .style-header {
-            margin-bottom: 15px;
-        }
-
-        .style-header h3 {
-            color: #1e40af;
-            margin: 0;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .product-details {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .detail-row {
-            display: flex;
-            align-items: center;
-        }
-
-        .detail-item {
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .detail-item strong {
-            color: #333;
-            font-weight: bold;
-            display: inline-block;
-            width: 80px;
-        }
-
-        @media (max-width: 768px) {
-            .product-details {
-                gap: 5px;
-            }
-
-            .detail-item {
-                font-size: 13px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/image_handler.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/loading-overlay.css">
 </head>
 <body>
     <?php
@@ -791,7 +473,7 @@ $dept_names = array(
 
         <div class="card">
             <h2>Upload hình ảnh</h2>
-            <form action="" method="post" enctype="multipart/form-data" class="upload-form">
+            <form action="" method="post" enctype="multipart/form-data" class="upload-form" data-loading data-loading-text="Đang tải ảnh lên...">
                 <div class="form-group">
                     <label for="id_tieuchi" class="form-label">Chọn tiêu chí</label>
                     <select name="id_tieuchi" id="id_tieuchi" class="form-control" required>
@@ -856,7 +538,7 @@ $dept_names = array(
 
         <div class="card">
             <h2>Đánh giá điểm tiêu chí</h2>
-            <form action="" method="post" class="rating-form">
+            <form action="" method="post" class="rating-form" data-loading data-loading-text="Đang lưu điểm đánh giá...">
                 <div class="form-group">
                     <label for="tieuchi_id" class="form-label">Chọn tiêu chí</label>
                     <select name="tieuchi_id" id="tieuchi_id" class="form-control" required onchange="loadTieuchiData()">
@@ -977,127 +659,34 @@ $dept_names = array(
     <!-- Thêm jQuery từ CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Overlay loading chặn thao tác khi upload/lưu -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Đang xử lý...</div>
+    </div>
+
     <!-- Thêm script Lightbox từ CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
     <script>
-    // Cấu hình Lightbox
-    lightbox.option({
-      'resizeDuration': 200,
-      'wrapAround': true,
-      'albumLabel': 'Hình %1 / %2',
-      'disableScrolling': true,
-      'fadeDuration': 300,
-      'imageFadeDuration': 300,
-      'positionFromTop': 50,
-      'alwaysShowNavOnTouchDevices': true,
-      'showImageNumberLabel': true,
-      'maxWidth': 1200,
-      'maxHeight': 800
-    });
-
-    // JavaScript cho phần đánh giá điểm
-    // Lưu trữ dữ liệu của tiêu chí
-    const tieuchiData = <?php echo json_encode($tieuchi_data); ?>;
-
-    // Xác định đây có phải là bộ phận kế hoạch
-    const isKeHoach = <?php echo $dept === 'kehoach' ? 'true' : 'false'; ?>;
-
-    // Hàm cập nhật trạng thái thực hiện dựa trên điểm
-    function updateDaThucHien() {
-        const diem = parseFloat(document.getElementById('diem_danhgia').value);
-        // Nếu diem_danhgia_special đang hiển thị, sử dụng giá trị từ đó
-        if (document.getElementById('special_points_container').style.display !== 'none') {
-            const diemSpecial = parseFloat(document.getElementById('diem_danhgia_special').value);
-            return diemSpecial > 0;
-        }
-        return diem > 0;
-    }
-
-    // Hàm tải dữ liệu của tiêu chí khi chọn
-    function loadTieuchiData() {
-        const tieuchiId = document.getElementById('tieuchi_id').value;
-        const tieuchiThuTu = document.querySelector(`#tieuchi_id option[value="${tieuchiId}"]`)?.textContent.split('.')[0] || '';
-
-        // Kiểm tra nếu là tiêu chí 7 hoặc 8 của bộ phận kế hoạch
-        const isSpecialKeHoach = isKeHoach && (tieuchiThuTu === '7' || tieuchiThuTu === '8');
-
-        // Hiển thị/ẩn dropdown điểm đặc biệt
-        document.getElementById('special_points_container').style.display = isSpecialKeHoach ? 'block' : 'none';
-        document.getElementById('diem_danhgia').style.display = isSpecialKeHoach ? 'none' : 'block';
-
-        // Nếu có dữ liệu cho tiêu chí này, hiển thị thông tin
-        if (tieuchiData[tieuchiId]) {
-            const data = tieuchiData[tieuchiId];
-
-            // Điền giá trị
-            if (isSpecialKeHoach) {
-                document.getElementById('diem_danhgia_special').value = data.diem_danhgia;
+    window.IMAGE_HANDLER_BOOTSTRAP = {
+        tieuchiData: <?php echo json_encode($tieuchi_data); ?>,
+        isKeHoach: <?php echo $dept === 'kehoach' ? 'true' : 'false'; ?>,
+        scoreReset: <?php
+            if (isset($_GET['score_reset']) && isset($_GET['tieuchi_reset'])) {
+                echo json_encode([
+                    'tieuchi_reset' => intval($_GET['tieuchi_reset']),
+                    'id' => $id,
+                    'dept' => $dept,
+                ]);
             } else {
-                document.getElementById('diem_danhgia').value = data.diem_danhgia;
+                echo 'null';
             }
-
-            document.getElementById('nguoi_thuchien').value = data.nguoi_thuchien;
-            document.getElementById('ghichu').value = data.ghichu || '';
-        } else {
-            // Reset form
-            document.getElementById('diem_danhgia').value = '0';
-            document.getElementById('diem_danhgia_special').value = '0';
-            document.getElementById('ghichu').value = '';
-            // Giữ nguyên người thực hiện nếu đã chọn
-        }
-    }
-
-    // Khi trang tải xong, kiểm tra tiêu chí đã chọn
-    document.addEventListener('DOMContentLoaded', function() {
-        // Nếu có tiêu chí được chọn trong URL, tải dữ liệu
-        const urlParams = new URLSearchParams(window.location.search);
-        const tieuchiId = urlParams.get('tieuchi_id');
-
-        if (tieuchiId) {
-            document.getElementById('tieuchi_id').value = tieuchiId;
-            loadTieuchiData();
-        }
-    });
-
-    // Hàm chuẩn bị dữ liệu trước khi gửi form
-    function prepareSubmit() {
-        const tieuchiId = document.getElementById('tieuchi_id').value;
-        if (!tieuchiId) {
-            alert('Vui lòng chọn tiêu chí!');
-            return false;
-        }
-
-        const tieuchiThuTu = document.querySelector(`#tieuchi_id option[value="${tieuchiId}"]`)?.textContent.split('.')[0] || '';
-        const isSpecialKeHoach = isKeHoach && (tieuchiThuTu === '7' || tieuchiThuTu === '8');
-
-        // Nếu là tiêu chí đặc biệt của kế hoạch, sử dụng điểm đặc biệt
-        if (isSpecialKeHoach) {
-            const diemSpecial = document.getElementById('diem_danhgia_special').value;
-            document.getElementById('diem_danhgia').value = diemSpecial;
-        }
-
-        return true;
-    }
-
-    // Hàm để chọn và di chuyển đến phần đánh giá điểm
-    function editScore(tieuchiId) {
-        document.getElementById('tieuchi_id').value = tieuchiId;
-        loadTieuchiData();
-        document.querySelector('.rating-form').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Kiểm tra nếu có điểm đánh giá bị reset
-    window.addEventListener('DOMContentLoaded', function() {
-        <?php if (isset($_GET['score_reset']) && isset($_GET['tieuchi_reset'])): ?>
-        // Lưu thông tin vào localStorage để trang indexdept.php có thể đọc được
-        localStorage.setItem('tieuchi_score_reset', '<?php echo intval($_GET['tieuchi_reset']); ?>');
-        localStorage.setItem('khsanxuat_id', '<?php echo $id; ?>');
-        localStorage.setItem('dept', '<?php echo $dept; ?>');
-        localStorage.setItem('reset_timestamp', Date.now().toString());
-        <?php endif; ?>
-    });
+        ?>
+    };
     </script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/image_handler.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/loading-overlay.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
 </body>
 </html>
