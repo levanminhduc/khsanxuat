@@ -14,9 +14,9 @@ $dept_names = [
 ];
 
 $required_settings_files = [
-    'save_default_setting.php',
-    'save_all_default_settings.php',
-    'apply_default_settings.php'
+    BASE_PATH . '/actions/save_default_setting.php',
+    BASE_PATH . '/actions/save_all_default_settings.php',
+    BASE_PATH . '/actions/apply_default_settings.php'
 ];
 
 function getDeptDisplayName($dept, $dept_names) {

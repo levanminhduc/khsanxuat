@@ -10,8 +10,6 @@ require_once __DIR__ . '/../security/csrf-helper.php';
 require_once __DIR__ . '/score-options.php';
 require_once BASE_PATH . '/includes/check_tieuchi_image.php';
 
-session_start();
-
 // CSRF validation (không rotate token để các request tiếp theo vẫn dùng được)
 $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
 if (!validateCsrfToken($csrf_token)) {
