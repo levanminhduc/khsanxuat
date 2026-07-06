@@ -1852,7 +1852,7 @@
     if (INDEXDEPT_BOOTSTRAP.autoSelectImage && INDEXDEPT_BOOTSTRAP.autoSelectTieuchiId) {
         const autoSelectTieuchiId = INDEXDEPT_BOOTSTRAP.autoSelectTieuchiId;
         document.addEventListener('DOMContentLoaded', function() {
-            window.location.href = 'image_handler.php?id=' + encodeURIComponent(INDEXDEPT_BOOTSTRAP.id || '') + '&dept=' + encodeURIComponent(INDEXDEPT_BOOTSTRAP.dept || '') + '&tieuchi_id=' + encodeURIComponent(autoSelectTieuchiId);
+            window.location.href = window.BASE_URL + '/pages/image_handler.php?id=' + encodeURIComponent(INDEXDEPT_BOOTSTRAP.id || '') + '&dept=' + encodeURIComponent(INDEXDEPT_BOOTSTRAP.dept || '') + '&tieuchi_id=' + encodeURIComponent(autoSelectTieuchiId);
         });
     }
 })();
@@ -1883,7 +1883,7 @@ window._autoSaveScore = function(id_tieuchi, diem) {
         csrf_token: csrfToken
     });
 
-    fetch('includes/indexdept/save_score.php', {
+    fetch(window.BASE_URL + '/includes/indexdept/save_score.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: body.toString()
@@ -1895,7 +1895,7 @@ window._autoSaveScore = function(id_tieuchi, diem) {
         } else {
             window._showAutoSaveToast(data.message || 'Lỗi lưu', true);
             if (data.require_image) {
-                window.location.href = 'image_handler.php?id=' + INDEXDEPT_BOOTSTRAP.id +
+                window.location.href = window.BASE_URL + '/pages/image_handler.php?id=' + INDEXDEPT_BOOTSTRAP.id +
                     '&dept=' + INDEXDEPT_BOOTSTRAP.dept +
                     '&tieuchi_id=' + id_tieuchi;
             }
