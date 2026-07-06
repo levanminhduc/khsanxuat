@@ -35,6 +35,7 @@
                                     <option value="Nhóm Nghiệp Vụ">a. Nhóm Nghiệp Vụ</option>
                                     <option value="Nhóm May Mẫu">b. Nhóm May Mẫu</option>
                                     <option value="Nhóm Quy Trình">c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền</option>
+                                    <option value="Nhóm Kỹ Thuật Chuyền">d. Kỹ Thuật Chuyền</option>
                                 <?php elseif ($dept == 'kho') : ?>
                                     <option value="Kho Nguyên Liệu">a. Kho Nguyên Liệu</option>
                                     <option value="Kho Phụ Liệu">b. Kho Phụ Liệu</option>

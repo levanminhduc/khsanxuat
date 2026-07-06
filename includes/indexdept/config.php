@@ -32,6 +32,8 @@ function getNhomDisplayName($dept, $nhom) {
                 return 'b. Nhóm May Mẫu';
             case 'Nhóm Quy Trình':
                 return 'c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền';
+            case 'Nhóm Kỹ Thuật Chuyền':
+                return 'd. Kỹ Thuật Chuyền';
         }
     } elseif ($dept == 'kho') {
         switch ($nhom) {

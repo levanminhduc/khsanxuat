@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($dept == 'chuanbi_sanxuat_phong_kt' || $dept == 'kho') {
         $valid_groups = [];
         if ($dept == 'chuanbi_sanxuat_phong_kt') {
-            $valid_groups = ['Nhóm Nghiệp Vụ', 'Nhóm May Mẫu', 'Nhóm Quy Trình'];
+            $valid_groups = ['Nhóm Nghiệp Vụ', 'Nhóm May Mẫu', 'Nhóm Quy Trình', 'Nhóm Kỹ Thuật Chuyền'];
         } elseif ($dept == 'kho') {
             $valid_groups = ['Kho Nguyên Liệu', 'Kho Phụ Liệu'];
         }

@@ -118,9 +118,10 @@ $kho_percent = $stats['kho_percent'];
 
         $chart_departments = [
             'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
-            'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
             'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
             'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
+            'Trung Tâm BTP' => ['code' => 'trung_tam_btp', 'color' => '#8B5CF6'],
+            'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
             'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF'],
             'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#14B8A6'],
             'KCS' => ['code' => 'kcs', 'color' => '#F97316']
@@ -271,11 +272,6 @@ $kho_percent = $stats['kho_percent'];
                             </a>
                         </th>
                         <th style="width: 110px;">
-                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=chuanbi_sanxuat_phong_kt&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
-                                Kỹ Thuật
-                            </a>
-                        </th>
-                        <th style="width: 110px;">
                             <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=kho&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Kho
                             </a>
@@ -283,6 +279,16 @@ $kho_percent = $stats['kho_percent'];
                         <th style="width: 110px;">
                             <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=cat&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
                                 Cắt
+                            </a>
+                        </th>
+                        <th style="width: 130px;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=trung_tam_btp&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                                Trung Tâm BTP
+                            </a>
+                        </th>
+                        <th style="width: 110px;">
+                            <a href="<?php echo BASE_URL; ?>/pages/dept_statistics.php?dept=chuanbi_sanxuat_phong_kt&month=<?php echo $selected_month; ?>&year=<?php echo $selected_year; ?>" style="color: inherit; text-decoration: none;">
+                                Kỹ Thuật
                             </a>
                         </th>
                         <th style="width: 110px;">
@@ -382,25 +388,6 @@ $kho_percent = $stats['kho_percent'];
             echo "</td>";
 
             echo "<td>";
-
-            $chuanbi_deadline = getDeadlineFromCache($deadline_map, $row['stt'], 'chuanbi_sanxuat_phong_kt');
-
-            $chuanbi_formatted_date = !$chuanbi_deadline ? $kehoach_formatted : date('d/m/Y', strtotime($chuanbi_deadline));
-
-            if (!$chuanbi_completed) {
-                echo "<div style='display: flex; align-items: center; justify-content: center; gap: 5px;'>";
-                echo "<div style='width: 20px; height: 20px; background: #ef4444; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;'>X</div>";
-                echo "<a href='indexdept.php?dept=chuanbi_sanxuat_phong_kt&id={$row['stt']}'>{$chuanbi_formatted_date}</a>";
-                echo "</div>";
-            } else {
-                echo "<div style='display: flex; align-items: center; justify-content: center; gap: 5px;'>";
-                echo "<div style='width: 20px; height: 20px; background: #10b981; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center;'>✓</div>";
-                echo "<a href='indexdept.php?dept=chuanbi_sanxuat_phong_kt&id={$row['stt']}'>{$chuanbi_formatted_date}</a>";
-                echo "</div>";
-            }
-            echo "</td>";
-
-            echo "<td>";
             if (!$kho_completed) {
                 echo "<div style='display: flex; align-items: center; justify-content: center; gap: 5px;'>";
                 echo "<div style='width: 20px; height: 20px; background: #ef4444; border-radius: 4px; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;'>X</div>";
@@ -416,6 +403,8 @@ $kho_percent = $stats['kho_percent'];
 
             $departments = [
                 'cat' => 'Cắt',
+                'trung_tam_btp' => 'Trung Tâm BTP',
+                'chuanbi_sanxuat_phong_kt' => 'Kỹ Thuật',
                 'co_dien' => 'Cơ Điện',
                 'chuyen_may' => 'Chuyền May',
                 'kcs' => 'KCS'

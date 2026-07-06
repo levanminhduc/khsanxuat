@@ -74,7 +74,8 @@ try {
                     WHEN 'Nhóm Nghiệp Vụ' THEN 1
                     WHEN 'Nhóm May Mẫu' THEN 2
                     WHEN 'Nhóm Quy Trình' THEN 3
-                    ELSE 4
+                    WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
+                    ELSE 5
                 END
             ELSE 0
         END,
@@ -495,6 +496,8 @@ $dept_names = array(
                                 $tieuchi_nhom['Nhóm May Mẫu'][$id_tc] = str_replace('[Nhóm May Mẫu] ', '', $noidung);
                             } elseif (strpos($noidung, '[Nhóm Quy Trình]') === 0) {
                                 $tieuchi_nhom['Nhóm Quy Trình'][$id_tc] = str_replace('[Nhóm Quy Trình] ', '', $noidung);
+                            } elseif (strpos($noidung, '[Nhóm Kỹ Thuật Chuyền]') === 0) {
+                                $tieuchi_nhom['Nhóm Kỹ Thuật Chuyền'][$id_tc] = str_replace('[Nhóm Kỹ Thuật Chuyền] ', '', $noidung);
                             } else {
                                 $tieuchi_nhom['Khác'][$id_tc] = $noidung;
                             }

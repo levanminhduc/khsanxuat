@@ -56,9 +56,10 @@ $xuong_list = getXuongList($connect);
                                        WHEN 'Nhóm Nghiệp Vụ' THEN 1
                                        WHEN 'Nhóm May Mẫu' THEN 2
                                        WHEN 'Nhóm Quy Trình' THEN 3
+                                       WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
                                        WHEN 'Kho Nguyên Liệu' THEN 1
                                        WHEN 'Kho Phụ Liệu' THEN 2
-                                       ELSE 4
+                                       ELSE 5
                                    END, tc.thutu";
                         $stmt = $connect->prepare($sql);
                         $stmt->bind_param("ss", $dept, $dept);

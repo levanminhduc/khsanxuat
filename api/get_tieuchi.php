@@ -12,8 +12,9 @@ $sql = "SELECT id, thutu, nhom, noidung
             CASE nhom 
                 WHEN 'Nhóm Nghiệp Vụ' THEN 1 
                 WHEN 'Nhóm May Mẫu' THEN 2 
-                WHEN 'Nhóm Quy Trình' THEN 3 
-                ELSE 4 
+                WHEN 'Nhóm Quy Trình' THEN 3
+                WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
+                ELSE 5
             END, 
             thutu";
 

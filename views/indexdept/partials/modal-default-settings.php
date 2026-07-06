@@ -84,9 +84,10 @@
                                                WHEN 'Nhóm Nghiệp Vụ' THEN 1
                                                WHEN 'Nhóm May Mẫu' THEN 2
                                                WHEN 'Nhóm Quy Trình' THEN 3
+                                               WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
                                                WHEN 'Kho Nguyên Liệu' THEN 1
                                                WHEN 'Kho Phụ Liệu' THEN 2
-                                               ELSE 4
+                                               ELSE 5
                                            END,
                                            tc.thutu";
 
@@ -115,6 +116,9 @@
                                                     break;
                                                 case 'Nhóm Quy Trình':
                                                     $nhom_display = 'c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền';
+                                                    break;
+                                                case 'Nhóm Kỹ Thuật Chuyền':
+                                                    $nhom_display = 'd. Kỹ Thuật Chuyền';
                                                     break;
                                             }
                                         } elseif ($dept == 'kho') {
