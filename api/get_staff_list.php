@@ -1,6 +1,7 @@
 <?php
 // Kết nối cơ sở dữ liệu
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/indexdept/config.php';
 
 // Kiểm tra tham số bộ phận
 if (!isset($_GET['dept']) || empty($_GET['dept'])) {
@@ -14,20 +15,7 @@ if (!isset($_GET['dept']) || empty($_GET['dept'])) {
 $dept = $_GET['dept'];
 
 // Kiểm tra tính hợp lệ của bộ phận
-$valid_departments = [
-    'kehoach',
-    'chuanbi_sanxuat_phong_kt',
-    'kho',
-    'cat',
-    'ep_keo',
-    'co_dien',
-    'chuyen_may',
-    'kcs',
-    'ui_thanh_pham',
-    'hoan_thanh'
-];
-
-if (!in_array($dept, $valid_departments)) {
+if (!in_array($dept, getValidDepts())) {
     echo json_encode([
         'success' => false,
         'message' => 'Bộ phận không hợp lệ'

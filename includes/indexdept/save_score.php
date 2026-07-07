@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../bootstrap.php';
 require_once __DIR__ . '/../security/csrf-helper.php';
 require_once __DIR__ . '/score-options.php';
 require_once BASE_PATH . '/includes/check_tieuchi_image.php';
+require_once BASE_PATH . '/includes/indexdept/config.php';
 
 // CSRF validation (không rotate token để các request tiếp theo vẫn dùng được)
 $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
@@ -35,12 +36,7 @@ if ($id_sanxuat <= 0 || $id_tieuchi <= 0 || empty($dept) || $diem_danhgia === nu
     exit;
 }
 
-$valid_depts = [
-    'kehoach', 'chuanbi_sanxuat_phong_kt', 'kho', 'cat', 'ep_keo',
-    'co_dien', 'chuyen_may', 'kcs', 'ui_thanh_pham', 'hoan_thanh'
-];
-
-if (!in_array($dept, $valid_depts)) {
+if (!in_array($dept, getValidDepts())) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Bộ phận không hợp lệ']);
     exit;

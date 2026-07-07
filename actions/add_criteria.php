@@ -10,20 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_sanxuat = isset($_POST['id_sanxuat']) ? $_POST['id_sanxuat'] : 0;
     
     // Kiểm tra bộ phận hợp lệ
-    $valid_departments = [
-        'kehoach',
-        'chuanbi_sanxuat_phong_kt',
-        'kho',
-        'cat',
-        'ep_keo',
-        'co_dien',
-        'chuyen_may',
-        'kcs',
-        'ui_thanh_pham',
-        'hoan_thanh'
-    ];
-
-    if (!in_array($dept, $valid_departments)) {
+    if (!in_array($dept, getValidDepts())) {
         die("Bộ phận không hợp lệ");
     }
 
