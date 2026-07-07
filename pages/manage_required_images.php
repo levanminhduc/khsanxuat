@@ -243,7 +243,7 @@ $result = $connect->query($sql);
             
             if (dept) {
                 // Gọi API để lấy danh sách tiêu chí của bộ phận
-                fetch('get_tieuchi.php?dept=' + dept)
+                fetch(window.BASE_URL + '/api/get_tieuchi_list.php?dept=' + encodeURIComponent(dept))
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.data) {

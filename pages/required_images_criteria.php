@@ -268,7 +268,7 @@ $dept_names = [
                 return;
             }
 
-            fetch('get_tieuchi_list.php?dept=' + encodeURIComponent(dept))
+            fetch(window.BASE_URL + '/api/get_tieuchi_list.php?dept=' + encodeURIComponent(dept))
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -292,7 +292,7 @@ $dept_names = [
             const tieuchiId = this.value;
             
             if (selectedDept && tieuchiId) {
-                fetch('get_tieuchi_info.php?dept=' + encodeURIComponent(selectedDept) + '&id=' + encodeURIComponent(tieuchiId))
+                fetch(window.BASE_URL + '/api/get_tieuchi_info.php?dept=' + encodeURIComponent(selectedDept) + '&id=' + encodeURIComponent(tieuchiId))
                     .then(response => response.json())
                     .then(data => {
                         const previewDiv = document.getElementById('tieuchi_preview');
