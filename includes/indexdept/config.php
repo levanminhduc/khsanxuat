@@ -5,6 +5,7 @@ $dept_names = [
     'chuanbi_sanxuat_phong_kt' => 'BỘ PHẬN CHUẨN BỊ SẢN XUẤT (PHÒNG KT)',
     'kho' => 'KHO NGUYÊN, PHỤ LIỆU',
     'cat' => 'BỘ PHẬN CẮT',
+    'trung_tam_btp' => 'TRUNG TÂM BTP',
     'ep_keo' => 'BỘ PHẬN ÉP KEO',
     'co_dien' => 'BỘ PHẬN CƠ ĐIỆN',
     'chuyen_may' => 'BỘ PHẬN CHUYỀN MAY',

@@ -391,7 +391,7 @@ try {
     $connect->commit();
     
     // Chuyển hướng về trang đánh giá với thông báo thành công
-    header("Location: indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&success=1");
+    header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&success=1");
     exit;
     
 } catch (Exception $e) {
@@ -399,7 +399,7 @@ try {
     $connect->rollback();
     
     // Chuyển hướng về trang đánh giá với thông báo lỗi
-    header("Location: indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&error=" . urlencode($e->getMessage()));
+    header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&error=" . urlencode($e->getMessage()));
     exit;
 }
 
@@ -551,7 +551,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Redirect để tránh gửi lại form khi refresh
-    $redirect_url = "indexdept.php?id={$id_sanxuat}&dept={$dept}";
+    $redirect_url = BASE_URL . "/indexdept.php?id={$id_sanxuat}&dept={$dept}";
     if ($changes_made) {
         $redirect_url .= "&success=1";
     }
@@ -560,5 +560,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Redirect về trang chính nếu không phải là POST request
-header("Location: index.php");
-exit; 
+header("Location: " . BASE_URL . "/index.php");
+exit;

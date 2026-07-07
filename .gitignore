@@ -6,6 +6,8 @@ plans/
 logs/
 debug.log
 /*.log
+actions/*.log
+.mcp.json
 /*.phar
 /*.backup
 /*-backup.php

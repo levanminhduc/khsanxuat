@@ -56,19 +56,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($stmt->execute()) {
             // Chuyển hướng về trang trước với thông báo thành công và giữ nguyên id_sanxuat
-            header("Location: indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat . "&success=1");
+            header("Location: " . BASE_URL . "/indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat . "&success=1");
             exit();
         } else {
             throw new Exception("Lỗi khi thêm tiêu chí");
         }
     } catch (Exception $e) {
         // Chuyển hướng về trang trước với thông báo lỗi và giữ nguyên id_sanxuat
-        header("Location: indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat . "&error=1&message=" . urlencode($e->getMessage()));
+        header("Location: " . BASE_URL . "/indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat . "&error=1&message=" . urlencode($e->getMessage()));
         exit();
     }
 } else {
     // Nếu không phải POST request, chuyển về trang chính
-    header("Location: index.php");
+    header("Location: " . BASE_URL . "/index.php");
     exit();
 }
 ?> 

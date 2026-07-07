@@ -11,9 +11,9 @@ When you need to read a specific file but don't know the exact line range, use t
 **khsanxuat** — Hệ thống đánh giá sản xuất nhà máy.
 
 - **Stack**: PHP 7.4+ thuần (không framework), MySQL 5.7+ (mysqli), HTML/CSS/JS vanilla, Apache via Laragon.
-- **Mục đích**: Theo dõi đơn hàng qua 10 bộ phận sản xuất (kế hoạch → kỹ thuật → kho → cắt → ép keo → cơ điện → chuyền may → KCS → ủi thành phẩm → hoàn thành), đánh giá tiêu chí, quản lý hạn xử lý, upload hình ảnh minh hoạ.
+- **Mục đích**: Theo dõi đơn hàng qua các bộ phận sản xuất (kế hoạch → kỹ thuật/chuẩn bị sản xuất → kho → cắt → trung tâm BTP → ép keo → cơ điện → chuyền may → KCS → ủi thành phẩm → hoàn thành), đánh giá tiêu chí, quản lý hạn xử lý, upload hình ảnh minh hoạ. Nguồn duy nhất định nghĩa danh sách bộ phận và nhóm: `includes/indexdept/config.php` (`$dept_names`, `$dept_nhom_config`); mọi nơi khác derive qua helper `getValidDepts()`, `getDeptDisplayName()`, `getNhomDisplayName()`, `getNhomOrderByCase()`.
 - **Trang chính**: `index.php` (dashboard), `indexdept.php` (chi tiết bộ phận), `pages/theodoi.php`, `pages/settings.php`, `actions/save_danhgia_with_log.php`, `pages/import.php`, `pages/dept_statistics.php`.
-- **Modules**: `config/`, `pages/`, `actions/`, `api/`, `helpers/`, `sql/`, `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `account/`.
+- **Modules**: `config/`, `pages/`, `actions/`, `api/`, `helpers/`, `sql/`, `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `assets/` (css/js), `account/`, `dev-tools/` (script backup/check/debug/migration — không thuộc runtime).
 - **DB connection**: `config/database.php` (1 nguồn `$connect`, nạp qua `bootstrap.php`; Laragon mặc định: `localhost`/`root`/blank/`mysqli`). Link/redirect/form qua hằng `BASE_URL` (`config/app.php`); JS fetch qua `window.BASE_URL`.
 
 ## Language
@@ -23,7 +23,7 @@ When you need to read a specific file but don't know the exact line range, use t
 
 ## Code Style
 
-- **File naming**: kebab-case, tên dài mô tả rõ ý (vd: `save-danhgia-with-log.php`).
+- **File naming**: PHP script trong `pages/`, `actions/`, `api/`, `helpers/`, `includes/` dùng snake_case, tên dài mô tả rõ ý (vd: `save_danhgia_with_log.php`, `get_tieuchi_list.php`). Partial UI trong `components/`, `views/` dùng kebab-case (vd: `month-filter.php`, `modal-add-criteria.php`).
 - **PHP functions**: camelCase (`checkDeptStatus`, `getEarliestDeadline`).
 - **PHP variables**: snake_case (`$id_sanxuat`, `$search_value`).
 - **Constants**: UPPER_SNAKE_CASE (`DB_SERVER`, `DB_NAME`).
@@ -37,11 +37,13 @@ When you need to read a specific file but don't know the exact line range, use t
 - `pages/` — trang giao diện (URL: /khsanxuat/pages/xxx.php).
 - `actions/` — handler ghi (POST: save/update/delete/add).
 - `api/` — handler đọc (GET/AJAX trả data).
-- `helpers/` — lib dùng chung (activity_logger).
-- `includes/` — config+function theo area, check_tieuchi_image, display_deadline.
-- `components/`, `views/` — UI partial + template.
-- `account/` — auth (login/register/password + action).
-- `sql/` — script SQL.
+- `helpers/` — lib dùng chung (activity_logger, admin_menu, download_token, template_files).
+- `includes/` — config+function theo area (`index/`, `indexdept/`), `security/csrf-helper.php`, check_tieuchi_image, display_deadline. `includes/indexdept/config.php` là nguồn duy nhất định nghĩa `$dept_names` + `$dept_nhom_config` và các helper dept/nhom.
+- `components/`, `views/` — UI partial + template (`views/indexdept/page.php` + `partials/`).
+- `assets/` — css/js theo area (`css/index`, `css/indexdept`, `js/indexdept`).
+- `account/` — auth (login/register/password + `*_action.php`).
+- `sql/` — script SQL (migration, backup).
+- `dev-tools/` — script phụ trợ backup/check/debug/fixes/migrations (không thuộc runtime).
 
 Đường dẫn: include qua `BASE_PATH`/`__DIR__`; link/redirect/form qua `BASE_URL`;
 JS fetch qua `window.BASE_URL`.
