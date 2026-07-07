@@ -31,15 +31,7 @@
                         <div class="form-group add-criteria-modal__group">
                             <label for="nhom" class="add-criteria-modal__label tw-mb-1 tw-block tw-text-xs tw-font-bold tw-text-slate-700">Nhóm</label>
                             <select id="nhom" name="nhom" required class="form-control add-criteria-modal__control tw-h-9 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-slate-900 tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15">
-                                <?php if ($dept == 'chuanbi_sanxuat_phong_kt') : ?>
-                                    <option value="Nhóm Nghiệp Vụ">a. Nhóm Nghiệp Vụ</option>
-                                    <option value="Nhóm May Mẫu">b. Nhóm May Mẫu</option>
-                                    <option value="Nhóm Quy Trình">c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền</option>
-                                    <option value="Nhóm Kỹ Thuật Chuyền">d. Kỹ Thuật Chuyền</option>
-                                <?php elseif ($dept == 'kho') : ?>
-                                    <option value="Kho Nguyên Liệu">a. Kho Nguyên Liệu</option>
-                                    <option value="Kho Phụ Liệu">b. Kho Phụ Liệu</option>
-                                <?php endif; ?>
+                                <?php echo getNhomOptionsHtml($dept); ?>
                             </select>
                         </div>
                         <?php endif; ?>

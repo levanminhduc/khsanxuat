@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/indexdept/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dept = $_POST['dept'];
@@ -28,12 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Kiểm tra nhóm hợp lệ cho các bộ phận có nhóm
     if ($dept == 'chuanbi_sanxuat_phong_kt' || $dept == 'kho') {
-        $valid_groups = [];
-        if ($dept == 'chuanbi_sanxuat_phong_kt') {
-            $valid_groups = ['Nhóm Nghiệp Vụ', 'Nhóm May Mẫu', 'Nhóm Quy Trình', 'Nhóm Kỹ Thuật Chuyền'];
-        } elseif ($dept == 'kho') {
-            $valid_groups = ['Kho Nguyên Liệu', 'Kho Phụ Liệu'];
-        }
+        $valid_groups = getValidNhomForDept($dept);
 
         if (!in_array($nhom, $valid_groups)) {
             die("Nhóm không hợp lệ");
