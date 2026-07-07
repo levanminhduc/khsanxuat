@@ -6,6 +6,7 @@ ini_set('display_startup_errors', 1);
 
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/indexdept/config.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -61,25 +62,8 @@ try {
     }
 
     // Lấy danh sách tiêu chí của phòng ban
-    $sql_tieuchi = "SELECT id, thutu, noidung, nhom FROM tieuchi_dept WHERE dept = ? ORDER BY
-        CASE
-            WHEN dept = 'kho' THEN
-                CASE nhom
-                    WHEN 'Kho Nguyên Liệu' THEN 1
-                    WHEN 'Kho Phụ Liệu' THEN 2
-                    ELSE 3
-                END
-            WHEN dept = 'chuanbi_sanxuat_phong_kt' THEN
-                CASE nhom
-                    WHEN 'Nhóm Nghiệp Vụ' THEN 1
-                    WHEN 'Nhóm May Mẫu' THEN 2
-                    WHEN 'Nhóm Quy Trình' THEN 3
-                    WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
-                    ELSE 5
-                END
-            ELSE 0
-        END,
-        thutu ASC";
+    $sql_tieuchi = "SELECT id, thutu, noidung, nhom FROM tieuchi_dept WHERE dept = ? ORDER BY "
+        . getNhomOrderByCase('nhom') . ", thutu ASC";
     $stmt_tieuchi = $connect->prepare($sql_tieuchi);
     $stmt_tieuchi->bind_param("s", $dept);
     $stmt_tieuchi->execute();

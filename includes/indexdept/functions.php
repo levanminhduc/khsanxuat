@@ -64,16 +64,7 @@ function getEvaluationCriteria($connect, $id, $dept) {
             FROM tieuchi_dept tc
             LEFT JOIN danhgia_tieuchi dg ON tc.id = dg.id_tieuchi AND dg.id_sanxuat = ?
             WHERE tc.dept = ?
-            ORDER BY
-                CASE tc.nhom
-                    WHEN 'Nhóm Nghiệp Vụ' THEN 1
-                    WHEN 'Nhóm May Mẫu' THEN 2
-                    WHEN 'Nhóm Quy Trình' THEN 3
-                    WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
-                    WHEN 'Kho Nguyên Liệu' THEN 1
-                    WHEN 'Kho Phụ Liệu' THEN 2
-                    ELSE 5
-                END, tc.thutu";
+            ORDER BY " . getNhomOrderByCase() . ", tc.thutu";
 
     $stmt = $connect->prepare($sql);
     $stmt->bind_param("is", $id, $dept);

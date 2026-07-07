@@ -43,15 +43,7 @@
                                     AND dg.id_sanxuat = ?
                                WHERE tc.dept = ?
                                ORDER BY
-                                   CASE tc.nhom
-                                       WHEN 'Nhóm Nghiệp Vụ' THEN 1
-                                       WHEN 'Nhóm May Mẫu' THEN 2
-                                       WHEN 'Nhóm Quy Trình' THEN 3
-                                       WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
-                                       WHEN 'Kho Nguyên Liệu' THEN 1
-                                       WHEN 'Kho Phụ Liệu' THEN 2
-                                       ELSE 5
-                                   END,
+                                   " . getNhomOrderByCase() . ",
                                    tc.thutu";
 
                         $stmt = $connect->prepare($sql);
@@ -81,32 +73,7 @@
                                 $current_nhom = $row['nhom'];
 
                                 // Hiển thị tên nhóm
-                                $nhom_display = '';
-                                if ($dept == 'chuanbi_sanxuat_phong_kt') {
-                                    switch ($row['nhom']) {
-                                        case 'Nhóm Nghiệp Vụ':
-                                            $nhom_display = 'a. Nhóm Nghiệp Vụ';
-                                            break;
-                                        case 'Nhóm May Mẫu':
-                                            $nhom_display = 'b. Nhóm May Mẫu';
-                                            break;
-                                        case 'Nhóm Quy Trình':
-                                            $nhom_display = 'c. Nhóm Quy Trình Công Nghệ, Thiết Kế Chuyền';
-                                            break;
-                                        case 'Nhóm Kỹ Thuật Chuyền':
-                                            $nhom_display = 'd. Kỹ Thuật Chuyền';
-                                            break;
-                                    }
-                                } elseif ($dept == 'kho') {
-                                    switch ($row['nhom']) {
-                                        case 'Kho Nguyên Liệu':
-                                            $nhom_display = 'a. Kho Nguyên Liệu';
-                                            break;
-                                        case 'Kho Phụ Liệu':
-                                            $nhom_display = 'b. Kho Phụ Liệu';
-                                            break;
-                                    }
-                                }
+                                $nhom_display = getNhomDisplayName($dept, $row['nhom']);
                                 ?>
                                 <tr>
                                     <td colspan="7" class="evaluation-group-row">

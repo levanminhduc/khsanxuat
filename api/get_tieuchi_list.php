@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../includes/indexdept/config.php';
 
 if (!isset($_GET['dept'])) {
     echo json_encode(['success' => false, 'message' => 'Thiếu tham số bộ phận']);
@@ -11,16 +12,8 @@ $dept = $connect->real_escape_string($_GET['dept']);
 
 $sql = "SELECT id, thutu, noidung, nhom 
         FROM tieuchi_dept 
-        WHERE dept = ? 
-        ORDER BY 
-            CASE nhom 
-                WHEN 'Nhóm Nghiệp Vụ' THEN 1 
-                WHEN 'Nhóm May Mẫu' THEN 2 
-                WHEN 'Nhóm Quy Trình' THEN 3
-                WHEN 'Nhóm Kỹ Thuật Chuyền' THEN 4
-                ELSE 5
-            END, 
-            thutu";
+        WHERE dept = ?
+        ORDER BY " . getNhomOrderByCase('nhom') . ", thutu";
 
 $stmt = $connect->prepare($sql);
 $stmt->bind_param("s", $dept);
