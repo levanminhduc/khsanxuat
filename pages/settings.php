@@ -5,6 +5,11 @@ session_start();
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
 
+// Permission check
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+requireLogin();
+requireFeature('edit_settings', 'page');
+
 // Header Config
 $header_config = [
     'title' => 'Cài đặt hệ thống hạn xử lý',
@@ -18,10 +23,6 @@ $header_config = [
         ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
-
-// Kiểm tra quyền truy cập
-$access_allowed = true; // Thay đổi điều kiện này tùy theo cấu trúc xác thực của hệ thống
-
 
 // Kiểm tra xem có hành động gì không
 $action = isset($_GET['action']) ? $_GET['action'] : '';
