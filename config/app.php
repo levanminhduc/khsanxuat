@@ -1,11 +1,13 @@
 <?php
-// Base URL cho mọi link/redirect/form action. Đổi 1 chỗ khi deploy folder/host khác.
-// Môi trường thật: http://localhost/khsanxuat/  → '/khsanxuat'
 if (!defined('BASE_URL')) {
-    define('BASE_URL', '/khsanxuat');
+    $app_root = str_replace('\\', '/', realpath(defined('BASE_PATH') ? BASE_PATH : __DIR__ . '/..'));
+    $doc_root = str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'] ?? ''));
+    if ($doc_root && stripos($app_root, $doc_root) === 0) {
+        define('BASE_URL', rtrim(substr($app_root, strlen($doc_root)), '/'));
+    } else {
+        define('BASE_URL', '/' . basename($app_root)); // fallback: tên folder app
+    }
 }
-
-// Error config thống nhất (giữ nguyên hành vi production hiện tại của các trang).
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);

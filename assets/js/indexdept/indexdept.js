@@ -568,10 +568,24 @@
         });
     }
 
+    // Banner "Lưu đánh giá thành công!" do server render tĩnh nên không tự mất;
+    // tự ẩn (fade) sau AUTO_HIDE_SUCCESS_MS để không che nội dung.
+    const AUTO_HIDE_SUCCESS_MS = 3000;
+    function autoHideSuccessMessage() {
+        const banner = document.querySelector('.success-message');
+        if (!banner) return;
+        setTimeout(function () {
+            banner.style.transition = 'opacity 0.4s ease';
+            banner.style.opacity = '0';
+            setTimeout(function () { banner.remove(); }, 400);
+        }, AUTO_HIDE_SUCCESS_MS);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         initializeModalBackdropDismissal();
         initializeScoreEditors();
         updateDeadlineSelectionSummary();
+        autoHideSuccessMessage();
 
         document.addEventListener('click', function(event) {
             const removeButton = event.target.closest('[data-score-remove]');

@@ -8,11 +8,9 @@ ini_set('log_errors', 1);
 require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/helpers/activity_logger.php';
 require_once BASE_PATH . '/includes/check_tieuchi_image.php';
-ini_set('display_errors', 0);
-
-// CSRF protection
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
 require_once BASE_PATH . '/includes/indexdept/score-options.php';
+require_once BASE_PATH . '/includes/indexdept/config.php';
 
 // Khởi tạo phiên làm việc
 session_start();
@@ -20,27 +18,13 @@ session_start();
 // Validate CSRF token
 verifyCsrfOrDie();
 
-// Kiểm tra quyền ghi log
+// Chỉ admin/manager mới được ghi activity log
 $can_log = false;
-
-// Kiểm tra bảng activity_logs có tồn tại không
-$check_table = $connect->query("SHOW TABLES LIKE 'activity_logs'");
-if ($check_table->num_rows === 0) {
-    error_log("Table activity_logs does not exist!");
-} else {
-    error_log("Table activity_logs exists");
-}
-
 if (isset($_SESSION['user_role'])) {
     $user_role = $_SESSION['user_role'];
-    error_log("User role: " . $user_role);
-    // Chỉ cho phép admin và manager ghi log
     if ($user_role == 'admin' || $user_role == 'manager') {
         $can_log = true;
-        error_log("Can log: true from role");
     }
-} else {
-    error_log("No user_role in session");
 }
 
 // Kiểm tra kết nối
@@ -83,47 +67,14 @@ function normalizeCsvIds($csv)
 }
 
 
-// Đọc giá trị dept từ URL
-$dept = isset($_GET['dept']) ? $_GET['dept'] : (isset($_POST['dept']) ? $_POST['dept'] : '');
-// Thiết lập danh sách các giá trị dept hợp lệ
-$dept_names = [
-    'kehoach' => 'Phòng Kế Hoạch',
-    'chuanbi_sanxuat_phong_kt' => 'Chuẩn Bị Sản Xuất - Phòng KT',
-    'kho' => 'Kho',
-    'cat' => 'Cắt',
-    'ep_keo' => 'Ép Keo',
-    'co_dien' => 'Cơ Điện',
-    'chuyen_may' => 'Chuyền May',
-    'kcs' => 'KCS',
-    'ui_thanh_pham' => 'Ủi Thành Phẩm',
-    'hoan_thanh' => 'Hoàn Thành'
-];
-
-// Kiểm tra và log giá trị dept ban đầu
-error_log("save_danhgia_with_log: Initial dept value: " . $dept);
-
-// Nếu không có dept từ form hoặc URL, thử lấy từ HTTP_REFERER
-if (empty($dept) && isset($_SERVER['HTTP_REFERER'])) {
-    $referer = $_SERVER['HTTP_REFERER'];
-    if (preg_match('/dept=([^&]+)/', $referer, $matches)) {
-        $dept = urldecode($matches[1]);
-        error_log("save_danhgia_with_log: Found dept from referer: " . $dept);
-    }
+// dept + id_sanxuat lấy từ form POST. Reject nếu thiếu/không hợp lệ thay vì đoán bừa (tránh ghi nhầm bộ phận).
+$dept = isset($_POST['dept']) ? $_POST['dept'] : '';
+if (empty($dept) || !in_array($dept, getValidDepts())) {
+    die("Bộ phận không hợp lệ");
 }
 
-// Đảm bảo dept là giá trị hợp lệ
-$valid_depts = array_keys($dept_names);
-if (empty($dept) || !in_array($dept, $valid_depts)) {
-    // Sử dụng giá trị mặc định nếu không hợp lệ
-    $dept = 'kehoach';
-    error_log("save_danhgia_with_log: Using default dept: " . $dept);
-}
-
-// Lấy giá trị id_sanxuat từ POST hoặc GET
-$id_sanxuat = isset($_POST['id_sanxuat']) ? intval($_POST['id_sanxuat']) : (isset($_GET['id']) ? intval($_GET['id']) : 0);
-error_log("save_danhgia_with_log: id_sanxuat = " . $id_sanxuat);
-
-if ($id_sanxuat <= 0 || empty($dept)) {
+$id_sanxuat = isset($_POST['id_sanxuat']) ? intval($_POST['id_sanxuat']) : 0;
+if ($id_sanxuat <= 0) {
     die("Thiếu thông tin cần thiết");
 }
 
@@ -303,8 +254,6 @@ try {
         $new_value = implode(" | ", $all_new_values);
         
         try {
-            error_log("Logging activity with department: " . $dept);
-            
             $additional_info = [
                 'action' => 'update_multiple',
                 'status' => 'success',
@@ -402,163 +351,3 @@ try {
     header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&error=" . urlencode($e->getMessage()));
     exit;
 }
-
-// Bắt đầu xử lý POST request
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Lấy dữ liệu từ form
-    $id_sanxuat = isset($_POST['id_sanxuat']) ? intval($_POST['id_sanxuat']) : 0;
-    
-    // Khởi tạo biến để theo dõi thay đổi
-    $changes_made = false;
-    
-    // Kiểm tra và xử lý từng tiêu chí
-    foreach ($_POST as $key => $value) {
-        if (strpos($key, 'score_') === 0) {
-            $id_tieuchi = intval(str_replace('score_', '', $key));
-            $score = intval($value);
-            $personInCharge = isset($_POST['person_' . $id_tieuchi]) ? trim($_POST['person_' . $id_tieuchi]) : '';
-            $note = isset($_POST['note_' . $id_tieuchi]) ? trim($_POST['note_' . $id_tieuchi]) : '';
-            
-            // Lấy dữ liệu hiện tại từ DB
-            $stmt = $connect->prepare("SELECT * FROM danhgia_tieuchi WHERE id_tieuchi = ? AND id_khsanxuat = ?");
-            $stmt->bind_param("ii", $id_tieuchi, $id_sanxuat);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows > 0) {
-                // Đã có đánh giá, cập nhật
-                $existing = $result->fetch_assoc();
-                $old_score = $existing['diem'];
-                $old_personInCharge = $existing['nguoi_chiu_trach_nhiem'];
-                $old_note = $existing['note'];
-                
-                $has_changes = ($old_score != $score || $old_personInCharge != $personInCharge || $old_note != $note);
-                
-                if ($has_changes) {
-                    $changes_made = true;
-                    
-                    // Cập nhật bản ghi
-                    $update_stmt = $connect->prepare("UPDATE danhgia_tieuchi SET diem = ?, nguoi_chiu_trach_nhiem = ?, note = ? WHERE id_tieuchi = ? AND id_khsanxuat = ?");
-                    $update_stmt->bind_param("issii", $score, $personInCharge, $note, $id_tieuchi, $id_sanxuat);
-                    $update_stmt->execute();
-                    
-                    // Lấy thông tin tiêu chí
-                    $get_criteria = $connect->prepare("SELECT tieuchi.ten_tieuchi, tieuchi_dept.dept FROM tieuchi 
-                                                      JOIN tieuchi_dept ON tieuchi.id = tieuchi_dept.id
-                                                      WHERE tieuchi.id = ?");
-                    $get_criteria->bind_param("i", $id_tieuchi);
-                    $get_criteria->execute();
-                    $criteria_result = $get_criteria->get_result();
-                    $criteria_info = $criteria_result->fetch_assoc();
-                    $criteria_name = $criteria_info ? $criteria_info['ten_tieuchi'] : "Tiêu chí #".$id_tieuchi;
-                    
-                    // Ghi log cho từng thay đổi
-                    if ($old_score != $score) {
-                        $action_type = 'update_score';
-                        $old_value = $old_score;
-                        $new_value = $score;
-                        $additional_info = [
-                            'criteria_id' => $id_tieuchi,
-                            'criteria_name' => $criteria_name,
-                            'dept_info' => [
-                                'dept_code' => $dept,
-                                'dept_name' => $dept_names[$dept] ?? $dept
-                            ]
-                        ];
-                        
-                        if (!$logger->logActivity($action_type, 'danhgia_tieuchi', $id_tieuchi, $id_sanxuat, $dept, $old_value, $new_value, $additional_info)) {
-                            error_log("Failed to log activity for score update on criteria $id_tieuchi");
-                        }
-                    }
-                    
-                    if ($old_personInCharge != $personInCharge) {
-                        $action_type = 'update_person';
-                        $old_value = $old_personInCharge;
-                        $new_value = $personInCharge;
-                        $additional_info = [
-                            'criteria_id' => $id_tieuchi,
-                            'criteria_name' => $criteria_name,
-                            'dept_info' => [
-                                'dept_code' => $dept,
-                                'dept_name' => $dept_names[$dept] ?? $dept
-                            ]
-                        ];
-                        
-                        if (!$logger->logActivity($action_type, 'danhgia_tieuchi', $id_tieuchi, $id_sanxuat, $dept, $old_value, $new_value, $additional_info)) {
-                            error_log("Failed to log activity for person update on criteria $id_tieuchi");
-                        }
-                    }
-                    
-                    if ($old_note != $note) {
-                        $action_type = 'update_note';
-                        $old_value = $old_note;
-                        $new_value = $note;
-                        $additional_info = [
-                            'criteria_id' => $id_tieuchi,
-                            'criteria_name' => $criteria_name,
-                            'dept_info' => [
-                                'dept_code' => $dept,
-                                'dept_name' => $dept_names[$dept] ?? $dept
-                            ]
-                        ];
-                        
-                        if (!$logger->logActivity($action_type, 'danhgia_tieuchi', $id_tieuchi, $id_sanxuat, $dept, $old_value, $new_value, $additional_info)) {
-                            error_log("Failed to log activity for note update on criteria $id_tieuchi");
-                        }
-                    }
-                }
-            } else {
-                // Chưa có đánh giá, thêm mới
-                $changes_made = true;
-                
-                $insert_stmt = $connect->prepare("INSERT INTO danhgia_tieuchi (id_tieuchi, id_khsanxuat, diem, nguoi_chiu_trach_nhiem, note) VALUES (?, ?, ?, ?, ?)");
-                $insert_stmt->bind_param("iiiss", $id_tieuchi, $id_sanxuat, $score, $personInCharge, $note);
-                $insert_stmt->execute();
-                
-                // Lấy thông tin tiêu chí
-                $get_criteria = $connect->prepare("SELECT tieuchi.ten_tieuchi, tieuchi_dept.dept FROM tieuchi 
-                                                  JOIN tieuchi_dept ON tieuchi.id = tieuchi_dept.id
-                                                  WHERE tieuchi.id = ?");
-                $get_criteria->bind_param("i", $id_tieuchi);
-                $get_criteria->execute();
-                $criteria_result = $get_criteria->get_result();
-                $criteria_info = $criteria_result->fetch_assoc();
-                $criteria_name = $criteria_info ? $criteria_info['ten_tieuchi'] : "Tiêu chí #".$id_tieuchi;
-                
-                // Ghi log thêm mới
-                $action_type = 'update_multiple';
-                $old_value = "Chưa có dữ liệu";
-                $new_value = "Điểm: $score, Người chịu trách nhiệm: $personInCharge, Ghi chú: $note";
-                $additional_info = [
-                    'criteria_id' => $id_tieuchi,
-                    'criteria_name' => $criteria_name,
-                    'dept_info' => [
-                        'dept_code' => $dept,
-                        'dept_name' => $dept_names[$dept] ?? $dept
-                    ],
-                    'fields' => [
-                        'score' => $score,
-                        'person' => $personInCharge,
-                        'note' => $note
-                    ]
-                ];
-                
-                if (!$logger->logActivity($action_type, 'danhgia_tieuchi', $id_tieuchi, $id_sanxuat, $dept, $old_value, $new_value, $additional_info)) {
-                    error_log("Failed to log activity for new criteria evaluation $id_tieuchi");
-                }
-            }
-        }
-    }
-    
-    // Redirect để tránh gửi lại form khi refresh
-    $redirect_url = BASE_URL . "/indexdept.php?id={$id_sanxuat}&dept={$dept}";
-    if ($changes_made) {
-        $redirect_url .= "&success=1";
-    }
-    header("Location: $redirect_url");
-    exit;
-}
-
-// Redirect về trang chính nếu không phải là POST request
-header("Location: " . BASE_URL . "/index.php");
-exit;

@@ -1,7 +1,5 @@
 <?php
-// Bật hiển thị lỗi để dễ debug trong quá trình phát triển
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Cấu hình lỗi tập trung ở config/app.php (nạp qua bootstrap) — include này không tự bật display_errors.
 
 /**
  * Kiểm tra xem một tiêu chí có yêu cầu hình ảnh không
