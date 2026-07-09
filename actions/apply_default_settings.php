@@ -4,11 +4,6 @@
  * Gọi hàm applyDefaultSettings($id_sanxuat) sau khi đơn hàng mới được tạo
  */
 
-// Bật hiển thị lỗi để dễ debug
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 // Kết nối database - Sử dụng cùng file kết nối với import.php để đảm bảo tính nhất quán
 if (!isset($connect)) {
     require_once __DIR__ . '/../bootstrap.php';

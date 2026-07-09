@@ -261,7 +261,8 @@ $(document).on('click', '#btn_save_default_settings', function() {
         data: {
             dept: currentDept,
             so_ngay_xuly: so_ngay_xuly,
-            ngay_tinh_han: ngay_tinh_han
+            ngay_tinh_han: ngay_tinh_han,
+            csrf_token: $('input[name="csrf_token"]').val()
         },
         dataType: 'json',
         success: function(response) {

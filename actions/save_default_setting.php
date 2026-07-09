@@ -2,13 +2,21 @@
 // Khởi tạo phiên làm việc
 session_start();
 
-// Bật hiển thị lỗi để dễ debug
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
+requireFeature('edit_settings', 'json');
+
+// CSRF: khong rotate token de cac AJAX tiep theo tren cung trang van hop le
+$csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+if (!validateCsrfToken($csrf_token)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF token không hợp lệ']);
+    exit;
+}
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -17,17 +25,6 @@ if (!$connect) {
         'message' => 'Lỗi kết nối database'
     ]));
 }
-
-// Tạm thời bỏ qua kiểm tra quyền
-/*
-if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Bạn chưa đăng nhập. Vui lòng đăng nhập để sử dụng chức năng này.'
-    ]);
-    exit();
-}
-*/
 
 // Lấy thông tin từ request
 $id_tieuchi = isset($_POST['id_tieuchi']) ? intval($_POST['id_tieuchi']) : 0;

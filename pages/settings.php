@@ -7,6 +7,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 // Permission check
 require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
 requireLogin();
 requireFeature('edit_settings', 'page');
 
@@ -226,7 +227,8 @@ $departments = [
     <?php include BASE_PATH . '/components/header.php'; ?>
 
     <div class="container">
-        
+        <?php echo getCsrfInput(); ?>
+
         <?php if (!empty($message)): ?>
         <div class="alert alert-<?php echo $message_type; ?>" role="alert">
             <?php echo $message; ?>

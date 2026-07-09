@@ -1433,7 +1433,7 @@
                 }
             }
         };
-        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&ngay_tinh_han=' + ngayTinhHan + '&so_ngay_xuly=' + soNgayXuly + '&nguoi_chiu_trachnhiem=' + nguoiChiuTrachnhiem);
+        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&ngay_tinh_han=' + ngayTinhHan + '&so_ngay_xuly=' + soNgayXuly + '&nguoi_chiu_trachnhiem=' + nguoiChiuTrachnhiem + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm lưu tất cả cài đặt mặc định
@@ -1496,7 +1496,7 @@
                 }
             }
         };
-        xhr.send('dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&settings=' + JSON.stringify(settings));
+        xhr.send('dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&settings=' + JSON.stringify(settings) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm mở modal cài đặt mặc định
@@ -1537,7 +1537,7 @@
                 }
             }
         };
-        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong));
+        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm áp dụng tất cả cài đặt mặc định
@@ -1599,7 +1599,7 @@
                     }
                 }
             };
-            xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong));
+            xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
         }
     }
 
