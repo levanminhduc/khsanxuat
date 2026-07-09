@@ -921,7 +921,7 @@
                 }
             }
         };
-        xhr.send('id_sanxuat=' + idSanxuat + '&tieuchi=' + JSON.stringify(selectedTieuchi) + '&so_ngay_xuly=' + soNgayXulyChung + '&ngay_tinh_han=' + ngayTinhHan + '&dept=' + dept);
+        xhr.send('id_sanxuat=' + idSanxuat + '&tieuchi=' + encodeURIComponent(JSON.stringify(selectedTieuchi)) + '&so_ngay_xuly=' + soNgayXulyChung + '&ngay_tinh_han=' + ngayTinhHan + '&dept=' + dept + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm mới để tải lại thông tin hạn xử lý hiện tại
