@@ -1,12 +1,11 @@
 <?php
-// Bật hiển thị lỗi để dễ debug
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/includes/display_deadline.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+requireLogin();
+requireFeature('edit_settings', 'page');
 
 // Khởi tạo biến
 $success_message = "";
@@ -28,6 +27,7 @@ if ($workshop_result) {
 
 // Xử lý cập nhật hàng loạt
 if (isset($_POST['batch_update'])) {
+    verifyCsrfOrDie();
     try {
         // Bắt đầu ghi log
         $log_file = fopen("update_deadline_batch.log", "a");
@@ -246,6 +246,7 @@ if (isset($_POST['batch_update'])) {
             </div>
             <div class="card-body">
                 <form method="post" action="<?php echo BASE_URL; ?>/actions/batch_update_deadline.php">
+                    <?php echo getCsrfInput(); ?>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">

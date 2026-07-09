@@ -5,19 +5,26 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', 'update_deadline_debug.log');
 
+// Nạp bootstrap sớm để có BASE_PATH/BASE_URL cho auth-helper + csrf-helper
+require_once __DIR__ . '/../bootstrap.php';
+
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
+requireFeature('edit_settings', 'json');
+
+// CSRF: khong rotate token de cac AJAX tiep theo tren cung trang van hop le
+$csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+if (!validateCsrfToken($csrf_token)) {
+    http_response_code(403);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'CSRF token không hợp lệ']);
+    exit;
+}
+
 // Ghi log cho mục đích gỡ lỗi
 error_log('[' . date('Y-m-d H:i:s') . '] Nhận yêu cầu cập nhật hạn xử lý chung');
 error_log('[POST Data] ' . print_r($_POST, true));
-
-// Kiểm tra xem người dùng đã đăng nhập chưa
-/* Comment lại để test code
-if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
-    // Trả về phản hồi JSON với thông báo lỗi
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Bạn chưa đăng nhập. Vui lòng đăng nhập để sử dụng chức năng này.']);
-    exit;
-}
-*/
 
 // Kiểm tra dữ liệu đầu vào
 if (!isset($_POST['id_sanxuat']) || !isset($_POST['dept']) || !isset($_POST['so_ngay_xuly'])) {
@@ -55,9 +62,6 @@ if ($so_ngay_xuly <= 0 || $so_ngay_xuly > 30) {
     error_log('Số ngày xử lý không hợp lệ: ' . $so_ngay_xuly);
     exit;
 }
-
-// Kết nối đến cơ sở dữ liệu
-require_once __DIR__ . '/../bootstrap.php';
 
 // Kiểm tra kết nối
 if (!$connect) {

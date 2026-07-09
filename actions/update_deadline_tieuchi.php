@@ -2,25 +2,21 @@
 // Khởi tạo phiên làm việc
 session_start();
 
-// Đảm bảo hiển thị lỗi chi tiết
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Kiểm tra quyền truy cập (tạm thời bỏ qua cho mục đích test)
-/* Đã comment để test code
-if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
-    // Trả về lỗi dưới dạng JSON
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Không có quyền thực hiện thao tác này'
-    ]);
-    exit();
-} 
-*/
-
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
+requireFeature('edit_settings', 'json');
+
+// CSRF: khong rotate token de cac AJAX tiep theo tren cung trang van hop le
+$csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+if (!validateCsrfToken($csrf_token)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF token không hợp lệ']);
+    exit;
+}
 
 // Kiểm tra kết nối
 if (!$connect) {

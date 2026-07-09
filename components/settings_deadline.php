@@ -335,7 +335,8 @@ function updateDeadline(id_tieuchi, so_ngay_xuly, ngay_tinh_han, is_default) {
                 so_ngay_xuly: so_ngay_xuly,
                 ngay_tinh_han: ngay_tinh_han,
                 dept: currentDept,
-                is_default: is_default
+                is_default: is_default,
+                csrf_token: $('input[name="csrf_token"]').val()
             },
             dataType: 'json',
             success: function(response) {

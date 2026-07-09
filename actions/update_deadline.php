@@ -2,20 +2,13 @@
 // Khởi tạo phiên làm việc
 session_start();
 
-// Đảm bảo hiển thị lỗi chi tiết
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Kiểm tra quyền truy cập
-/* if (!isset($_SESSION['username']) || $_SESSION['username'] !== 'admin') {
-    // Chuyển hướng với thông báo lỗi
-    header("Location: " . $_SERVER['HTTP_REFERER'] . "&error=not_authorized");
-    exit();
-} */
-
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+requireFeature('edit_settings', 'redirect');
+verifyCsrfOrDie();
 
 // Kiểm tra kết nối
 if (!isset($connect) || $connect === null) {

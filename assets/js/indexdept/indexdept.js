@@ -797,7 +797,7 @@
                 }
             }
         };
-        xhr.send('id_sanxuat=' + idSanxuat + '&id_tieuchi=' + idTieuchi + '&so_ngay_xuly=' + soNgayXuly + '&ngay_tinh_han=' + ngayTinhHan + '&dept=' + dept);
+        xhr.send('id_sanxuat=' + idSanxuat + '&id_tieuchi=' + idTieuchi + '&so_ngay_xuly=' + soNgayXuly + '&ngay_tinh_han=' + ngayTinhHan + '&dept=' + dept + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm cập nhật hạn xử lý cho nhiều tiêu chí
