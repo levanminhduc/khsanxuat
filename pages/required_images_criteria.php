@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+requireLogin();
+requireFeature('edit_settings', 'page');
 
 // Mảng ánh xạ tên bộ phận
 $dept_names = [
@@ -131,6 +135,7 @@ $dept_names = [
         <?php
         // Xử lý thêm tiêu chí mới
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_criteria'])) {
+            verifyCsrfOrDie();
             $dept = $connect->real_escape_string($_POST['dept']);
             $id_tieuchi = intval($_POST['id_tieuchi']);
 
@@ -162,6 +167,7 @@ $dept_names = [
 
         // Xử lý xóa tiêu chí
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_criteria'])) {
+            verifyCsrfOrDie();
             $id = intval($_POST['id']);
             
             $sql_delete = "DELETE FROM required_images_criteria WHERE id = ?";
@@ -179,6 +185,7 @@ $dept_names = [
         <div class="criteria-form">
             <h2>Thêm Tiêu Chí Mới</h2>
             <form method="POST">
+                <?php echo getCsrfInput(); ?>
                 <input type="hidden" name="add_criteria" value="1">
                 <div class="form-group">
                     <label for="dept">Bộ phận:</label>
@@ -236,7 +243,7 @@ $dept_names = [
                             echo "<td>" . ($row['thutu'] ?? 'N/A') . "</td>";
                             echo "<td>" . ($row['noidung'] ?? 'Không tìm thấy tiêu chí') . "</td>";
                             echo "<td>";
-                            echo "<form method='POST' style='display: inline;'>";
+                            echo "<form method='POST' style='display: inline;'>" . getCsrfInput();
                             echo "<input type='hidden' name='delete_criteria' value='1'>";
                             echo "<input type='hidden' name='id' value='" . $row['id'] . "'>";
                             echo "<button type='submit' class='btn-delete' onclick='return confirm(\"Bạn có chắc chắn muốn xóa tiêu chí này?\")'>Xóa</button>";

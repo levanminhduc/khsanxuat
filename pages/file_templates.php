@@ -2,6 +2,12 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
 require_once BASE_PATH . '/helpers/template_files.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+
+// canManageTemplates() la stub luon tra ve true (khong duoc sua helpers/template_files.php),
+// nen phai gac that bang requireLogin()/requireFeature() truoc khi toi check stub.
+requireLogin();
+requireFeature('edit_settings', 'page');
 
 if (!canManageTemplates()) {
     http_response_code(403);
