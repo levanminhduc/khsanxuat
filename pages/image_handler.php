@@ -1,12 +1,9 @@
 <?php
-// Bật hiển thị lỗi để dễ debug
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/includes/indexdept/config.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -15,6 +12,8 @@ if (!$connect) {
 
 // Khởi tạo phiên làm việc nếu chưa có
 session_start();
+
+requireLogin();
 
 // Lấy thông tin từ URL
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -109,6 +108,8 @@ try {
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["image_file"])) {
+        verifyCsrfOrDie();
+
         $total = count($_FILES['image_file']['name']);
 
         // Kiểm tra thư mục upload
@@ -234,6 +235,8 @@ try {
 
     // Xử lý form đánh giá điểm nếu có
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save_score'])) {
+        verifyCsrfOrDie();
+
         // Bắt đầu transaction
         $connect->begin_transaction();
 
@@ -459,6 +462,7 @@ $dept_names = array(
         <div class="card">
             <h2>Upload hình ảnh</h2>
             <form action="" method="post" enctype="multipart/form-data" class="upload-form" data-loading data-loading-text="Đang tải ảnh lên...">
+                <?php echo getCsrfInput(); ?>
                 <div class="form-group">
                     <label for="id_tieuchi" class="form-label">Chọn tiêu chí</label>
                     <select name="id_tieuchi" id="id_tieuchi" class="form-control" required>
@@ -526,6 +530,7 @@ $dept_names = array(
         <div class="card">
             <h2>Đánh giá điểm tiêu chí</h2>
             <form action="" method="post" class="rating-form" data-loading data-loading-text="Đang lưu điểm đánh giá...">
+                <?php echo getCsrfInput(); ?>
                 <div class="form-group">
                     <label for="tieuchi_id" class="form-label">Chọn tiêu chí</label>
                     <select name="tieuchi_id" id="tieuchi_id" class="form-control" required onchange="loadTieuchiData()">
@@ -631,7 +636,7 @@ $dept_names = array(
                            data-title="<strong>Tiêu chí:</strong> <?php echo htmlspecialchars($image['tieuchi_name'] ?? 'Không xác định'); ?><br><strong>Ngày upload:</strong> <?php echo date('d/m/Y H:i', strtotime($image['upload_date'])); ?>">
                            Xem
                         </a>
-                        <a href="<?php echo BASE_URL; ?>/actions/delete_image.php?id_image=<?php echo $image['id']; ?>&id=<?php echo $id; ?>&dept=<?php echo urlencode($dept); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')">Xóa</a>
+                        <a href="<?php echo BASE_URL; ?>/actions/delete_image.php?id_image=<?php echo $image['id']; ?>&id=<?php echo $id; ?>&dept=<?php echo urlencode($dept); ?>&csrf_token=<?php echo urlencode(generateCsrfToken()); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')">Xóa</a>
                         <?php if (isset($image['id_tieuchi'])): ?>
                         <a href="javascript:void(0)" onclick="editScore(<?php echo $image['id_tieuchi']; ?>)">Đánh giá</a>
                         <?php endif; ?>

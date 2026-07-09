@@ -1,11 +1,8 @@
 <?php
-// Bật hiển thị lỗi để dễ debug
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
@@ -14,6 +11,18 @@ if (!$connect) {
 
 // Khởi tạo phiên làm việc nếu chưa có
 session_start();
+
+requireLogin();
+requireFeature('edit_settings', 'redirect');
+
+// Day la link GET (khong phai form POST) nen doc token tu $_GET, khong rotate:
+// trang image_handler.php co the hien thi nhieu link xoa anh cung luc, rotate se
+// lam hong token cua cac link con lai neu user mo nhieu tab/chua reload.
+$csrf_token = isset($_GET['csrf_token']) ? $_GET['csrf_token'] : '';
+if (!validateCsrfToken($csrf_token)) {
+    http_response_code(403);
+    die('CSRF token không hợp lệ');
+}
 
 // Lấy thông tin từ URL
 $id_image = isset($_GET['id_image']) ? intval($_GET['id_image']) : 0;

@@ -1,6 +1,10 @@
 <?php
 // Kết nối database
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+
+requireLogin();
+requireFeature('edit_settings', 'page');
 
 echo "<h1>Cập nhật cấu trúc bảng khsanxuat</h1>";
 

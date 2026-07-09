@@ -9,23 +9,20 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/helpers/activity_logger.php';
 require_once BASE_PATH . '/includes/check_tieuchi_image.php';
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
 require_once BASE_PATH . '/includes/indexdept/score-options.php';
 require_once BASE_PATH . '/includes/indexdept/config.php';
 
 // Khởi tạo phiên làm việc
 session_start();
 
+requireLogin();
+
 // Validate CSRF token
 verifyCsrfOrDie();
 
-// Chỉ admin/manager mới được ghi activity log
-$can_log = false;
-if (isset($_SESSION['user_role'])) {
-    $user_role = $_SESSION['user_role'];
-    if ($user_role == 'admin' || $user_role == 'manager') {
-        $can_log = true;
-    }
-}
+// Log hoat dong cho moi user da login (audit khong gate theo role)
+$can_log = isLoggedIn();
 
 // Kiểm tra kết nối
 if (!$connect) {
