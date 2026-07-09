@@ -1091,7 +1091,7 @@
                 }
             }
         };
-        xhr.send('ten=' + encodeURIComponent(staffName) + '&chuc_vu=' + encodeURIComponent(staffPosition) + '&phong_ban=' + dept);
+        xhr.send('ten=' + encodeURIComponent(staffName) + '&chuc_vu=' + encodeURIComponent(staffPosition) + '&phong_ban=' + dept + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Khởi tạo các sự kiện khi trang đã load xong

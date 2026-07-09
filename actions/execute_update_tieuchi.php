@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+requireLogin();
+requireFeature('edit_settings', 'page');
 
 // Đọc nội dung file SQL
 $sql_content = file_get_contents('update_chuanbi_tieuchi_correct.sql');

@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+requireFeature('edit_settings', 'redirect');
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
 require_once BASE_PATH . '/helpers/template_files.php';
 

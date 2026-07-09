@@ -1,6 +1,17 @@
 <?php
 // Kết nối cơ sở dữ liệu
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
+requireFeature('edit_settings', 'json');
+
+$csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+if (!validateCsrfToken($csrf_token)) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'CSRF token không hợp lệ']);
+    exit;
+}
 
 // Kiểm tra dữ liệu đầu vào
 if (!isset($_POST['ten']) || empty($_POST['ten']) || !isset($_POST['phong_ban']) || empty($_POST['phong_ban'])) {

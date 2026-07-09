@@ -24,6 +24,7 @@
 
                 <div class="add-criteria-modal__body score-options-modal__body tw-px-4 tw-py-4">
                     <form action="<?php echo BASE_URL; ?>/actions/add_criteria.php" method="POST" class="add-criteria-modal__form tw-space-y-3">
+                        <?php echo getCsrfInput(); ?>
                         <input type="hidden" name="dept" value="<?php echo htmlspecialchars($dept); ?>">
                         <input type="hidden" name="id_sanxuat" value="<?php echo (int) $id; ?>">
 

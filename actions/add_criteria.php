@@ -1,5 +1,11 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
+requireFeature('edit_settings', 'redirect');
+verifyCsrfOrDie();
+
 require_once BASE_PATH . '/includes/indexdept/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
