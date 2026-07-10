@@ -49,7 +49,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem;
+    padding: 0 1rem 0 0.5rem;
     height: var(--header-height);
     background: var(--header-primary);
     box-shadow: var(--header-shadow);
@@ -79,12 +79,6 @@
 .header-component .navbar-left img {
     width: 45px;
     height: auto;
-    transition: transform 0.2s ease;
-    border-radius: 6px;
-}
-
-.header-component .navbar-left img:hover {
-    transform: scale(1.05);
 }
 
 /* ========================================
@@ -154,14 +148,7 @@
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
     text-decoration: none;
-}
-
-.header-component .nav-item a:hover,
-.header-component .nav-item a:focus {
-    background-color: var(--header-hover);
 }
 
 .header-component .nav-item a:focus {
@@ -172,11 +159,6 @@
 .header-component .nav-item img {
     width: 36px;
     height: auto;
-    transition: transform 0.2s ease;
-}
-
-.header-component .nav-item img:hover {
-    transform: scale(1.1);
 }
 
 /* ========================================
@@ -187,14 +169,7 @@
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
-    border-radius: 6px;
-    transition: background-color 0.2s ease, transform 0.2s ease;
     text-decoration: none;
-}
-
-.header-component .action-btn:hover,
-.header-component .action-btn:focus {
-    background-color: var(--header-hover);
 }
 
 .header-component .action-btn:focus {
@@ -205,11 +180,6 @@
 .header-component .action-btn img {
     width: 36px;
     height: auto;
-    transition: transform 0.2s ease;
-}
-
-.header-component .action-btn:hover img {
-    transform: scale(1.1);
 }
 
 /* ========================================
@@ -238,13 +208,6 @@
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.header-component .user-badge:hover,
-.header-component .user-badge:focus {
-    background-color: rgba(255, 255, 255, 0.22);
-    transform: scale(1.05);
 }
 
 .header-component .user-badge:focus {
@@ -717,7 +680,7 @@
    ======================================== */
 @media (min-width: 1200px) {
     .header-component .navbar {
-        padding: 0 2.5rem;
+        padding: 0 2.5rem 0 0.5rem;
     }
 
     .header-component .navbar-brand {
@@ -739,7 +702,7 @@
    ======================================== */
 @media (min-width: 992px) and (max-width: 1199.98px) {
     .header-component .navbar {
-        padding: 0 1.5rem;
+        padding: 0 1.5rem 0 0.5rem;
     }
 
     .header-component .navbar-brand {
@@ -753,7 +716,7 @@
    ======================================== */
 @media (min-width: 768px) and (max-width: 1145px) {
     .header-component .navbar {
-        padding: 0 0.75rem;
+        padding: 0 0.75rem 0 0.5rem;
     }
 
     /* Show short title, hide full title for this range */
@@ -789,7 +752,7 @@
 @media (max-width: 1024.98px) {
     .header-component .navbar {
         height: var(--header-height-mobile);
-        padding: 0 0.75rem;
+        padding: 0 0.75rem 0 0.5rem;
     }
 
     .header-component .navbar-left {
