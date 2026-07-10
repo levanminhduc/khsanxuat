@@ -258,7 +258,12 @@ $search_types = [
 
             <div class="user-menu">
                 <?php if ($user_logged_in): ?>
-                <a href="<?php echo $logout_url; ?>" class="user-badge" title="<?php echo $user_display_name; ?> — Đăng xuất" aria-label="<?php echo $user_display_name; ?> — Đăng xuất" onclick="return confirm('Đăng xuất?');"><?php echo $user_initials; ?></a>
+                <button type="button" class="user-badge" id="user-menu-toggle" title="<?php echo $user_display_name; ?>" aria-label="<?php echo $user_display_name; ?> — Menu tài khoản" aria-haspopup="true" aria-expanded="false" aria-controls="user-menu-panel"><?php echo $user_initials; ?></button>
+                <div class="user-menu-panel" id="user-menu-panel" role="menu">
+                    <div class="user-menu-name" role="none"><?php echo $user_display_name; ?></div>
+                    <a href="<?php echo header_escape(BASE_URL . '/account/change_password.php'); ?>" class="user-menu-item" role="menuitem">Đổi mật khẩu</a>
+                    <a href="<?php echo $logout_url; ?>" class="user-menu-item" role="menuitem" onclick="return confirm('Đăng xuất?');">Đăng xuất</a>
+                </div>
                 <?php else: ?>
                 <a href="<?php echo $login_url; ?>" class="login-btn">Đăng nhập</a>
                 <?php endif; ?>
@@ -390,6 +395,9 @@ $search_types = [
             <?php endforeach; ?>
 
             <?php if ($user_logged_in): ?>
+            <a href="<?php echo header_escape(BASE_URL . '/account/change_password.php'); ?>" class="mobile-nav-item" role="menuitem">
+                Đổi mật khẩu
+            </a>
             <a href="<?php echo $logout_url; ?>" class="mobile-nav-item" role="menuitem" onclick="return confirm('Đăng xuất?');">
                 <span class="user-badge user-badge--mobile" aria-hidden="true"><?php echo $user_initials; ?></span>
                 Đăng xuất

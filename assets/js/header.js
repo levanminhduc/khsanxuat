@@ -19,7 +19,9 @@
             toggle: null,
             dropdown: null,
             navbar: null,
-            placeholderRotators: null
+            placeholderRotators: null,
+            userMenuToggle: null,
+            userMenuPanel: null
         },
 
         // Configuration
@@ -37,7 +39,8 @@
         init: function() {
             this.cacheElements();
             this.initSearchPlaceholderRotation();
-            
+            this.initUserMenu();
+
             if (!this.elements.toggle || !this.elements.dropdown) {
                 // Elements not found, component may not be on this page
                 return;
@@ -55,6 +58,8 @@
             this.elements.dropdown = document.getElementById(this.config.dropdownId);
             this.elements.navbar = document.querySelector('.header-component .navbar');
             this.elements.placeholderRotators = document.querySelectorAll('.header-component [data-placeholder-rotator]');
+            this.elements.userMenuToggle = document.getElementById('user-menu-toggle');
+            this.elements.userMenuPanel = document.getElementById('user-menu-panel');
         },
 
         /**
@@ -209,6 +214,90 @@
                     this.style.opacity = '1';
                 });
             });
+        },
+
+        /**
+         * Init avatar dropdown (ten day du + doi mat khau + dang xuat).
+         * Chay doc lap voi bindEvents() cua mobile menu vi trang co the
+         * show_mobile_menu = false (khong co toggle/dropdown mobile).
+         */
+        initUserMenu: function() {
+            var self = this;
+            var toggle = this.elements.userMenuToggle;
+            var panel = this.elements.userMenuPanel;
+
+            if (!toggle || !panel) {
+                return;
+            }
+
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                self.toggleUserMenu();
+            });
+
+            document.addEventListener('click', function(e) {
+                self.handleUserMenuOutsideClick(e);
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && self.isUserMenuOpen()) {
+                    self.closeUserMenu();
+                    toggle.focus();
+                }
+            });
+        },
+
+        /**
+         * Toggle avatar dropdown open/closed
+         */
+        toggleUserMenu: function() {
+            if (this.isUserMenuOpen()) {
+                this.closeUserMenu();
+            } else {
+                this.openUserMenu();
+            }
+        },
+
+        /**
+         * Open avatar dropdown
+         */
+        openUserMenu: function() {
+            this.elements.userMenuPanel.classList.add(this.config.openClass);
+            this.elements.userMenuToggle.setAttribute('aria-expanded', 'true');
+        },
+
+        /**
+         * Close avatar dropdown
+         */
+        closeUserMenu: function() {
+            this.elements.userMenuPanel.classList.remove(this.config.openClass);
+            this.elements.userMenuToggle.setAttribute('aria-expanded', 'false');
+        },
+
+        /**
+         * Check if avatar dropdown is currently open
+         * @returns {boolean}
+         */
+        isUserMenuOpen: function() {
+            return this.elements.userMenuPanel.classList.contains(this.config.openClass);
+        },
+
+        /**
+         * Close avatar dropdown when clicking/touching outside of it
+         * @param {Event} e - The click/touch event
+         */
+        handleUserMenuOutsideClick: function(e) {
+            if (!this.isUserMenuOpen()) {
+                return;
+            }
+
+            var isClickInsidePanel = this.elements.userMenuPanel.contains(e.target);
+            var isClickOnToggle = this.elements.userMenuToggle.contains(e.target);
+
+            if (!isClickInsidePanel && !isClickOnToggle) {
+                this.closeUserMenu();
+            }
         },
 
         /**
