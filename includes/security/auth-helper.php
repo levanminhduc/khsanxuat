@@ -6,8 +6,8 @@
 
 // Nguon duy nhat dinh nghia quyen cua khsanxuat. Them role/feature = sua mang nay.
 $GLOBALS['app_role_features'] = [
-    'admin'       => ['edit_settings'],
-    'super_admin' => ['edit_settings'], // luon la superset cua admin
+    'admin'       => ['edit_settings', 'manage_users'],
+    'super_admin' => ['edit_settings', 'manage_users'], // luon la superset cua admin
 ];
 
 function currentAppRole()

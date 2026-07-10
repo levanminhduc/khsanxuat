@@ -1,4 +1,12 @@
-<?php require_once __DIR__ . '/../bootstrap.php'; ?>
+<?php
+require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
+// Register gio la cong cu admin: user chung ~10 du an, tu dang ky se login duoc ca 10 he thong
+requireLogin();
+requireFeature('manage_users', 'page');
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -116,6 +124,7 @@
         <?php endif; ?>
 
         <form action="<?php echo BASE_URL; ?>/account/register_action.php" method="POST">
+            <?php echo getCsrfInput(); ?>
             <label for="name">Tên đăng nhập</label>
             <input type="text" id="name" name="name" required><br>
             
@@ -130,8 +139,7 @@
 
             <button type="submit">Đăng ký</button>
         </form>
-        <a href="<?php echo BASE_URL; ?>/account/login.php">Đã có tài khoản? Đăng nhập ngay</a>
-        <a href="<?php echo BASE_URL; ?>/account/change_password.php">Quên mật khẩu? Thay đổi mật khẩu</a>
+        <a href="<?php echo BASE_URL; ?>/index.php">Về trang chủ</a>
     </div>
 </body>
 

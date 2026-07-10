@@ -1,9 +1,16 @@
 <?php
-session_start();
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
 
-$name = $_POST['name'];
-$pass = $_POST['password'];
+verifyCsrfOrDie();
+
+$name = trim($_POST['name'] ?? '');
+$pass = $_POST['password'] ?? '';
+
+if ($name === '' || $pass === '') {
+    header("Location: " . BASE_URL . "/account/login.php?error_message=Vui lòng nhập đầy đủ thông tin");
+    exit();
+}
 
 // Truy vấn lấy thêm full_name
 $sql = "SELECT id, name, password, full_name FROM user WHERE name = ?";
