@@ -258,7 +258,7 @@ $search_types = [
 
             <div class="user-menu">
                 <?php if ($user_logged_in): ?>
-                <a href="<?php echo $logout_url; ?>" class="user-badge" title="<?php echo $user_display_name; ?> — Đăng xuất" onclick="return confirm('Đăng xuất?');"><?php echo $user_initials; ?></a>
+                <a href="<?php echo $logout_url; ?>" class="user-badge" title="<?php echo $user_display_name; ?> — Đăng xuất" aria-label="<?php echo $user_display_name; ?> — Đăng xuất" onclick="return confirm('Đăng xuất?');"><?php echo $user_initials; ?></a>
                 <?php else: ?>
                 <a href="<?php echo $login_url; ?>" class="login-btn">Đăng nhập</a>
                 <?php endif; ?>
