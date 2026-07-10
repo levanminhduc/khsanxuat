@@ -1,4 +1,7 @@
 <?php
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
+
 if (!isset($header_config) || !is_array($header_config)) {
     $header_config = [];
 }
@@ -121,7 +124,23 @@ $mobile_actions = array_values(array_filter($mobile_actions, function($action) {
         && (!empty($action['url']) || !empty($action['onclick']))
         && (!empty($action['icon']) || !empty($action['icon_class']));
 }));
-$show_mobile_menu = $show_mobile_menu && ($show_search || !empty($actions) || !empty($mobile_actions));
+
+$user_logged_in = isLoggedIn();
+$user_raw_name = '';
+if ($user_logged_in) {
+    $user_raw_name = !empty($_SESSION['full_name'])
+        ? $_SESSION['full_name']
+        : (isset($_SESSION['username']) ? $_SESSION['username'] : '');
+}
+$user_display_name = header_escape($user_raw_name);
+$user_initials = header_escape(header_user_initials($user_raw_name));
+$logout_icon = header_escape(BASE_URL . '/img/exit.png');
+$logout_url = $user_logged_in
+    ? header_escape(BASE_URL . '/account/logout.php?csrf_token=' . urlencode(generateCsrfToken()))
+    : '';
+$login_url = header_escape(BASE_URL . '/account/login.php?redirect=' . urlencode(
+    isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : BASE_URL . '/index.php'
+));
 
 $search_types = [
     'xuong' => 'Xưởng',
@@ -237,6 +256,17 @@ $search_types = [
                 <?php endif; ?>
                 <?php endforeach; ?>
             </ul>
+
+            <div class="user-menu">
+                <?php if ($user_logged_in): ?>
+                <span class="user-badge" title="<?php echo $user_display_name; ?>"><?php echo $user_initials; ?></span>
+                <a href="<?php echo $logout_url; ?>" class="action-btn" title="Đăng xuất" onclick="return confirm('Đăng xuất?');">
+                    <img src="<?php echo $logout_icon; ?>" alt="Đăng xuất">
+                </a>
+                <?php else: ?>
+                <a href="<?php echo $login_url; ?>" class="login-btn">Đăng nhập</a>
+                <?php endif; ?>
+            </div>
         </div>
     </nav>
 
@@ -362,6 +392,17 @@ $search_types = [
             </button>
             <?php endif; ?>
             <?php endforeach; ?>
+
+            <?php if ($user_logged_in): ?>
+            <a href="<?php echo $logout_url; ?>" class="mobile-nav-item" role="menuitem" onclick="return confirm('Đăng xuất?');">
+                <img src="<?php echo $logout_icon; ?>" alt="" aria-hidden="true">
+                Đăng xuất (<?php echo $user_initials; ?>)
+            </a>
+            <?php else: ?>
+            <a href="<?php echo $login_url; ?>" class="mobile-nav-item" role="menuitem">
+                Đăng nhập
+            </a>
+            <?php endif; ?>
         </div>
     </div>
     <?php endif; ?>
