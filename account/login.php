@@ -1,4 +1,18 @@
-<?php require_once __DIR__ . '/../bootstrap.php'; ?>
+<?php
+require_once __DIR__ . '/../bootstrap.php';
+
+// Nhan dich den tu nut "Dang nhap" o header de login_action redirect ve.
+// Chi chap nhan path noi bo: bat dau '/', khong '//' (protocol-relative),
+// khong backslash — chan open redirect.
+if (isset($_GET['redirect']) && is_string($_GET['redirect'])) {
+    $redirect_target = $_GET['redirect'];
+    if (strpos($redirect_target, '/') === 0
+        && strpos($redirect_target, '//') !== 0
+        && strpos($redirect_target, '\\') === false) {
+        $_SESSION['redirect_url'] = $redirect_target;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
