@@ -54,7 +54,7 @@ function requireFeature($feature, $mode)
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'message' => $message]);
     } elseif ($mode === 'redirect') {
-        header('Location: ' . BASE_URL . '/index.php?error=' . urlencode($message));
+        header('Location: ' . BASE_URL . '/index.php?error=1&message=' . urlencode($message));
     } else { // 'page'
         http_response_code(403);
         echo '<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>Không có quyền</title></head>'

@@ -215,8 +215,11 @@ $kho_percent = $stats['kho_percent'];
         }
     }
     if (isset($_GET['error']) && $_GET['error'] == 1) {
-        if (isset($_GET['action']) && $_GET['action'] == 'delete') {
-            $error_message = isset($_GET['message']) ? $_GET['message'] : 'Có lỗi xảy ra khi xóa dữ liệu!';
+        // Uu tien message tu requireFeature (vd: loi phan quyen), fallback theo action nhu cu
+        if (isset($_GET['message']) && $_GET['message'] !== '') {
+            $error_message = $_GET['message'];
+        } elseif (isset($_GET['action']) && $_GET['action'] == 'delete') {
+            $error_message = 'Có lỗi xảy ra khi xóa dữ liệu!';
         } else {
             $error_message = 'Có lỗi xảy ra khi lưu đánh giá!';
         }
