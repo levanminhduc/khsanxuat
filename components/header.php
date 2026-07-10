@@ -261,7 +261,9 @@ $search_types = [
                 <button type="button" class="user-badge" id="user-menu-toggle" title="<?php echo $user_display_name; ?>" aria-label="<?php echo $user_display_name; ?> — Menu tài khoản" aria-haspopup="true" aria-expanded="false" aria-controls="user-menu-panel"><?php echo $user_initials; ?></button>
                 <div class="user-menu-panel" id="user-menu-panel" role="menu">
                     <div class="user-menu-name" role="none"><?php echo $user_display_name; ?></div>
+                    <?php if (false): // tam an link Doi mat khau theo yeu cau, mo lai bang cach bo if ?>
                     <a href="<?php echo header_escape(BASE_URL . '/account/change_password.php'); ?>" class="user-menu-item" role="menuitem">Đổi mật khẩu</a>
+                    <?php endif; ?>
                     <a href="<?php echo $logout_url; ?>" class="user-menu-item" role="menuitem" onclick="return confirm('Đăng xuất?');">Đăng xuất</a>
                 </div>
                 <?php else: ?>
@@ -395,9 +397,11 @@ $search_types = [
             <?php endforeach; ?>
 
             <?php if ($user_logged_in): ?>
+            <?php if (false): // tam an link Doi mat khau theo yeu cau, mo lai bang cach bo if ?>
             <a href="<?php echo header_escape(BASE_URL . '/account/change_password.php'); ?>" class="mobile-nav-item" role="menuitem">
                 Đổi mật khẩu
             </a>
+            <?php endif; ?>
             <a href="<?php echo $logout_url; ?>" class="mobile-nav-item" role="menuitem" onclick="return confirm('Đăng xuất?');">
                 <span class="user-badge user-badge--mobile" aria-hidden="true"><?php echo $user_initials; ?></span>
                 Đăng xuất
