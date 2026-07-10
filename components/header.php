@@ -46,6 +46,36 @@ function header_selected($type, $current) {
     return ($type === $current) ? 'selected' : '';
 }
 
+// Viet tat ten user cho badge: chu cai dau moi tu, in hoa, bo dau tieng Viet
+// (Đ→D, nhom nguyen am co thanh dieu) — 'Lê Văn Minh Đức' → 'LVMD'.
+function header_user_initials($full_name) {
+    $words = preg_split('/\s+/u', trim((string)$full_name), -1, PREG_SPLIT_NO_EMPTY);
+    if (empty($words)) {
+        return 'USER';
+    }
+    $map = [
+        'Á' => 'A', 'À' => 'A', 'Ả' => 'A', 'Ã' => 'A', 'Ạ' => 'A',
+        'Ă' => 'A', 'Ắ' => 'A', 'Ằ' => 'A', 'Ẳ' => 'A', 'Ẵ' => 'A', 'Ặ' => 'A',
+        'Â' => 'A', 'Ấ' => 'A', 'Ầ' => 'A', 'Ẩ' => 'A', 'Ẫ' => 'A', 'Ậ' => 'A',
+        'É' => 'E', 'È' => 'E', 'Ẻ' => 'E', 'Ẽ' => 'E', 'Ẹ' => 'E',
+        'Ê' => 'E', 'Ế' => 'E', 'Ề' => 'E', 'Ể' => 'E', 'Ễ' => 'E', 'Ệ' => 'E',
+        'Í' => 'I', 'Ì' => 'I', 'Ỉ' => 'I', 'Ĩ' => 'I', 'Ị' => 'I',
+        'Ó' => 'O', 'Ò' => 'O', 'Ỏ' => 'O', 'Õ' => 'O', 'Ọ' => 'O',
+        'Ô' => 'O', 'Ố' => 'O', 'Ồ' => 'O', 'Ổ' => 'O', 'Ỗ' => 'O', 'Ộ' => 'O',
+        'Ơ' => 'O', 'Ớ' => 'O', 'Ờ' => 'O', 'Ở' => 'O', 'Ỡ' => 'O', 'Ợ' => 'O',
+        'Ú' => 'U', 'Ù' => 'U', 'Ủ' => 'U', 'Ũ' => 'U', 'Ụ' => 'U',
+        'Ư' => 'U', 'Ứ' => 'U', 'Ừ' => 'U', 'Ử' => 'U', 'Ữ' => 'U', 'Ự' => 'U',
+        'Ý' => 'Y', 'Ỳ' => 'Y', 'Ỷ' => 'Y', 'Ỹ' => 'Y', 'Ỵ' => 'Y',
+        'Đ' => 'D',
+    ];
+    $initials = '';
+    foreach ($words as $word) {
+        $first = mb_strtoupper(mb_substr($word, 0, 1, 'UTF-8'), 'UTF-8');
+        $initials .= strtr($first, $map);
+    }
+    return $initials !== '' ? $initials : 'USER';
+}
+
 $title = header_escape($config['title']);
 $title_short = header_escape($config['title_short']);
 $logo_path = header_escape($config['logo_path']);
