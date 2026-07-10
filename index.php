@@ -78,19 +78,19 @@ $kho_percent = $stats['kho_percent'];
         'actions' => [
             [
                 'url' => 'dept_statistics_month.php',
-                'icon' => 'img/thongke.png',
+                'icon' => 'img/header/chart.png',
                 'title' => 'Thống kê',
                 'tooltip' => 'Xem thống kê'
             ],
             [
                 'url' => 'import.php',
-                'icon' => 'img/add.png',
+                'icon' => 'img/header/plus.png',
                 'title' => 'Nhập dữ liệu',
                 'tooltip' => 'Nhập dữ liệu mới'
             ],
             [
                 'url' => 'pages/export.php?month=' . $selected_month . '&year=' . $selected_year,
-                'icon' => 'img/export.jpg',
+                'icon' => 'img/header/download.png',
                 'title' => 'Xuất dữ liệu',
                 'tooltip' => 'Xuất dữ liệu',
                 'download' => true,

@@ -169,19 +169,19 @@ $header_config = [
     'mobile_actions' => [
         [
             'url' => BASE_URL . '/index.php',
-            'icon' => 'img/back.png',
+            'icon' => 'img/header/arrow-left.png',
             'title' => 'Quay lại',
             'tooltip' => 'Quay lại danh sách'
         ],
         [
             'url' => BASE_URL . '/pages/image_handler.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
-            'icon' => 'img/open.png',
+            'icon' => 'img/header/image.png',
             'title' => 'Hình ảnh',
             'tooltip' => 'Quản lý hình ảnh'
         ],
         [
             'url' => BASE_URL . '/pages/file_templates.php?id=' . urlencode((string)$id) . '&dept=' . urlencode((string)$dept),
-            'icon' => 'img/doc.gif',
+            'icon' => 'img/header/file-text.png',
             'title' => 'Biểu mẫu',
             'tooltip' => 'Biểu mẫu'
         ],

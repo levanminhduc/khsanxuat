@@ -20,8 +20,8 @@ $header_config = [
     'show_search' => false,
     'show_mobile_menu' => true,
     'actions' => [
-        ['url' => BASE_URL . '/pages/help_deadline.php', 'icon' => BASE_URL . '/img/help_icon.png', 'title' => 'Hướng dẫn', 'tooltip' => 'Hướng dẫn sử dụng'],
-        ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
+        ['url' => BASE_URL . '/pages/help_deadline.php', 'icon' => BASE_URL . '/img/header/help.png', 'title' => 'Hướng dẫn', 'tooltip' => 'Hướng dẫn sử dụng'],
+        ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/header/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
 

@@ -11,8 +11,8 @@ $header_config = [
     'show_search' => false,
     'show_mobile_menu' => true,
     'actions' => [
-        ['url' => BASE_URL . '/pages/settings.php', 'icon' => BASE_URL . '/img/settings.png', 'title' => 'Cài đặt', 'tooltip' => 'Trang cài đặt'],
-        ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
+        ['url' => BASE_URL . '/pages/settings.php', 'icon' => BASE_URL . '/img/header/settings.png', 'title' => 'Cài đặt', 'tooltip' => 'Trang cài đặt'],
+        ['url' => BASE_URL . '/index.php', 'icon' => BASE_URL . '/img/header/home.png', 'title' => 'Trang chủ', 'tooltip' => 'Trang chủ']
     ]
 ];
 ?>
