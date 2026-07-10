@@ -134,7 +134,6 @@ if ($user_logged_in) {
 }
 $user_display_name = header_escape($user_raw_name);
 $user_initials = header_escape(header_user_initials($user_raw_name));
-$logout_icon = header_escape(BASE_URL . '/img/exit.png');
 $logout_url = $user_logged_in
     ? header_escape(BASE_URL . '/account/logout.php?csrf_token=' . urlencode(generateCsrfToken()))
     : '';
@@ -259,10 +258,7 @@ $search_types = [
 
             <div class="user-menu">
                 <?php if ($user_logged_in): ?>
-                <span class="user-badge" title="<?php echo $user_display_name; ?>"><?php echo $user_initials; ?></span>
-                <a href="<?php echo $logout_url; ?>" class="action-btn" title="Đăng xuất" onclick="return confirm('Đăng xuất?');">
-                    <img src="<?php echo $logout_icon; ?>" alt="Đăng xuất">
-                </a>
+                <a href="<?php echo $logout_url; ?>" class="user-badge" title="<?php echo $user_display_name; ?> — Đăng xuất" onclick="return confirm('Đăng xuất?');"><?php echo $user_initials; ?></a>
                 <?php else: ?>
                 <a href="<?php echo $login_url; ?>" class="login-btn">Đăng nhập</a>
                 <?php endif; ?>
@@ -395,8 +391,8 @@ $search_types = [
 
             <?php if ($user_logged_in): ?>
             <a href="<?php echo $logout_url; ?>" class="mobile-nav-item" role="menuitem" onclick="return confirm('Đăng xuất?');">
-                <img src="<?php echo $logout_icon; ?>" alt="" aria-hidden="true">
-                Đăng xuất (<?php echo $user_initials; ?>)
+                <span class="user-badge user-badge--mobile" aria-hidden="true"><?php echo $user_initials; ?></span>
+                Đăng xuất
             </a>
             <?php else: ?>
             <a href="<?php echo $login_url; ?>" class="mobile-nav-item" role="menuitem">
