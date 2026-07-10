@@ -1,12 +1,23 @@
 <?php
-session_start();
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/security/csrf-helper.php';
 
-// Lấy dữ liệu từ form
-$name = $_POST['name'];
-$current_password = $_POST['current_password'];
-$new_password = $_POST['new_password'];
-$confirm_password = $_POST['confirm_password'];
+// Bat buoc dang nhap + CSRF: doi mat khau chi cho user dang session, khong con hoi username
+requireLogin();
+verifyCsrfOrDie();
+
+$user_id = $_SESSION['user_id'];
+
+// Lay du lieu tu form (mat khau khong trim - giu nguyen theo quy uoc cu)
+$current_password = $_POST['current_password'] ?? '';
+$new_password = $_POST['new_password'] ?? '';
+$confirm_password = $_POST['confirm_password'] ?? '';
+
+if ($current_password === '' || $new_password === '' || $confirm_password === '') {
+    header("Location: " . BASE_URL . "/account/change_password.php?error_message=Vui lòng nhập đầy đủ thông tin");
+    exit();
+}
 
 // Kiểm tra mật khẩu xác nhận
 if ($new_password !== $confirm_password) {
@@ -14,48 +25,51 @@ if ($new_password !== $confirm_password) {
     exit();
 }
 
-// Kiểm tra xem tên đăng nhập có tồn tại không và mật khẩu hiện tại có đúng không
-$check_sql = "SELECT id, password FROM user WHERE name = ?";
+if (strlen($new_password) < 8) {
+    header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu mới phải có ít nhất 8 ký tự");
+    exit();
+}
+
+// Lay mat khau hien tai cua user dang login (khong con can nhap ten dang nhap)
+$check_sql = "SELECT password FROM user WHERE id = ?";
 $check_stmt = mysqli_prepare($connect, $check_sql);
-mysqli_stmt_bind_param($check_stmt, "s", $name);
+mysqli_stmt_bind_param($check_stmt, "i", $user_id);
 mysqli_stmt_execute($check_stmt);
 mysqli_stmt_store_result($check_stmt);
 
 if (mysqli_stmt_num_rows($check_stmt) > 0) {
-    mysqli_stmt_bind_result($check_stmt, $user_id, $db_password);
+    mysqli_stmt_bind_result($check_stmt, $db_password);
     mysqli_stmt_fetch($check_stmt);
-    
-    // Kiểm tra mật khẩu hiện tại có đúng không
+    mysqli_stmt_close($check_stmt);
+
+    // Kiem tra mat khau hien tai co dung khong (plaintext - giu nguyen co che cu)
     if ($current_password !== $db_password) {
-        mysqli_stmt_close($check_stmt);
         header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu hiện tại không đúng");
         exit();
     }
-    
-    mysqli_stmt_close($check_stmt);
-    
+
     // Cập nhật mật khẩu mới
     $update_sql = "UPDATE user SET password = ? WHERE id = ?";
     $update_stmt = mysqli_prepare($connect, $update_sql);
     mysqli_stmt_bind_param($update_stmt, "si", $new_password, $user_id);
-    
+
     if (mysqli_stmt_execute($update_stmt)) {
-        // Cập nhật thành công
         mysqli_stmt_close($update_stmt);
         mysqli_close($connect);
-        header("Location: " . BASE_URL . "/account/login.php?success_message=Mật khẩu đã được thay đổi thành công! Vui lòng đăng nhập lại");
+        // O lai trang, khong dang xuat vi user van dang dang nhap
+        header("Location: " . BASE_URL . "/account/change_password.php?success_message=Mật khẩu đã được thay đổi thành công");
         exit();
     } else {
-        // Lỗi khi cập nhật
-        $error = mysqli_error($connect);
+        // Loi DB: log chi tiet noi bo, khong lo mysqli_error() ra URL
+        error_log("change_password_action: update password that bai cho user_id=$user_id - " . mysqli_error($connect));
         mysqli_stmt_close($update_stmt);
         mysqli_close($connect);
-        header("Location: " . BASE_URL . "/account/change_password.php?error_message=Lỗi khi thay đổi mật khẩu: " . urlencode($error));
+        header("Location: " . BASE_URL . "/account/change_password.php?error_message=Có lỗi xảy ra, vui lòng thử lại sau");
         exit();
     }
 } else {
-    // Tên đăng nhập không tồn tại
+    // User bi xoa trong luc session con song - khong lo chi tiet
     mysqli_stmt_close($check_stmt);
-    header("Location: " . BASE_URL . "/account/change_password.php?error_message=Tên đăng nhập không tồn tại");
+    header("Location: " . BASE_URL . "/account/change_password.php?error_message=Có lỗi xảy ra, vui lòng thử lại sau");
     exit();
-} 
+}
