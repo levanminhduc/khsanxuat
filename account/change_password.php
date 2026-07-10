@@ -130,7 +130,6 @@
             <button type="submit">Thay đổi mật khẩu</button>
         </form>
         <a href="   login.php">Quay lại trang đăng nhập</a>
-        <a href="forgot_password.php">Quên mật khẩu?</a>
     </div>
 </body>
 

@@ -139,7 +139,6 @@ if (isset($_GET['redirect']) && is_string($_GET['redirect'])) {
             <button type="submit">Đăng nhập</button>
         </form>
         <a href="<?php echo BASE_URL; ?>/account/register.php">Chưa có tài khoản? Đăng ký ngay</a>
-        <a href="<?php echo BASE_URL; ?>/account/forgot_password.php">Quên mật khẩu?</a>
         <a href="<?php echo BASE_URL; ?>/account/change_password.php">Thay đổi mật khẩu</a>
     </div>
 </body>
