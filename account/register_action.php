@@ -8,7 +8,6 @@ requireLogin();
 requireFeature('manage_users', 'redirect');
 verifyCsrfOrDie();
 
-// Lấy dữ liệu từ form
 $name = trim($_POST['name'] ?? '');
 $full_name = trim($_POST['full_name'] ?? '');
 $password = $_POST['password'] ?? '';
@@ -19,7 +18,6 @@ if ($name === '' || $full_name === '' || $password === '' || $confirm_password =
     exit();
 }
 
-// Kiểm tra mật khẩu xác nhận
 if ($password !== $confirm_password) {
     header("Location: " . BASE_URL . "/account/register.php?error_message=Mật khẩu xác nhận không khớp");
     exit();
@@ -30,7 +28,6 @@ if (strlen($password) < 8) {
     exit();
 }
 
-// Kiểm tra xem tên đăng nhập đã tồn tại chưa
 $check_sql = "SELECT id FROM user WHERE name = ?";
 $check_stmt = mysqli_prepare($connect, $check_sql);
 mysqli_stmt_bind_param($check_stmt, "s", $name);
@@ -38,7 +35,6 @@ mysqli_stmt_execute($check_stmt);
 mysqli_stmt_store_result($check_stmt);
 
 if (mysqli_stmt_num_rows($check_stmt) > 0) {
-    // Tên đăng nhập đã tồn tại
     mysqli_stmt_close($check_stmt);
     header("Location: " . BASE_URL . "/account/register.php?error_message=Tên đăng nhập đã tồn tại");
     exit();
@@ -46,13 +42,13 @@ if (mysqli_stmt_num_rows($check_stmt) > 0) {
 
 mysqli_stmt_close($check_stmt);
 
-// Thêm người dùng mới vào cơ sở dữ liệu (mat khau plaintext - giu nguyen co che cu)
+// Mat khau plaintext - giu nguyen co che cu (bang user dung chung ~10 du an)
 $insert_sql = "INSERT INTO user (name, password, full_name) VALUES (?, ?, ?)";
 $insert_stmt = mysqli_prepare($connect, $insert_sql);
 mysqli_stmt_bind_param($insert_stmt, "sss", $name, $password, $full_name);
 
 if (mysqli_stmt_execute($insert_stmt)) {
-    // Dang ky thanh cong: ve lai register.php (khong ve login.php - admin co the tao tiep tai khoan)
+    // Ve lai register.php (khong ve login.php) de admin tao tiep tai khoan
     mysqli_stmt_close($insert_stmt);
     mysqli_close($connect);
     header("Location: " . BASE_URL . "/account/register.php?success_message=Tạo tài khoản thành công");

@@ -9,7 +9,7 @@ verifyCsrfOrDie();
 
 $user_id = $_SESSION['user_id'];
 
-// Lay du lieu tu form (mat khau khong trim - giu nguyen theo quy uoc cu)
+// Mat khau khong trim - giu nguyen theo quy uoc cu
 $current_password = $_POST['current_password'] ?? '';
 $new_password = $_POST['new_password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
@@ -19,7 +19,6 @@ if ($current_password === '' || $new_password === '' || $confirm_password === ''
     exit();
 }
 
-// Kiểm tra mật khẩu xác nhận
 if ($new_password !== $confirm_password) {
     header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu xác nhận không khớp");
     exit();
@@ -30,7 +29,6 @@ if (strlen($new_password) < 8) {
     exit();
 }
 
-// Lay mat khau hien tai cua user dang login (khong con can nhap ten dang nhap)
 $check_sql = "SELECT password FROM user WHERE id = ?";
 $check_stmt = mysqli_prepare($connect, $check_sql);
 mysqli_stmt_bind_param($check_stmt, "i", $user_id);
@@ -42,13 +40,12 @@ if (mysqli_stmt_num_rows($check_stmt) > 0) {
     mysqli_stmt_fetch($check_stmt);
     mysqli_stmt_close($check_stmt);
 
-    // Kiem tra mat khau hien tai co dung khong (plaintext - giu nguyen co che cu)
+    // So sanh plaintext - giu nguyen co che cu (bang user dung chung ~10 du an)
     if ($current_password !== $db_password) {
         header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu hiện tại không đúng");
         exit();
     }
 
-    // Cập nhật mật khẩu mới
     $update_sql = "UPDATE user SET password = ? WHERE id = ?";
     $update_stmt = mysqli_prepare($connect, $update_sql);
     mysqli_stmt_bind_param($update_stmt, "si", $new_password, $user_id);
@@ -56,7 +53,6 @@ if (mysqli_stmt_num_rows($check_stmt) > 0) {
     if (mysqli_stmt_execute($update_stmt)) {
         mysqli_stmt_close($update_stmt);
         mysqli_close($connect);
-        // O lai trang, khong dang xuat vi user van dang dang nhap
         header("Location: " . BASE_URL . "/account/change_password.php?success_message=Mật khẩu đã được thay đổi thành công");
         exit();
     } else {

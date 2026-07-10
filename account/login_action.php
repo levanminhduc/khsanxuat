@@ -12,7 +12,6 @@ if ($name === '' || $pass === '') {
     exit();
 }
 
-// Truy vấn lấy thêm full_name
 $sql = "SELECT id, name, password, full_name FROM user WHERE name = ?";
 $stmt = mysqli_prepare($connect, $sql);
 mysqli_stmt_bind_param($stmt, "s", $name);
@@ -27,9 +26,9 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
 
         $_SESSION['id'] = $user_id;
         $_SESSION['name'] = $db_name;
-        $_SESSION['full_name'] = $full_name; // Lưu full_name
-        $_SESSION['username'] = $db_name;    // Lưu username cho ActivityLogger
-        $_SESSION['user_id'] = $user_id;     // Thêm user_id cho kiểm tra đăng nhập
+        $_SESSION['full_name'] = $full_name;
+        $_SESSION['username'] = $db_name;    // trung voi 'name' nhung ActivityLogger doc key nay
+        $_SESSION['user_id'] = $user_id;     // trung voi 'id' nhung auth-helper doc key nay
 
         // Nap role per-app cho khsanxuat; dong app='*' (super_admin) thang dong app cu the.
         // Role chi nap 1 lan luc login — thu hoi quyen co hieu luc khi login lai.
@@ -42,32 +41,28 @@ if (mysqli_stmt_num_rows($stmt) > 0) {
         while (mysqli_stmt_fetch($role_stmt)) {
             $app_role = $row_role;
             if ($row_app === '*') {
-                break; // '*' co uu tien cao nhat
+                break;
             }
         }
         mysqli_stmt_close($role_stmt);
         $_SESSION['app_role'] = $app_role;
 
-        // Debug thông tin đăng nhập
         error_log("Đăng nhập thành công - ID: {$user_id}, Username: {$db_name}, Full name: {$full_name}");
-        
-        // Kiểm tra và xử lý redirect_url
+
         if (isset($_SESSION['redirect_url'])) {
             $redirect_to = $_SESSION['redirect_url'];
-            unset($_SESSION['redirect_url']); // Xóa redirect_url sau khi sử dụng
+            unset($_SESSION['redirect_url']);
             header("Location: " . $redirect_to);
         } else {
             header("Location: " . BASE_URL . "/index.php");
         }
         exit();
     } else {
-        // Trả về lỗi mật khẩu sai
         error_log("Đăng nhập thất bại - Sai mật khẩu cho username: {$name}");
         header("Location: " . BASE_URL . "/account/login.php?error_message=Sai tên đăng nhập hoặc mật khẩu");
         exit();
     }
 } else {
-    // Trả về lỗi tên đăng nhập không tồn tại
     error_log("Đăng nhập thất bại - Username không tồn tại: {$name}");
     header("Location: " . BASE_URL . "/account/login.php?error_message=Sai tên đăng nhập hoặc mật khẩu");
     exit();
