@@ -30,6 +30,7 @@ if (!$connect) {
 $id_tieuchi = isset($_POST['id_tieuchi']) ? intval($_POST['id_tieuchi']) : 0;
 $dept = isset($_POST['dept']) ? $_POST['dept'] : '';
 $xuong = isset($_POST['xuong']) ? $_POST['xuong'] : '';
+$line = isset($_POST['line']) ? $_POST['line'] : '';
 $ngay_tinh_han = isset($_POST['ngay_tinh_han']) ? $_POST['ngay_tinh_han'] : 'ngay_vao';
 $so_ngay_xuly = isset($_POST['so_ngay_xuly']) ? intval($_POST['so_ngay_xuly']) : 7;
 $nguoi_chiu_trachnhiem = isset($_POST['nguoi_chiu_trachnhiem']) ? intval($_POST['nguoi_chiu_trachnhiem']) : 0;
@@ -39,6 +40,45 @@ if (empty($id_tieuchi) || empty($dept)) {
         'success' => false,
         'message' => 'Thiếu thông tin cần thiết'
     ]));
+}
+
+// Chọn line cụ thể: chỉ override người thực hiện trong default_nguoi_line,
+// không đụng default_settings (ngày + loại tính hạn vẫn theo xưởng).
+if ($line !== '' && $xuong !== '') {
+    try {
+        if ($nguoi_chiu_trachnhiem > 0) {
+            $sql = "INSERT INTO default_nguoi_line (dept, id_tieuchi, xuong, line, nguoi_id)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE nguoi_id = VALUES(nguoi_id)";
+            $stmt = $connect->prepare($sql);
+            $stmt->bind_param("sissi", $dept, $id_tieuchi, $xuong, $line, $nguoi_chiu_trachnhiem);
+        } else {
+            // Chọn "-- Theo xưởng --" (0): bỏ override, quay về người theo xưởng
+            $sql = "DELETE FROM default_nguoi_line WHERE dept = ? AND id_tieuchi = ? AND xuong = ? AND line = ?";
+            $stmt = $connect->prepare($sql);
+            $stmt->bind_param("siss", $dept, $id_tieuchi, $xuong, $line);
+        }
+
+        if ($stmt->execute()) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Đã lưu người thực hiện cho line ' . $line
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Lỗi khi lưu cài đặt: ' . $stmt->error
+            ]);
+        }
+    } catch (Exception $e) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Lỗi truy vấn: ' . $e->getMessage()
+        ]);
+    }
+
+    $connect->close();
+    exit;
 }
 
 try {

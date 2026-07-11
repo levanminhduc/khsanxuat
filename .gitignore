@@ -35,3 +35,4 @@ playwright_test/
 .augment/
 node_modules/
 dev-tools/
+.claude/settings.local.json

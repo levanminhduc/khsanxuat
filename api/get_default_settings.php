@@ -19,6 +19,7 @@ if (!$connect) {
 // Lấy thông tin từ request
 $dept = isset($_GET['dept']) ? $_GET['dept'] : '';
 $xuong = isset($_GET['xuong']) ? $_GET['xuong'] : '';
+$line = isset($_GET['line']) ? $_GET['line'] : '';
 
 if (empty($dept)) {
     die(json_encode([
@@ -59,7 +60,39 @@ try {
     while ($row = $result->fetch_assoc()) {
         $settings[] = $row;
     }
-    
+
+    // Chọn line cụ thể: cột người trả về override theo (xuong, line);
+    // không có override thì trả 0 để UI hiển thị "-- Theo xưởng --".
+    if ($line !== '' && $xuong !== '') {
+        $overrides = [];
+        $sql_line = "SELECT id_tieuchi, nguoi_id FROM default_nguoi_line WHERE dept = ? AND xuong = ? AND line = ?";
+        $stmt_line = $connect->prepare($sql_line);
+        $stmt_line->bind_param("sss", $dept, $xuong, $line);
+        $stmt_line->execute();
+        $result_line = $stmt_line->get_result();
+        while ($row_line = $result_line->fetch_assoc()) {
+            $overrides[$row_line['id_tieuchi']] = $row_line['nguoi_id'];
+        }
+
+        foreach ($settings as &$setting) {
+            $setting['nguoi_chiu_trachnhiem_default'] = isset($overrides[$setting['id_tieuchi']])
+                ? $overrides[$setting['id_tieuchi']]
+                : 0;
+            unset($overrides[$setting['id_tieuchi']]);
+        }
+        unset($setting);
+
+        // Tiêu chí có override nhưng chưa có dòng default_settings vẫn phải hiển thị người
+        foreach ($overrides as $id_tieuchi => $nguoi_id) {
+            $settings[] = [
+                'id_tieuchi' => $id_tieuchi,
+                'ngay_tinh_han' => 'ngay_vao',
+                'so_ngay_xuly' => 7,
+                'nguoi_chiu_trachnhiem_default' => $nguoi_id
+            ];
+        }
+    }
+
     echo json_encode([
         'success' => true,
         'data' => $settings

@@ -23,9 +23,6 @@ if ($id <= 0 || empty($dept)) {
     die("Thiếu thông tin cần thiết");
 }
 
-// Tạm thời bỏ kiểm tra user
-$is_admin = true;
-
 // Lấy thông tin từ database
 try {
     $sql = "SELECT style, po, xuong, line1 FROM khsanxuat WHERE stt = ?";

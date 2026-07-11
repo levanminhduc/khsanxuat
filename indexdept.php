@@ -31,7 +31,6 @@ if ($id <= 0) {
     exit;
 }
 
-$is_admin = isset($_SESSION['username']) && $_SESSION['username'] === 'admin';
 $dept_display_name = getDeptDisplayName($dept, $dept_names);
 $image_count = getImageCount($connect, $id, $dept);
 

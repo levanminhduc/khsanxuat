@@ -13,7 +13,7 @@ When you need to read a specific file but don't know the exact line range, use t
 - **Stack**: PHP 7.4+ thuần (không framework), MySQL 5.7+ (mysqli), HTML/CSS/JS vanilla, Apache via Laragon.
 - **Mục đích**: Theo dõi đơn hàng qua các bộ phận sản xuất (kế hoạch → kỹ thuật/chuẩn bị sản xuất → kho → cắt → trung tâm BTP → ép keo → cơ điện → chuyền may → KCS → ủi thành phẩm → hoàn thành), đánh giá tiêu chí, quản lý hạn xử lý, upload hình ảnh minh hoạ. Nguồn duy nhất định nghĩa danh sách bộ phận và nhóm: `includes/indexdept/config.php` (`$dept_names`, `$dept_nhom_config`); mọi nơi khác derive qua helper `getValidDepts()`, `getDeptDisplayName()`, `getNhomDisplayName()`, `getNhomOrderByCase()`.
 - **Trang chính**: `index.php` (dashboard), `indexdept.php` (chi tiết bộ phận), `pages/theodoi.php`, `pages/settings.php`, `actions/save_danhgia_with_log.php`, `pages/import.php`, `pages/dept_statistics.php`.
-- **Modules**: `config/`, `pages/`, `actions/`, `api/`, `helpers/`, `sql/`, `includes/index/`, `includes/indexdept/`, `includes/security/csrf-helper.php`, `components/`, `views/`, `assets/` (css/js), `account/`, `dev-tools/` (script backup/check/debug/migration — không thuộc runtime).
+- **Modules**: `config/`, `pages/`, `actions/`, `api/`, `helpers/`, `sql/`, `includes/index/`, `includes/indexdept/`, `includes/security/` (csrf-helper.php, auth-helper.php), `components/`, `views/`, `assets/` (css/js), `account/`, `dev-tools/` (script backup/check/debug/migration — không thuộc runtime).
 - **DB connection**: `config/database.php` (1 nguồn `$connect`, nạp qua `bootstrap.php`; Laragon mặc định: `localhost`/`root`/blank/`mysqli`). Link/redirect/form qua hằng `BASE_URL` (`config/app.php`); JS fetch qua `window.BASE_URL`.
 
 ## Language
@@ -47,6 +47,22 @@ When you need to read a specific file but don't know the exact line range, use t
 
 Đường dẫn: include qua `BASE_PATH`/`__DIR__`; link/redirect/form qua `BASE_URL`;
 JS fetch qua `window.BASE_URL`.
+
+## Phân quyền (Authorization)
+
+Hệ per-app, dùng bảng `user_app_role (user_id, app, role, granted_by, created_at)` — bảng này **dùng chung ~10 dự án** login qua cùng bảng `user`, scope theo cột `app` để mỗi dự án độc lập. Không FK tới `user.id`. Cột `user.role` cũ (admin/quan_doc/to_truong/bao_ve) là của dự án khác (`nhansuhtdb`) — KHÔNG đụng.
+
+- **Login** (`account/login_action.php`): sau khi xác thực, query `user_app_role WHERE user_id = ? AND app IN ('khsanxuat', '*')`, nạp 1 lần vào `$_SESSION['app_role']` (`'admin'` | `'super_admin'` | `null`). Dòng `app='*'` thắng dòng `app='khsanxuat'` (quyền cross-app, dành cho trang tổng cấp quyền sau này — chưa xây). Thu hồi/cấp quyền có hiệu lực khi login lại (không query lại mỗi request).
+- **Không có dòng trong `user_app_role`** = user thường: login được, đánh giá tiêu chí được, không sửa cấu hình. Đây là lệch chuẩn có chủ đích so với default-deny (login đã là rào đầu tiên của hệ nội bộ).
+- **Helper** `includes/security/auth-helper.php` (nạp SAU `bootstrap.php`):
+  - `isLoggedIn()`, `currentAppRole()`, `userCan($feature)` — đọc, không side-effect.
+  - `requireLogin()` — chưa login → lưu `$_SESSION['redirect_url']`, redirect `account/login.php`, exit.
+  - `requireFeature($feature, $mode)` — `$mode` là `'json'|'redirect'|'page'`, khớp kiểu response thật của endpoint (không phải cứ AJAX là `'json'`, cứ POST là `'redirect'` — luôn đọc code để xác nhận trước khi chọn mode).
+  - Map role→feature nằm trong `$GLOBALS['app_role_features']` (đầu file `auth-helper.php`) — **CẤM** viết `role === 'admin'` rải rác ở call-site, luôn gọi `requireFeature('edit_settings', $mode)`. Thêm role/feature mới = sửa mảng này.
+- **CSRF** (`includes/security/csrf-helper.php`):
+  - AJAX/JSON và link GET (vd `delete_image.php`): `validateCsrfToken($token)` **KHÔNG rotate** — nhiều request/link trên cùng 1 trang dùng chung 1 token, rotate sẽ làm hỏng các request/link còn lại.
+  - Form full-page tự submit: `verifyCsrfOrDie()` **CÓ rotate** + `getCsrfInput()` render hidden input trong `<form>`.
+- **Trước khi gate 1 file mới**: đọc thật response mode (echo JSON? `header('Location:...')`? render HTML?) và **grep toàn bộ caller thật** (đừng tin tên file hay giả định — nhiều action tưởng "đang dùng" hoá ra mồ côi/script migration cũ, và nhiều caller thật nằm ở JS thay vì component PHP tưởng như vậy).
 
 ## Rules Reference
 

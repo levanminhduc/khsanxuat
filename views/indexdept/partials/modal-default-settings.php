@@ -50,6 +50,13 @@
                                 </select>
                             </div>
 
+                            <div class="default-settings-modal__line-filter tw-min-w-[160px]">
+                                <label for="selected_line" class="default-settings-modal__label tw-mb-1 tw-block tw-text-xs tw-font-bold tw-text-slate-700">Chọn line</label>
+                                <select id="selected_line" class="form-control default-settings-modal__select-line tw-h-9 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-slate-900 tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15 disabled:tw-cursor-not-allowed disabled:tw-bg-slate-100" onchange="changeSelectedLine()" disabled>
+                                    <option value="">-- Tất cả line --</option>
+                                </select>
+                            </div>
+
                             <div class="default-settings-modal__actions tw-flex tw-flex-wrap tw-gap-2">
                                 <button type="button" onclick="openStaffModal('<?php echo htmlspecialchars($dept); ?>')" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary default-settings-modal__btn default-settings-modal__btn--info tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-3 tw-text-sm tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">
                                     <i class="fas fa-users tw-mr-2" aria-hidden="true"></i>
@@ -74,17 +81,28 @@
                             <tbody id="default_settings_tbody" class="tw-divide-y tw-divide-slate-100">
                                 <?php
                                 // Lấy danh sách tiêu chí
-                                $sql = "SELECT tc.*, kds.ngay_tinh_han, kds.so_ngay_xuly, kds.nguoi_chiu_trachnhiem_default, nv.ten as ten_nguoi_thuchien
+                                // Đọc từ default_settings (nguồn mà save + import + API get_default_settings dùng)
+                                // thay cho khsanxuat_default_settings, để modal hiển thị đúng giá trị đã lưu.
+                                // Ưu tiên cài đặt theo xưởng hiện tại, fallback về cài đặt "tất cả xưởng" (xuong = '').
+                                $sql = "SELECT tc.*, ds.ngay_tinh_han, ds.so_ngay_xuly, ds.nguoi_chiu_trachnhiem_default, nv.ten as ten_nguoi_thuchien
                                        FROM tieuchi_dept tc
-                                       LEFT JOIN khsanxuat_default_settings kds ON tc.id = kds.id_tieuchi AND kds.dept = ?
-                                       LEFT JOIN nhan_vien nv ON kds.nguoi_chiu_trachnhiem_default = nv.id
+                                       LEFT JOIN default_settings ds
+                                              ON ds.id_tieuchi = tc.id
+                                             AND ds.dept = ?
+                                             AND ds.xuong = (
+                                                 SELECT ds2.xuong FROM default_settings ds2
+                                                 WHERE ds2.dept = ? AND ds2.id_tieuchi = tc.id AND (ds2.xuong = ? OR ds2.xuong = '')
+                                                 ORDER BY CASE WHEN ds2.xuong = ? THEN 0 ELSE 1 END
+                                                 LIMIT 1
+                                             )
+                                       LEFT JOIN nhan_vien nv ON ds.nguoi_chiu_trachnhiem_default = nv.id
                                        WHERE tc.dept = ?
                                        ORDER BY
                                            " . getNhomOrderByCase() . ",
                                            tc.thutu";
 
                                 $stmt = $connect->prepare($sql);
-                                $stmt->bind_param("ss", $dept, $dept);
+                                $stmt->bind_param("sssss", $dept, $dept, $xuong, $xuong, $dept);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
 
@@ -174,3 +192,17 @@
                 </div>
             </div>
         </div>
+        <script>
+        // Map xưởng → danh sách line, dùng cho dropdown "Chọn line" trong modal cài đặt mặc định
+        window.XUONG_LINE_MAP = <?php
+        $xuong_line_map = [];
+        $sql_line_map = "SELECT DISTINCT xuong, line1 FROM khsanxuat WHERE xuong != '' AND line1 != '' ORDER BY xuong, LENGTH(line1), line1";
+        $result_line_map = $connect->query($sql_line_map);
+        if ($result_line_map) {
+            while ($row_line_map = $result_line_map->fetch_assoc()) {
+                $xuong_line_map[$row_line_map['xuong']][] = $row_line_map['line1'];
+            }
+        }
+        echo json_encode($xuong_line_map, JSON_UNESCAPED_UNICODE);
+        ?>;
+        </script>

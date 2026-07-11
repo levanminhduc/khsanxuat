@@ -1295,22 +1295,88 @@
     // Hàm thay đổi xưởng được chọn
     function changeSelectedXuong() {
         const selectedXuong = document.getElementById('selected_xuong').value;
-        const displayNameElement = document.getElementById('xuong_display_name');
 
-        if (selectedXuong) {
-            displayNameElement.textContent = selectedXuong;
-        } else {
-            displayNameElement.textContent = 'Tất cả xưởng';
-        }
+        // Đổi xưởng thì line quay về "Tất cả line" và nạp lại danh sách line của xưởng đó
+        updateLineOptions(selectedXuong);
+        updateXuongDisplayName();
+        setLineEditMode(false);
 
         // Tải lại dữ liệu cài đặt mặc định cho xưởng đã chọn
-        loadDefaultSettings(document.getElementById('current_dept').value, selectedXuong);
+        loadDefaultSettings(document.getElementById('current_dept').value, selectedXuong, '');
     }
 
-    // Hàm tải dữ liệu cài đặt mặc định theo xưởng
-    function loadDefaultSettings(dept, xuong) {
+    // Hàm thay đổi line được chọn (override người thực hiện theo Xưởng + Line)
+    function changeSelectedLine() {
+        const selectedXuong = document.getElementById('selected_xuong').value;
+        const selectedLine = document.getElementById('selected_line').value;
+
+        updateXuongDisplayName();
+        // Khi chọn line cụ thể: chỉ cột người chỉnh được, ngày + loại tính hạn theo xưởng
+        setLineEditMode(selectedLine !== '');
+
+        loadDefaultSettings(document.getElementById('current_dept').value, selectedXuong, selectedLine);
+    }
+
+    // Hàm nạp danh sách line theo xưởng vào dropdown (map render sẵn từ PHP)
+    function updateLineOptions(xuong) {
+        const lineSelect = document.getElementById('selected_line');
+        if (!lineSelect) {
+            return;
+        }
+
+        const map = window.XUONG_LINE_MAP || {};
+        const lines = (xuong && map[xuong]) ? map[xuong] : [];
+
+        let html = '<option value="">-- Tất cả line --</option>';
+        lines.forEach(function(line) {
+            html += '<option value="' + escapeHtml(String(line)) + '">' + escapeHtml(String(line)) + '</option>';
+        });
+
+        lineSelect.innerHTML = html;
+        lineSelect.value = '';
+        lineSelect.disabled = !xuong || lines.length === 0;
+    }
+
+    // Hàm cập nhật badge tên xưởng (+ line nếu có) trên header modal
+    function updateXuongDisplayName() {
+        const xuong = document.getElementById('selected_xuong').value;
+        const lineSelect = document.getElementById('selected_line');
+        const line = lineSelect ? lineSelect.value : '';
+
+        let text = xuong || 'Tất cả xưởng';
+        if (xuong && line) {
+            text += ' — Line ' + line;
+        }
+        document.getElementById('xuong_display_name').textContent = text;
+    }
+
+    // Hàm bật/tắt chế độ chỉnh theo line: chỉ cho sửa người, khóa ngày + loại tính hạn
+    function setLineEditMode(isLineMode) {
+        const rows = document.querySelectorAll('#default_settings_tbody tr[id^="ds_row_"]');
+        rows.forEach(function(row) {
+            const id_tieuchi = row.id.replace('ds_row_', '');
+            const methodSelect = document.getElementById('ds_ngay_tinh_han_' + id_tieuchi);
+            const daysInput = document.getElementById('ds_so_ngay_xuly_' + id_tieuchi);
+            const ownerSelect = document.getElementById('ds_nguoi_chiu_trachnhiem_' + id_tieuchi);
+
+            if (methodSelect) {
+                methodSelect.disabled = isLineMode;
+            }
+            if (daysInput) {
+                daysInput.disabled = isLineMode;
+            }
+            if (ownerSelect && ownerSelect.options.length > 0 && ownerSelect.options[0].value === '0') {
+                ownerSelect.options[0].textContent = isLineMode
+                    ? '-- Theo xưởng (không override) --'
+                    : '-- Chọn người chịu trách nhiệm --';
+            }
+        });
+    }
+
+    // Hàm tải dữ liệu cài đặt mặc định theo xưởng (+ line nếu có)
+    function loadDefaultSettings(dept, xuong, line) {
         const xhr = new XMLHttpRequest();
-        const url = window.BASE_URL + '/api/get_default_settings.php?dept=' + encodeURIComponent(dept) + '&xuong=' + encodeURIComponent(xuong || '');
+        const url = window.BASE_URL + '/api/get_default_settings.php?dept=' + encodeURIComponent(dept) + '&xuong=' + encodeURIComponent(xuong || '') + '&line=' + encodeURIComponent(line || '');
 
         xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
@@ -1401,6 +1467,7 @@
         const soNgayXuly = document.getElementById('ds_so_ngay_xuly_' + id_tieuchi).value;
         const nguoiChiuTrachnhiem = document.getElementById('ds_nguoi_chiu_trachnhiem_' + id_tieuchi).value;
         const selectedXuong = document.getElementById('selected_xuong').value;
+        const selectedLine = document.getElementById('selected_line') ? document.getElementById('selected_line').value : '';
         const statusDiv = document.getElementById('default_settings_status');
         const row = document.getElementById('ds_row_' + id_tieuchi);
 
@@ -1433,7 +1500,7 @@
                 }
             }
         };
-        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&ngay_tinh_han=' + ngayTinhHan + '&so_ngay_xuly=' + soNgayXuly + '&nguoi_chiu_trachnhiem=' + nguoiChiuTrachnhiem + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
+        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&line=' + encodeURIComponent(selectedLine) + '&ngay_tinh_han=' + ngayTinhHan + '&so_ngay_xuly=' + soNgayXuly + '&nguoi_chiu_trachnhiem=' + nguoiChiuTrachnhiem + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm lưu tất cả cài đặt mặc định
@@ -1441,6 +1508,7 @@
         const statusDiv = document.getElementById('default_settings_status');
         const rows = document.querySelectorAll("#default_settings_tbody tr[id^='ds_row_']");
         const selectedXuong = document.getElementById('selected_xuong').value;
+        const selectedLine = document.getElementById('selected_line') ? document.getElementById('selected_line').value : '';
         const settings = [];
 
         rows.forEach(row => {
@@ -1496,7 +1564,7 @@
                 }
             }
         };
-        xhr.send('dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&settings=' + JSON.stringify(settings) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
+        xhr.send('dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&line=' + encodeURIComponent(selectedLine) + '&settings=' + JSON.stringify(settings) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
     // Hàm mở modal cài đặt mặc định
@@ -1852,6 +1920,7 @@
     window.selectAllTieuchi = typeof selectAllTieuchi === 'function' ? selectAllTieuchi : window.selectAllTieuchi;
     window.updateDeadlineAll = typeof updateDeadlineAll === 'function' ? updateDeadlineAll : window.updateDeadlineAll;
     window.changeSelectedXuong = typeof changeSelectedXuong === 'function' ? changeSelectedXuong : window.changeSelectedXuong;
+    window.changeSelectedLine = typeof changeSelectedLine === 'function' ? changeSelectedLine : window.changeSelectedLine;
     window.saveAllDefaultSettings = typeof saveAllDefaultSettings === 'function' ? saveAllDefaultSettings : window.saveAllDefaultSettings;
     window.openStaffModal = typeof openStaffModal === 'function' ? openStaffModal : window.openStaffModal;
     window.saveDefaultSetting = typeof saveDefaultSetting === 'function' ? saveDefaultSetting : window.saveDefaultSetting;

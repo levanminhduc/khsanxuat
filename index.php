@@ -77,13 +77,13 @@ $kho_percent = $stats['kho_percent'];
         ],
         'actions' => [
             [
-                'url' => 'dept_statistics_month.php',
+                'url' => BASE_URL . '/pages/dept_statistics_month.php',
                 'icon' => 'img/header/chart.png',
                 'title' => 'Thống kê',
                 'tooltip' => 'Xem thống kê'
             ],
             [
-                'url' => 'import.php',
+                'url' => BASE_URL . '/pages/import.php',
                 'icon' => 'img/header/plus.png',
                 'title' => 'Nhập dữ liệu',
                 'tooltip' => 'Nhập dữ liệu mới'

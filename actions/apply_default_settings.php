@@ -35,9 +35,16 @@ function applyDefaultSettings($id_sanxuat) {
         $table_exists = true;
 }
 
+    // Bảng override người thực hiện theo Xưởng + Line (có thể chưa migrate)
+    $nguoi_line_table_exists = false;
+    $result_check_nguoi_line = mysqli_query($connect, "SHOW TABLES LIKE 'default_nguoi_line'");
+    if ($result_check_nguoi_line && mysqli_num_rows($result_check_nguoi_line) > 0) {
+        $nguoi_line_table_exists = true;
+    }
+
 try {
         // Lấy thông tin của đơn hàng
-        $sql = "SELECT xuong FROM khsanxuat WHERE stt = ?";
+        $sql = "SELECT xuong, line1 FROM khsanxuat WHERE stt = ?";
         $stmt = $connect->prepare($sql);
         $stmt->bind_param("i", $id_sanxuat);
         $stmt->execute();
@@ -53,6 +60,7 @@ try {
         
         $row = $result->fetch_assoc();
         $xuong = $row['xuong'];
+        $line = isset($row['line1']) ? $row['line1'] : '';
         
         // Bắt đầu transaction
         $connect->begin_transaction();
@@ -63,8 +71,9 @@ try {
         $total_settings_applied = 0;
         
         // Danh sách bộ phận cần áp dụng cài đặt mặc định
+        // Giữ đồng bộ với $dept_names trong includes/indexdept/config.php
         $departments = [
-            'kehoach', 'chuanbi_sanxuat_phong_kt', 'kho', 'cat', 'ep_keo', 
+            'kehoach', 'chuanbi_sanxuat_phong_kt', 'kho', 'cat', 'trung_tam_btp', 'ep_keo',
             'co_dien', 'chuyen_may', 'kcs', 'ui_thanh_pham', 'hoan_thanh'
         ];
         
@@ -94,7 +103,23 @@ try {
                 
                 if ($result_setting->num_rows > 0) {
                     $setting = $result_setting->fetch_assoc();
-                    
+
+                    // Người thực hiện có thể override theo Xưởng + Line của đơn hàng;
+                    // ngày + loại tính hạn luôn theo default_settings.
+                    $nguoi_thuchien = $setting['nguoi_chiu_trachnhiem_default'];
+                    if ($nguoi_line_table_exists && $xuong !== '' && $line !== '') {
+                        $sql_nguoi_line = "SELECT nguoi_id FROM default_nguoi_line
+                                          WHERE dept = ? AND id_tieuchi = ? AND xuong = ? AND line = ?
+                                          LIMIT 1";
+                        $stmt_nguoi_line = $connect->prepare($sql_nguoi_line);
+                        $stmt_nguoi_line->bind_param("siss", $dept, $id_tieuchi, $xuong, $line);
+                        $stmt_nguoi_line->execute();
+                        $row_nguoi_line = $stmt_nguoi_line->get_result()->fetch_assoc();
+                        if ($row_nguoi_line) {
+                            $nguoi_thuchien = $row_nguoi_line['nguoi_id'];
+                        }
+                    }
+
                     // Kiểm tra xem đã có đánh giá cho tiêu chí này chưa
                     $sql_check = "SELECT id FROM danhgia_tieuchi WHERE id_sanxuat = ? AND id_tieuchi = ?";
                     $stmt_check = $connect->prepare($sql_check);
@@ -107,7 +132,7 @@ try {
                         $sql_insert = "INSERT INTO danhgia_tieuchi (id_sanxuat, id_tieuchi, nguoi_thuchien, ngay_tinh_han, so_ngay_xuly) 
                                       VALUES (?, ?, ?, ?, ?)";
                         $stmt_insert = $connect->prepare($sql_insert);
-                        $stmt_insert->bind_param("iiisi", $id_sanxuat, $id_tieuchi, $setting['nguoi_chiu_trachnhiem_default'], $setting['ngay_tinh_han'], $setting['so_ngay_xuly']);
+                        $stmt_insert->bind_param("iiisi", $id_sanxuat, $id_tieuchi, $nguoi_thuchien, $setting['ngay_tinh_han'], $setting['so_ngay_xuly']);
                         
                         if ($stmt_insert->execute()) {
                             $settings_applied++;
