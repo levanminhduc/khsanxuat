@@ -1,0 +1,302 @@
+/**
+ * Activity Logs page styles
+ * Navbar dùng assets/css/header.css, file này chỉ lo phần nội dung trang.
+ */
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #1a365d;
+    margin-bottom: 20px;
+}
+
+/* ========================================
+   Form lọc
+   ======================================== */
+.filter-form {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.filter-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a365d;
+}
+
+.filter-form select,
+.filter-form input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-form button {
+    padding: 8px 16px;
+    background-color: #1a365d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background-color: #0d2240;
+}
+
+.btn-reset {
+    padding: 8px 16px;
+    border: 1px solid #1a365d;
+    border-radius: 4px;
+    color: #1a365d;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-reset:hover {
+    background-color: #e9f5fb;
+}
+
+.filter-info {
+    margin: 10px 0;
+    padding: 8px;
+    background-color: #e9f5fb;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* ========================================
+   Bảng dữ liệu
+   ======================================== */
+#activity-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#activity-table th,
+#activity-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+}
+
+#activity-table th {
+    background-color: #1a365d;
+    color: white;
+}
+
+#activity-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+#activity-table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-update {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-add {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    margin-bottom: 3px;
+}
+
+.user-full-name {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: rgb(0, 0, 0);
+}
+
+.tieuchi-list {
+    margin: 5px 0;
+    padding-left: 20px;
+}
+
+.tieuchi-change {
+    margin-left: 5px;
+    color: #28a745;
+}
+
+/* ========================================
+   Empty state + phân trang
+   ======================================== */
+.empty-state {
+    margin-top: 20px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+    color: #555;
+}
+
+.empty-state a {
+    color: #1a365d;
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 20px;
+}
+
+.pagination a,
+.pagination .current,
+.pagination .disabled,
+.pagination .ellipsis {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.pagination a {
+    border: 1px solid #ddd;
+    color: #1a365d;
+}
+
+.pagination a:hover {
+    background-color: #e9f5fb;
+}
+
+.pagination .current {
+    border: 1px solid #1a365d;
+    background-color: #1a365d;
+    color: white;
+    font-weight: bold;
+}
+
+.pagination .disabled {
+    border: 1px solid #eee;
+    color: #aaa;
+}
+
+/* ========================================
+   Responsive: bảng -> card, không cuộn ngang
+   ======================================== */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 12px;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-form label,
+    .filter-form select,
+    .filter-form input {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .filter-actions {
+        width: 100%;
+    }
+
+    .filter-actions button,
+    .filter-actions .btn-reset {
+        flex: 1;
+        text-align: center;
+    }
+
+    #activity-table thead {
+        display: none;
+    }
+
+    #activity-table,
+    #activity-table tbody,
+    #activity-table tr,
+    #activity-table td {
+        display: block;
+        width: 100%;
+    }
+
+    #activity-table tr {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        padding: 8px;
+        background: #fff;
+    }
+
+    #activity-table td {
+        border: none;
+        padding: 6px 0;
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 8px;
+    }
+
+    #activity-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #1a365d;
+    }
+
+    #activity-table td:last-child {
+        grid-template-columns: 1fr;
+    }
+}

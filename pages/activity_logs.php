@@ -1,47 +1,11 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/security/auth-helper.php';
+require_once BASE_PATH . '/includes/indexdept/config.php';
+require_once BASE_PATH . '/helpers/activity_logger.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+requireLogin();
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-    // Lưu URL hiện tại để redirect sau khi đăng nhập
-    $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-    header("Location: " . BASE_URL . "/account/login.php");
-    exit();
-}
-
-include BASE_PATH . '/helpers/activity_logger.php';
-
-// Kiểm tra kết nối
-if (!$connect) {
-    die("Lỗi kết nối database");
-}
-
-// Lấy logger
-$logger = getActivityLogger($connect);
-
-// Xử lý các tham số lọc
-$filters = [];
-if (isset($_GET['user_name'])) {
-    $filters['user_name'] = $_GET['user_name'];
-}
-if (isset($_GET['action_type'])) {
-    $filters['action_type'] = $_GET['action_type'];
-}
-if (isset($_GET['id_khsanxuat'])) {
-    $filters['id_khsanxuat'] = intval($_GET['id_khsanxuat']);
-}
-
-// Mặc định giới hạn 100 bản ghi mỗi trang
-$filters['limit'] = isset($_GET['limit']) ? min(intval($_GET['limit']), 1000) : 100;
-
-// Lấy danh sách hoạt động
-$activities = $logger->getActivityLogs($filters);
-
-// Ánh xạ tên hiển thị cho các loại hành động
 $action_types = [
     'update_score' => 'Cập nhật điểm',
     'update_person' => 'Thay đổi người thực hiện',
@@ -53,547 +17,408 @@ $action_types = [
     'delete_template' => 'Xóa biểu mẫu'
 ];
 
-// Ánh xạ tên hiển thị cho các loại đối tượng
-$target_types = [
-    'tieuchi' => 'Tiêu chí',
-    'image' => 'Hình ảnh',
-    'template' => 'Biểu mẫu'
+$limit_options = [25, 50, 100, 200, 500];
+$default_limit = 100;
+
+function activityEscape($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+/** GET dang mang (?user_name[]=a) lam trim()/preg_match() nem TypeError => coi nhu rong. */
+function activityGetParam($key)
+{
+    return isset($_GET[$key]) && is_string($_GET[$key]) ? $_GET[$key] : '';
+}
+
+function activityBadgeClass($action_type)
+{
+    if (strpos($action_type, 'update_') === 0) {
+        return 'badge-update';
+    }
+    if (strpos($action_type, 'delete_') === 0) {
+        return 'badge-delete';
+    }
+    return 'badge-add';
+}
+
+/**
+ * Tách chuỗi log "tiêu chí N: điểm X, người thực hiện Y, ghi chú: Z" (nối bằng " | ")
+ * thành map [thutu => [mô tả thay đổi]]. Chỉ giữ phần THỰC SỰ khác giữa cũ/mới.
+ * Format chuỗi do actions/save_danhgia_with_log.php sinh ra — đổi format ở đó phải sửa hàm này.
+ *
+ * @return array<int|string, string[]>
+ */
+function parseTieuchiDiff($old_value, $new_value)
+{
+    $old_parts = explode(' | ', (string) $old_value);
+    $new_parts = explode(' | ', (string) $new_value);
+    $diff = [];
+
+    foreach ($old_parts as $idx => $old_part) {
+        if (!isset($new_parts[$idx])) {
+            continue;
+        }
+        $new_part = $new_parts[$idx];
+
+        if (!preg_match('/tiêu chí (\d+)/', $old_part, $matches)) {
+            continue;
+        }
+        $thutu = $matches[1];
+
+        $old_score = preg_match('/điểm (\d+(?:\.\d+)?)/', $old_part, $matches) ? $matches[1] : null;
+        $new_score = preg_match('/điểm (\d+(?:\.\d+)?)/', $new_part, $matches) ? $matches[1] : null;
+
+        $old_person = preg_match('/người thực hiện ([^,]+)/', $old_part, $matches) ? $matches[1] : null;
+        $new_person = preg_match('/người thực hiện ([^,]+)/', $new_part, $matches) ? $matches[1] : null;
+
+        $old_note = preg_match('/ghi chú: ([^|]+)/', $old_part, $matches) ? trim($matches[1]) : null;
+        $new_note = preg_match('/ghi chú: ([^|]+)/', $new_part, $matches) ? trim($matches[1]) : null;
+
+        $score_changed = ($old_score === null || $new_score === null)
+            ? $old_score !== $new_score
+            : (float) $old_score !== (float) $new_score;
+
+        $changes = [];
+        if ($score_changed) {
+            $changes[] = "Điểm thay đổi từ {$old_score} --> {$new_score}";
+        }
+        if ($old_person !== $new_person) {
+            $changes[] = "Người thực hiện thay đổi từ \"{$old_person}\" --> \"{$new_person}\"";
+        }
+        if ($old_note !== $new_note) {
+            if (empty($old_note)) {
+                $changes[] = "Thêm ghi chú: \"{$new_note}\"";
+            } elseif (empty($new_note)) {
+                $changes[] = "Xóa ghi chú: \"{$old_note}\"";
+            } else {
+                $changes[] = "Ghi chú thay đổi từ \"{$old_note}\" --> \"{$new_note}\"";
+            }
+        }
+
+        if (!empty($changes)) {
+            $diff[$thutu] = $changes;
+        }
+    }
+
+    return $diff;
+}
+
+/** Render chi tiết thay đổi của 1 dòng log; trả về chuỗi HTML đã escape. */
+function renderActivityDetails(array $activity)
+{
+    if (empty($activity['additional_info'])) {
+        return '';
+    }
+
+    $info = json_decode($activity['additional_info'], true);
+    if (!is_array($info)) {
+        return '';
+    }
+
+    $html = '';
+    if (isset($info['changes']) && is_scalar($info['changes'])) {
+        $html .= '<div><strong>Thay đổi:</strong> ' . activityEscape($info['changes']) . '</div>';
+    }
+
+    if (isset($info['changed_tieuchi']) && is_array($info['changed_tieuchi'])) {
+        $diff = parseTieuchiDiff($activity['old_value'], $activity['new_value']);
+        $items = '';
+
+        foreach ($info['changed_tieuchi'] as $tieuchi) {
+            $thutu = isset($tieuchi['thutu']) ? $tieuchi['thutu'] : '';
+            if (!isset($diff[$thutu])) {
+                continue;
+            }
+
+            $items .= '<li>Tiêu chí ' . activityEscape($thutu) . ': '
+                . activityEscape(isset($tieuchi['noidung']) ? $tieuchi['noidung'] : '')
+                . '<div class="tieuchi-change">';
+            foreach ($diff[$thutu] as $change) {
+                $items .= '- ' . activityEscape($change) . '<br>';
+            }
+            $items .= '</div></li>';
+        }
+
+        if ($items !== '') {
+            $html .= '<ul class="tieuchi-list">' . $items . '</ul>';
+        }
+    }
+
+    return $html;
+}
+
+/** Sinh URL trang $page, giữ nguyên bộ lọc hiện tại (bỏ param rỗng cho URL gọn). */
+function activityLogPageUrl(array $query, $page)
+{
+    $query['page'] = $page;
+    $query = array_filter($query, function ($value) {
+        return $value !== '' && $value !== null;
+    });
+
+    return BASE_URL . '/pages/activity_logs.php?' . http_build_query($query);
+}
+
+$valid_depts = getValidDepts();
+
+$filter_action_type = activityGetParam('action_type');
+if (!isset($action_types[$filter_action_type])) {
+    $filter_action_type = '';
+}
+
+$filter_dept = activityGetParam('dept');
+if (!in_array($filter_dept, $valid_depts, true)) {
+    $filter_dept = '';
+}
+
+$filter_id_khsanxuat = max(0, (int) activityGetParam('id_khsanxuat'));
+
+$filter_user_name = mb_substr(trim(activityGetParam('user_name')), 0, 50);
+
+$filter_date_from = activityGetParam('date_from');
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $filter_date_from)) {
+    $filter_date_from = '';
+}
+
+$filter_date_to = activityGetParam('date_to');
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $filter_date_to)) {
+    $filter_date_to = '';
+}
+
+$limit = (int) activityGetParam('limit');
+if (!in_array($limit, $limit_options, true)) {
+    $limit = $default_limit;
+}
+
+$filters = [];
+if ($filter_action_type !== '') {
+    $filters['action_type'] = $filter_action_type;
+}
+if ($filter_dept !== '') {
+    $filters['dept'] = $filter_dept;
+}
+if ($filter_id_khsanxuat > 0) {
+    $filters['id_khsanxuat'] = $filter_id_khsanxuat;
+}
+if ($filter_user_name !== '') {
+    $filters['user_name'] = $filter_user_name;
+}
+if ($filter_date_from !== '') {
+    $filters['date_from'] = $filter_date_from;
+}
+if ($filter_date_to !== '') {
+    $filters['date_to'] = $filter_date_to;
+}
+
+$logger = getActivityLogger($connect);
+
+$total = $logger->countActivityLogs($filters);
+$total_pages = max(1, (int) ceil($total / $limit));
+$page = max(1, (int) activityGetParam('page'));
+$page = min($page, $total_pages);
+
+$filters['limit'] = $limit;
+$filters['offset'] = ($page - 1) * $limit;
+$activities = $logger->getActivityLogs($filters);
+
+$page_query = [
+    'action_type' => $filter_action_type,
+    'dept' => $filter_dept,
+    'id_khsanxuat' => $filter_id_khsanxuat > 0 ? $filter_id_khsanxuat : '',
+    'user_name' => $filter_user_name,
+    'date_from' => $filter_date_from,
+    'date_to' => $filter_date_to,
+    'limit' => $limit
 ];
 
-// Ánh xạ tên bộ phận
-$dept_names = [
-    'kehoach' => 'BỘ PHẬN KẾ HOẠCH',
-    'chuanbi_sanxuat_phong_kt' => 'BỘ PHẬN CHUẨN BỊ SẢN XUẤT (PHÒNG KT)',
-    'kho' => 'KHO NGUYÊN, PHỤ LIỆU',
-    'cat' => 'BỘ PHẬN CẮT',
-    'ep_keo' => 'BỘ PHẬN ÉP KEO',
-    'co_dien' => 'BỘ PHẬN CƠ ĐIỆN',
-    'chuyen_may' => 'BỘ PHẬN CHUYỀN MAY',
-    'kcs' => 'BỘ PHẬN KCS',
-    'ui_thanh_pham' => 'BỘ PHẬN ỦI THÀNH PHẨM',
-    'hoan_thanh' => 'BỘ PHẬN HOÀN THÀNH'
+$reset_url = BASE_URL . '/pages/activity_logs.php';
+
+$header_config = [
+    'title' => 'LỊCH SỬ HOẠT ĐỘNG',
+    'title_short' => 'Lịch Sử',
+    'logo_path' => BASE_URL . '/img/logoht.png',
+    'logo_link' => BASE_URL . '/index.php',
+    'show_search' => false,
+    'show_mobile_menu' => true,
+    'actions' => [
+        [
+            'url' => BASE_URL . '/index.php',
+            'icon' => BASE_URL . '/img/header/home.png',
+            'title' => 'Trang chủ',
+            'tooltip' => 'Trang chủ'
+        ]
+    ]
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch sử hoạt động</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            color: #1a365d;
-            margin-bottom: 20px;
-        }
-
-        .filter-form {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .filter-form select, .filter-form input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        .filter-form button {
-            padding: 8px 16px;
-            background-color: #1a365d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .filter-form button:hover {
-            background-color: #0d2240;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #1a365d;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        tr:hover {
-            background-color: #f2f2f2;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .badge-update {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .badge-delete {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .badge-add {
-            background-color: #17a2b8;
-            color: white;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            /* font-weight: bold; */
-            margin-bottom: 3px;
-        }
-
-        .user-full-name {
-            font-weight: bold;
-            font-size: 0.9em;
-            color: rgb(0, 0, 0);
-        }
-
-        .value-diff {
-            background-color: #fff3cd;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-
-        .value-diff .old {
-            color: #dc3545;
-            text-decoration: line-through;
-        }
-
-        .value-diff .new {
-            color: #28a745;
-        }
-
-        .filter-info {
-            margin-top: 10px;
-            padding: 8px;
-            background-color: #e9f5fb;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .highlight {
-            background-color: #ffffcc !important;
-        }
-
-        @media (max-width: 768px) {
-            .filter-form {
-                flex-direction: column;
-            }
-
-            .filter-form select, .filter-form input {
-                width: 100%;
-                margin-right: 0;
-            }
-
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/activity_logs.css">
 </head>
 <body>
+    <?php include BASE_PATH . '/components/header.php'; ?>
+
     <div class="container">
         <h1>Lịch sử hoạt động</h1>
 
-        <form class="filter-form" method="GET" id="filter-form">
-            <select name="action_type" id="action_type">
-                <option value="">Tất cả hoạt động</option>
-                <?php foreach ($action_types as $key => $value): ?>
-                <option value="<?php echo $key; ?>" <?php echo isset($_GET['action_type']) && $_GET['action_type'] === $key ? 'selected' : ''; ?>>
-                    <?php echo $value; ?>
-                </option>
-                <?php endforeach; ?>
-            </select>
+        <form class="filter-form" method="GET" id="filter-form" action="<?php echo $reset_url; ?>">
+            <label>
+                Hoạt động
+                <select name="action_type">
+                    <option value="">Tất cả hoạt động</option>
+                    <?php foreach ($action_types as $key => $label): ?>
+                        <option value="<?php echo activityEscape($key); ?>" <?php echo $filter_action_type === $key ? 'selected' : ''; ?>>
+                            <?php echo activityEscape($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
 
-            <select id="details_dept" name="details_dept">
-                <option value="">Lọc bộ phận trong chi tiết</option>
-            </select>
+            <label>
+                Bộ phận
+                <select name="dept">
+                    <option value="">Tất cả bộ phận</option>
+                    <?php foreach ($valid_depts as $dept_code): ?>
+                        <option value="<?php echo activityEscape($dept_code); ?>" <?php echo $filter_dept === $dept_code ? 'selected' : ''; ?>>
+                            <?php echo activityEscape(getDeptDisplayName($dept_code, $dept_names)); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
 
-            <input type="number" name="id_khsanxuat" id="id_khsanxuat" placeholder="ID mã hàng" 
-                   value="<?php echo isset($_GET['id_khsanxuat']) ? htmlspecialchars($_GET['id_khsanxuat']) : ''; ?>">
+            <label>
+                Mã hàng
+                <input type="number" name="id_khsanxuat" min="1" placeholder="ID mã hàng"
+                       value="<?php echo $filter_id_khsanxuat > 0 ? activityEscape($filter_id_khsanxuat) : ''; ?>">
+            </label>
 
-            <input type="number" name="limit" id="limit" placeholder="Số lượng hiển thị" 
-                   value="<?php echo isset($_GET['limit']) ? htmlspecialchars($_GET['limit']) : '100'; ?>">
+            <label>
+                Người thực hiện
+                <input type="text" name="user_name" maxlength="50" placeholder="Tên đăng nhập"
+                       value="<?php echo activityEscape($filter_user_name); ?>">
+            </label>
 
-            <button type="submit">Lọc</button>
+            <label>
+                Từ ngày
+                <input type="date" name="date_from" value="<?php echo activityEscape($filter_date_from); ?>">
+            </label>
+
+            <label>
+                Đến ngày
+                <input type="date" name="date_to" value="<?php echo activityEscape($filter_date_to); ?>">
+            </label>
+
+            <label>
+                Số dòng/trang
+                <select name="limit">
+                    <?php foreach ($limit_options as $option): ?>
+                        <option value="<?php echo $option; ?>" <?php echo $limit === $option ? 'selected' : ''; ?>>
+                            <?php echo $option; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+
+            <div class="filter-actions">
+                <button type="submit">Lọc</button>
+                <a class="btn-reset" href="<?php echo $reset_url; ?>">Xóa bộ lọc</a>
+            </div>
         </form>
 
-        <div id="filter-info" class="filter-info" style="display: none;">
-            <strong>Bộ lọc hiện tại:</strong> <span id="current-filter"></span>
-            <button type="button" id="btn-clear-filter" style="margin-left: 10px; padding: 2px 8px;">Xóa bộ lọc</button>
+        <div class="filter-info">
+            Tổng <b><?php echo number_format($total, 0, ',', '.'); ?></b> bản ghi — Trang <?php echo $page; ?> / <?php echo $total_pages; ?>
         </div>
 
-        <table id="activity-table">
-            <thead>
-                <tr>
-                    <th>Thời gian</th>
-                    <th>Người thực hiện</th>
-                    <th>Hoạt động</th>
-                    <th>Mã hàng</th>
-                    <th>Chi tiết thay đổi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($activities as $activity): ?>
-                <tr class="activity-row" data-dept="<?php echo htmlspecialchars($activity['dept']); ?>">
-                    <td><?php echo date('d/m/Y H:i:s', strtotime($activity['action_time'])); ?></td>
-                    <td>
-                        <div class="user-info">
-                            <div class="user-name"><?php echo htmlspecialchars($activity['user_name']); ?></div>
-                            <div class="user-full-name"><?php echo htmlspecialchars($activity['user_full_name']); ?></div>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge badge-<?php 
-                            echo strpos($activity['action_type'], 'update_') === 0 ? 'update' : 
-                                (strpos($activity['action_type'], 'delete_') === 0 ? 'delete' : 'add'); 
-                        ?>">
-                            <?php echo $action_types[$activity['action_type']] ?? $activity['action_type']; ?>
-                        </span>
-                    </td>
-                    <td><?php echo $activity['id_khsanxuat']; ?></td>
-                    <td class="details-cell">
-                        <?php if ($activity['old_value'] !== null || $activity['new_value'] !== null): ?>
-                        <!-- <div class="value-diff">
-                            <?php if ($activity['new_value'] !== null): ?>
-                            <div class="new">Giá trị mới: <?php echo nl2br(htmlspecialchars($activity['new_value'])); ?></div>
-                            <?php endif; ?>
-                        </div> -->
-                        <?php endif; ?>
-                        <?php if ($activity['additional_info']): ?>
-                        <div class="additional-info">
-                            <?php 
-                            $info = json_decode($activity['additional_info'], true);
-                            if ($info) {
-                                // Lấy mã bộ phận từ additional_info nếu có
-                                $dept_code = '';
-                                if (isset($info['dept_info']) && isset($info['dept_info']['dept_code'])) {
-                                    $dept_code = $info['dept_info']['dept_code'];
-                                    echo '<div class="dept-info" data-dept-code="' . htmlspecialchars($dept_code) . '">';
-                                } else {
-                                    echo '<div class="dept-info" data-dept-code="' . htmlspecialchars($activity['dept']) . '">';
-                                }
-                                
-                                // Hiển thị thông tin bộ phận
-                                if (isset($info['dept_info']) && isset($info['dept_info']['dept_name'])) {
-                                    // Lấy tên bộ phận từ additional_info
-                                    $dept_display = $info['dept_info']['dept_name'];
-                                } else {
-                                    // Sử dụng phương pháp hiện tại nếu không có trong additional_info
-                                    $dept_info = isset($activity['dept']) ? $activity['dept'] : '';
-                                    $dept_display = isset($dept_names[$dept_info]) ? $dept_names[$dept_info] : $dept_info;
-                                }
-                                
-                                echo "<strong>Bộ phận:</strong> " . htmlspecialchars($dept_display) . "</div>";
-                                
-                                // Hiển thị ghi chú trước nếu có
-                                // Hiển thị chi tiết ghi chú từng tiêu chí
-                                // if (isset($info['note_entries']) && is_array($info['note_entries']) && !empty($info['note_entries'])) {
-                                //     echo "<ul style='margin: 5px 0; padding-left: 20px;'>";
-                                //     foreach ($info['note_entries'] as $note_entry) {
-                                //         echo "<li>Tiêu chí " . htmlspecialchars($note_entry['thutu']) . ": " . 
-                                //              htmlspecialchars($note_entry['noidung']) . 
-                                //              "<div class='note-content' style='font-style:italic; color:#555; margin-left:5px;'>" . 
-                                //              nl2br(htmlspecialchars($note_entry['ghichu'])) . 
-                                //              "</div></li>";
-                                //     }
-                                //     echo "</ul>";
-                                // } else if (isset($info['note'])) {
-                                //     echo "<div style='margin-top: 8px;'>" . nl2br(htmlspecialchars($info['note'])) . "</div>";
-                                // }
-                                
-                                if (isset($info['changes'])) {
-                                    echo "<div><strong>Thay đổi:</strong> " . htmlspecialchars($info['changes']) . "</div>";
-                                }
-                                
-                                if (isset($info['changed_tieuchi']) && is_array($info['changed_tieuchi'])) {
-                                    echo "<ul style='margin: 5px 0; padding-left: 20px;'>";
-                                    
-                                    // Phân tích dữ liệu old_value và new_value để hiển thị chỉ các phần thay đổi
-                                    $old_parts = explode(" | ", $activity['old_value']);
-                                    $new_parts = explode(" | ", $activity['new_value']);
-                                    $tieuchi_changes = [];
-                                    
-                                    // Tạo một mảng để lưu trữ thông tin thay đổi theo từng tiêu chí
-                                    foreach ($old_parts as $idx => $old_part) {
-                                        if (isset($new_parts[$idx])) {
-                                            // Phân tích chuỗi để lấy thông tin tiêu chí (ví dụ: "tiêu chí 1: điểm 4, người thực hiện John")
-                                            if (preg_match('/tiêu chí (\d+)/', $old_part, $matches)) {
-                                                $tc_num = $matches[1];
-                                                
-                                                // Lấy giá trị điểm cũ và mới
-                                                $old_score = null;
-                                                if (preg_match('/điểm (\d+)/', $old_part, $matches)) {
-                                                    $old_score = $matches[1];
-                                                }
-                                                
-                                                $new_score = null;
-                                                if (preg_match('/điểm (\d+)/', $new_parts[$idx], $matches)) {
-                                                    $new_score = $matches[1];
-                                                }
-                                                
-                                                // Lấy thông tin người thực hiện cũ và mới
-                                                $old_person = null;
-                                                if (preg_match('/người thực hiện ([^,]+)/', $old_part, $matches)) {
-                                                    $old_person = $matches[1];
-                                                }
-                                                
-                                                $new_person = null;
-                                                if (preg_match('/người thực hiện ([^,]+)/', $new_parts[$idx], $matches)) {
-                                                    $new_person = $matches[1];
-                                                }
-                                                
-                                                // Lấy thông tin ghi chú cũ và mới
-                                                $old_note = null;
-                                                if (preg_match('/ghi chú: ([^|]+)/', $old_part, $matches)) {
-                                                    $old_note = trim($matches[1]);
-                                                }
-                                                
-                                                $new_note = null;
-                                                if (preg_match('/ghi chú: ([^|]+)/', $new_parts[$idx], $matches)) {
-                                                    $new_note = trim($matches[1]);
-                                                }
-                                                
-                                                // Chỉ lưu trữ thông tin thực sự thay đổi
-                                                $changes = [];
-                                                if ($old_score !== $new_score) {
-                                                    $changes[] = "Điểm thay đổi từ {$old_score} --> {$new_score}";
-                                                }
-                                                
-                                                if ($old_person !== $new_person) {
-                                                    $changes[] = "Người thực hiện thay đổi từ \"{$old_person}\" --> \"{$new_person}\"";
-                                                }
-                                                
-                                                if ($old_note !== $new_note) {
-                                                    if (empty($old_note)) {
-                                                        $changes[] = "Thêm ghi chú: \"{$new_note}\"";
-                                                    } else if (empty($new_note)) {
-                                                        $changes[] = "Xóa ghi chú: \"{$old_note}\"";
-                                                    } else {
-                                                        $changes[] = "Ghi chú thay đổi từ \"{$old_note}\" --> \"{$new_note}\"";
-                                                    }
-                                                }
-                                                
-                                                if (!empty($changes)) {
-                                                    $tieuchi_changes[$tc_num] = $changes;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    // Hiển thị chi tiết thay đổi, kết hợp với thông tin tiêu chí
-                                    foreach ($info['changed_tieuchi'] as $tieuchi) {
-                                        $thutu = $tieuchi['thutu'];
-                                        
-                                        // Chỉ hiển thị tiêu chí nếu có thay đổi
-                                        if (isset($tieuchi_changes[$thutu])) {
-                                            echo "<li>Tiêu chí " . htmlspecialchars($thutu) . ": " . 
-                                                 htmlspecialchars($tieuchi['noidung']);
-                                            
-                                            echo "<div style='margin-left: 5px; color: #28a745;'>";
-                                            foreach ($tieuchi_changes[$thutu] as $change) {
-                                                echo "- " . htmlspecialchars($change) . "<br>";
-                                            }
-                                            echo "</div>";
-                                            
-                                            echo "</li>";
-                                        }
-                                    }
-                                    
-                                    echo "</ul>";
-                                }
-                            }
-                            ?>
-                        </div>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php if (empty($activities)): ?>
+            <div class="empty-state">
+                <p>Không có hoạt động nào khớp bộ lọc.</p>
+                <a href="<?php echo $reset_url; ?>">Xóa bộ lọc</a>
+            </div>
+        <?php else: ?>
+            <table id="activity-table">
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Người thực hiện</th>
+                        <th>Hoạt động</th>
+                        <th>Mã hàng</th>
+                        <th>Bộ phận</th>
+                        <th>Chi tiết thay đổi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($activities as $activity): ?>
+                        <tr>
+                            <td data-label="Thời gian"><?php echo activityEscape(date('d/m/Y H:i:s', strtotime($activity['action_time']))); ?></td>
+                            <td data-label="Người thực hiện">
+                                <div class="user-info">
+                                    <div class="user-name"><?php echo activityEscape($activity['user_name']); ?></div>
+                                    <div class="user-full-name"><?php echo activityEscape($activity['user_full_name']); ?></div>
+                                </div>
+                            </td>
+                            <td data-label="Hoạt động">
+                                <span class="badge <?php echo activityBadgeClass($activity['action_type']); ?>">
+                                    <?php echo activityEscape(isset($action_types[$activity['action_type']]) ? $action_types[$activity['action_type']] : $activity['action_type']); ?>
+                                </span>
+                            </td>
+                            <td data-label="Mã hàng"><?php echo activityEscape($activity['id_khsanxuat']); ?></td>
+                            <td data-label="Bộ phận"><?php echo activityEscape(getDeptDisplayName($activity['dept'], $dept_names)); ?></td>
+                            <td data-label="Chi tiết"><?php echo renderActivityDetails($activity); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <?php if ($total_pages > 1): ?>
+                <nav class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="<?php echo activityEscape(activityLogPageUrl($page_query, $page - 1)); ?>">‹ Trước</a>
+                    <?php else: ?>
+                        <span class="disabled">‹ Trước</span>
+                    <?php endif; ?>
+
+                    <?php
+                    $window_start = max(1, $page - 2);
+                    $window_end = min($total_pages, $page + 2);
+
+                    if ($window_start > 1) {
+                        echo '<a href="' . activityEscape(activityLogPageUrl($page_query, 1)) . '">1</a>';
+                        if ($window_start > 2) {
+                            echo '<span class="ellipsis">…</span>';
+                        }
+                    }
+
+                    for ($i = $window_start; $i <= $window_end; $i++) {
+                        if ($i === $page) {
+                            echo '<span class="current">' . $i . '</span>';
+                        } else {
+                            echo '<a href="' . activityEscape(activityLogPageUrl($page_query, $i)) . '">' . $i . '</a>';
+                        }
+                    }
+
+                    if ($window_end < $total_pages) {
+                        if ($window_end < $total_pages - 1) {
+                            echo '<span class="ellipsis">…</span>';
+                        }
+                        echo '<a href="' . activityEscape(activityLogPageUrl($page_query, $total_pages)) . '">' . $total_pages . '</a>';
+                    }
+                    ?>
+
+                    <?php if ($page < $total_pages): ?>
+                        <a href="<?php echo activityEscape(activityLogPageUrl($page_query, $page + 1)); ?>">Sau ›</a>
+                    <?php else: ?>
+                        <span class="disabled">Sau ›</span>
+                    <?php endif; ?>
+                </nav>
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Lấy các phần tử DOM
-        const filterForm = document.getElementById('filter-form');
-        const btnClearFilter = document.getElementById('btn-clear-filter');
-        const filterInfo = document.getElementById('filter-info');
-        const currentFilter = document.getElementById('current-filter');
-        const detailsDeptSelect = document.getElementById('details_dept');
-        const activityRows = document.querySelectorAll('.activity-row');
-        
-        // Thu thập tất cả các bộ phận có trong chi tiết
-        const detailsDepts = new Map(); // Sử dụng Map để lưu trữ {code: name}
-        
-        // Lặp qua tất cả các bản ghi để thu thập thông tin bộ phận
-        document.querySelectorAll('.dept-info').forEach(deptInfo => {
-            const deptCode = deptInfo.getAttribute('data-dept-code');
-            if (deptCode) {
-                // Lấy tên hiển thị của bộ phận (text content sau khi bỏ "Bộ phận:")
-                let deptName = deptInfo.textContent.trim();
-                deptName = deptName.replace('Bộ phận:', '').trim();
-                
-                // Thêm vào Map nếu chưa có
-                if (!detailsDepts.has(deptCode)) {
-                    detailsDepts.set(deptCode, deptName);
-                }
-            }
-        });
-        
-        // Thêm options vào dropdown lọc theo bộ phận trong chi tiết
-        if (detailsDepts.size > 0) {
-            detailsDepts.forEach((name, code) => {
-                const option = document.createElement('option');
-                option.value = code;
-                option.textContent = name;
-                detailsDeptSelect.appendChild(option);
-            });
-        } else {
-            // Nếu không tìm thấy bộ phận nào trong chi tiết, ẩn dropdown
-            detailsDeptSelect.style.display = 'none';
-        }
-        
-        // Đã có bộ lọc từ URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const detailsDeptParam = urlParams.get('details_dept');
-        
-        // Nếu có tham số details_dept trong URL, set giá trị cho dropdown
-        if (detailsDeptParam) {
-            detailsDeptSelect.value = detailsDeptParam;
-        }
-        
-        // Bắt sự kiện thay đổi của dropdown lọc theo chi tiết
-        detailsDeptSelect.addEventListener('change', function() {
-            const selectedDept = this.value;
-            if (!selectedDept) {
-                clearDetailFilter();
-                return;
-            }
-            
-            // Tìm tên hiển thị của bộ phận đã chọn
-            const selectedOption = this.options[this.selectedIndex];
-            const deptDisplayName = selectedOption.textContent;
-            
-            // Hiển thị thông tin bộ lọc
-            filterInfo.style.display = 'block';
-            currentFilter.textContent = 'Bộ phận trong chi tiết: ' + deptDisplayName;
-            
-            // Lọc các hàng
-            let found = 0;
-            activityRows.forEach(row => {
-                // Tìm thông tin bộ phận trong chi tiết
-                const deptInfos = row.querySelectorAll('.dept-info');
-                let match = false;
-                
-                deptInfos.forEach(info => {
-                    const deptCode = info.getAttribute('data-dept-code');
-                    if (deptCode === selectedDept) {
-                        match = true;
-                    }
-                });
-                
-                if (match) {
-                    row.style.display = '';
-                    row.classList.add('highlight');
-                    found++;
-                } else {
-                    row.style.display = 'none';
-                    row.classList.remove('highlight');
-                }
-            });
-            
-            if (found === 0) {
-                alert('Không tìm thấy bản ghi nào với bộ phận đã chọn trong chi tiết!');
-                clearDetailFilter();
-            } else {
-                // Thêm tham số vào URL nhưng không reload trang
-                const url = new URL(window.location);
-                url.searchParams.set('details_dept', selectedDept);
-                window.history.pushState({}, '', url);
-            }
-        });
-        
-        // Sự kiện xóa bộ lọc
-        btnClearFilter.addEventListener('click', clearDetailFilter);
-        
-        // Hàm xóa bộ lọc chi tiết
-        function clearDetailFilter() {
-            filterInfo.style.display = 'none';
-            currentFilter.textContent = '';
-            detailsDeptSelect.value = '';
-            
-            activityRows.forEach(row => {
-                row.style.display = '';
-                row.classList.remove('highlight');
-            });
-            
-            // Xóa tham số khỏi URL
-            const url = new URL(window.location);
-            url.searchParams.delete('details_dept');
-            window.history.pushState({}, '', url);
-        }
-        
-        // Kiểm tra nếu có bộ lọc chi tiết từ URL và áp dụng
-        if (detailsDeptParam && detailsDeptSelect.value) {
-            // Kích hoạt sự kiện change để áp dụng bộ lọc
-            const event = new Event('change');
-            detailsDeptSelect.dispatchEvent(event);
-        }
-    });
-    </script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/header.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/activity_logs.js"></script>
 </body>
-</html> 
+</html>

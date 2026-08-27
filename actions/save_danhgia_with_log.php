@@ -224,7 +224,9 @@ try {
                     ];
                 }
                 // Kiểm tra nếu chỉ có ghi chú thay đổi
-                else if ($ghichu != $old_note) {
+                // $ghichu === null nghĩa là POST không gửi field: UPDATE giữ nguyên qua COALESCE
+                // nên so sánh với $old_note sẽ sinh log giả cho một thay đổi không xảy ra.
+                else if ($ghichu !== null && $ghichu != $old_note) {
                     $old_name = resolveNamesFromCsv($connect, $old_person);
                     if ($old_name === '') {
                         $old_name = 'Chưa phân công';

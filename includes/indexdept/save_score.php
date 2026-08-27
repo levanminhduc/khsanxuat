@@ -11,8 +11,33 @@ require_once __DIR__ . '/../security/csrf-helper.php';
 require_once __DIR__ . '/score-options.php';
 require_once BASE_PATH . '/includes/check_tieuchi_image.php';
 require_once BASE_PATH . '/includes/indexdept/config.php';
+require_once BASE_PATH . '/helpers/activity_logger.php';
 
-requireLogin();
+requireLogin('json');
+
+/**
+ * CSV id ("3,7,12") → chuỗi tên ("Nguyễn A, Trần B") để ghi log.
+ * id ép intval trước khi nội suy IN(...) nên an toàn SQL injection.
+ */
+function resolveNguoiThuchienNames($connect, $csv)
+{
+    $ids = array_filter(array_map('intval', explode(',', (string) $csv)));
+    if (empty($ids)) {
+        return '';
+    }
+
+    $res = $connect->query("SELECT ten FROM nhan_vien WHERE id IN (" . implode(',', $ids) . ")");
+    if (!$res) {
+        return '';
+    }
+
+    $names = [];
+    while ($row = $res->fetch_assoc()) {
+        $names[] = $row['ten'];
+    }
+
+    return implode(', ', $names);
+}
 
 // CSRF validation (không rotate token để các request tiếp theo vẫn dùng được)
 $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
@@ -45,9 +70,8 @@ if (!in_array($dept, getValidDepts())) {
     exit;
 }
 
-// Placeholder for next chunk
-// Lấy thutu của tiêu chí để validate score options
-$sql_tc = "SELECT thutu FROM tieuchi_dept WHERE id = ? AND dept = ?";
+// Lấy thutu (validate score options) + noidung (ghi log)
+$sql_tc = "SELECT thutu, noidung FROM tieuchi_dept WHERE id = ? AND dept = ?";
 $stmt_tc = $connect->prepare($sql_tc);
 $stmt_tc->bind_param("is", $id_tieuchi, $dept);
 $stmt_tc->execute();
@@ -59,7 +83,9 @@ if ($result_tc->num_rows === 0) {
     exit;
 }
 
-$thutu = $result_tc->fetch_assoc()['thutu'];
+$tieuchi = $result_tc->fetch_assoc();
+$thutu = $tieuchi['thutu'];
+$noidung = $tieuchi['noidung'];
 
 // Validate score
 $score_options = getScoreOptionsForCriteria($connect, $id_tieuchi, $dept, $thutu);
@@ -88,12 +114,13 @@ if ($diem_danhgia > 0 && isset($required_image_criteria[$id_tieuchi])) {
 
 $da_thuchien = ($diem_danhgia > 0) ? 1 : 0;
 
-// Kiểm tra record đã tồn tại chưa
-$sql_check = "SELECT id FROM danhgia_tieuchi WHERE id_sanxuat = ? AND id_tieuchi = ?";
+// Lấy record cũ: vừa để biết INSERT hay UPDATE, vừa lấy giá trị trước khi ghi để log
+$sql_check = "SELECT diem_danhgia, nguoi_thuchien, ghichu FROM danhgia_tieuchi WHERE id_sanxuat = ? AND id_tieuchi = ?";
 $stmt_check = $connect->prepare($sql_check);
 $stmt_check->bind_param("ii", $id_sanxuat, $id_tieuchi);
 $stmt_check->execute();
-$exists = $stmt_check->get_result()->num_rows > 0;
+$old_row = $stmt_check->get_result()->fetch_assoc();
+$exists = $old_row !== null;
 
 if ($exists) {
     $sql = "UPDATE danhgia_tieuchi SET diem_danhgia = ?, da_thuchien = ? WHERE id_sanxuat = ? AND id_tieuchi = ?";
@@ -109,6 +136,54 @@ if (!$stmt->execute()) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Lỗi lưu dữ liệu']);
     exit;
+}
+
+// Cột diem_danhgia là FLOAT NULL: ép kiểu để bản ghi chưa chấm vẫn ghi log ra "điểm 0".
+$old_score = $exists ? (float) $old_row['diem_danhgia'] : 0.0;
+
+// Autosave chỉ đổi điểm; người thực hiện/ghi chú giữ nguyên nên cũ & mới dùng chung giá trị.
+if ($old_score !== $diem_danhgia) {
+    $nguoi_thuchien = $exists ? $old_row['nguoi_thuchien'] : '';
+    $ghichu = $exists ? $old_row['ghichu'] : '';
+
+    $ten_nguoi = resolveNguoiThuchienNames($connect, $nguoi_thuchien);
+    if ($ten_nguoi === '') {
+        $ten_nguoi = 'Chưa phân công';
+    }
+    $suffix = ", người thực hiện {$ten_nguoi}" . (empty($ghichu) ? '' : ", ghi chú: " . $ghichu);
+
+    // Format phải khớp parseTieuchiDiff() trong pages/activity_logs.php — đổi ở đây phải sửa cả bên đó.
+    $old_value = "tiêu chí {$thutu}: điểm {$old_score}{$suffix}";
+    $new_value = "tiêu chí {$thutu}: điểm {$diem_danhgia}{$suffix}";
+
+    $additional_info = [
+        'action' => 'update_score',
+        'status' => 'success',
+        'changes' => "Thay đổi tiêu chí {$thutu}",
+        'changed_tieuchi' => [[
+            'thutu' => (int) $thutu,
+            'noidung' => $noidung
+        ]],
+        'dept_info' => [
+            'dept_code' => $dept,
+            'dept_name' => getDeptDisplayName($dept, $dept_names)
+        ]
+    ];
+
+    // Đánh giá đã lưu xong: lỗi ghi log không được làm hỏng response.
+    $logged = getActivityLogger($connect)->logActivity(
+        'update_score',
+        'tieuchi',
+        $id_tieuchi,
+        $id_sanxuat,
+        $dept,
+        $old_value,
+        $new_value,
+        $additional_info
+    );
+    if (!$logged) {
+        error_log("save_score: ghi activity_logs that bai (id_sanxuat={$id_sanxuat}, id_tieuchi={$id_tieuchi})");
+    }
 }
 
 echo json_encode(['success' => true, 'message' => 'Đã lưu', 'score' => $diem_danhgia]);

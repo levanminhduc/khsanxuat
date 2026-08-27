@@ -4,10 +4,40 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/includes/indexdept/config.php';
 require_once BASE_PATH . '/includes/security/auth-helper.php';
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
+require_once BASE_PATH . '/helpers/activity_logger.php';
 
 // Kiểm tra kết nối
 if (!$connect) {
     die("Lỗi kết nối database");
+}
+
+/**
+ * CSV id ("3,7,12") → chuỗi tên ("Nguyễn A, Trần B") để ghi log.
+ */
+function resolveNhanVienNames($connect, $csv)
+{
+    $ids = array_values(array_filter(array_map('intval', explode(',', (string) $csv))));
+    if (empty($ids)) {
+        return '';
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $connect->prepare("SELECT ten FROM nhan_vien WHERE id IN ({$placeholders})");
+    if (!$stmt) {
+        return '';
+    }
+
+    $stmt->bind_param(str_repeat('i', count($ids)), ...$ids);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $names = [];
+    while ($row = $result->fetch_assoc()) {
+        $names[] = $row['ten'];
+    }
+    $stmt->close();
+
+    return implode(', ', $names);
 }
 
 // Khởi tạo phiên làm việc nếu chưa có
@@ -66,7 +96,14 @@ try {
     $result_tieuchi = $stmt_tieuchi->get_result();
 
     $tieuchi_list = [];
+    // thutu/noidung thô dùng cho activity log (tieuchi_list đã bị gắn thêm prefix nhóm)
+    $tieuchi_meta = [];
     while ($row_tieuchi = $result_tieuchi->fetch_assoc()) {
+        $tieuchi_meta[$row_tieuchi['id']] = [
+            'thutu' => (int) $row_tieuchi['thutu'],
+            'noidung' => $row_tieuchi['noidung']
+        ];
+
         // Thêm thông tin nhóm vào nội dung để người dùng dễ phân biệt
         $nhom_prefix = '';
         if (($dept === 'kho' || $dept === 'chuanbi_sanxuat_phong_kt') && !empty($row_tieuchi['nhom'])) {
@@ -249,15 +286,19 @@ try {
             }
 
             // Kiểm tra xem đã có bản ghi đánh giá cho tiêu chí này chưa
-            $sql_check = "SELECT han_xuly, so_ngay_xuly, ngay_tinh_han FROM danhgia_tieuchi WHERE id_sanxuat = ? AND id_tieuchi = ?";
+            $sql_check = "SELECT han_xuly, so_ngay_xuly, ngay_tinh_han, diem_danhgia, nguoi_thuchien, ghichu
+                          FROM danhgia_tieuchi WHERE id_sanxuat = ? AND id_tieuchi = ?";
             $stmt_check = $connect->prepare($sql_check);
             $stmt_check->bind_param("ii", $id, $tieuchi_id);
             $stmt_check->execute();
             $result_check = $stmt_check->get_result();
 
+            // Giá trị trước khi ghi, dùng để so sánh và ghi activity log sau khi commit
+            $old_row = null;
+
             if ($result_check->num_rows > 0) {
                 // Đã có bản ghi, lấy thông tin hạn xử lý để giữ nguyên
-                $row_check = $result_check->fetch_assoc();
+                $old_row = $result_check->fetch_assoc();
 
                 // Cập nhật bản ghi hiện có
                 $sql_update = "UPDATE danhgia_tieuchi
@@ -304,6 +345,89 @@ try {
             ];
 
             $connect->commit();
+
+            $old_diem = $old_row !== null ? (float) $old_row['diem_danhgia'] : 0.0;
+            $old_nguoi = $old_row !== null ? (string) $old_row['nguoi_thuchien'] : '';
+            $old_ghichu = $old_row !== null ? (string) $old_row['ghichu'] : '';
+            $new_diem = (float) $diem_danhgia;
+
+            $diem_changed = $old_diem !== $new_diem;
+            $nguoi_changed = $old_nguoi !== (string) $nguoi_thuchien;
+            $ghichu_changed = $old_ghichu !== (string) $ghichu;
+
+            if (($diem_changed || $nguoi_changed || $ghichu_changed) && isset($tieuchi_meta[$tieuchi_id])) {
+                $thutu = $tieuchi_meta[$tieuchi_id]['thutu'];
+
+                $changed_labels = [];
+                if ($diem_changed) {
+                    $changed_labels[] = 'điểm';
+                }
+                if ($nguoi_changed) {
+                    $changed_labels[] = 'người thực hiện';
+                }
+                if ($ghichu_changed) {
+                    $changed_labels[] = 'ghi chú';
+                }
+
+                if (count($changed_labels) > 1) {
+                    $action_type = 'update_multiple';
+                } elseif ($diem_changed) {
+                    $action_type = 'update_score';
+                } elseif ($nguoi_changed) {
+                    $action_type = 'update_person';
+                } else {
+                    $action_type = 'update_note';
+                }
+
+                $old_name = resolveNhanVienNames($connect, $old_nguoi);
+                if ($old_name === '') {
+                    $old_name = 'Chưa phân công';
+                }
+                $new_name = resolveNhanVienNames($connect, $nguoi_thuchien);
+                if ($new_name === '') {
+                    $new_name = 'Chưa phân công';
+                }
+
+                // Format phải khớp parseTieuchiDiff() trong pages/activity_logs.php — đổi ở đây phải sửa cả bên đó.
+                $old_value = "tiêu chí {$thutu}: điểm {$old_diem}, người thực hiện {$old_name}"
+                           . (empty($old_ghichu) ? "" : ", ghi chú: " . $old_ghichu);
+                $new_value = "tiêu chí {$thutu}: điểm {$new_diem}, người thực hiện {$new_name}"
+                           . (empty($ghichu) ? "" : ", ghi chú: " . $ghichu);
+
+                $additional_info = [
+                    'action' => $action_type,
+                    'status' => 'success',
+                    'changes' => "Thay đổi tiêu chí {$thutu} (" . implode(', ', $changed_labels) . ")",
+                    'changed_tieuchi' => [[
+                        'thutu' => $thutu,
+                        'noidung' => $tieuchi_meta[$tieuchi_id]['noidung']
+                    ]],
+                    'dept_info' => [
+                        'dept_code' => $dept,
+                        'dept_name' => getDeptDisplayName($dept, $dept_names)
+                    ]
+                ];
+
+                // Đánh giá đã commit: lỗi ghi log không được rơi xuống catch bên dưới và báo
+                // "Lỗi" cho một thao tác thực chất đã lưu thành công.
+                try {
+                    $logged = getActivityLogger($connect)->logActivity(
+                        $action_type,
+                        'tieuchi',
+                        $tieuchi_id,
+                        $id,
+                        $dept,
+                        $old_value,
+                        $new_value,
+                        $additional_info
+                    );
+                    if (!$logged) {
+                        error_log("image_handler: ghi activity_logs that bai (id={$id}, tieuchi_id={$tieuchi_id})");
+                    }
+                } catch (Exception $e) {
+                    error_log("image_handler: ghi activity_logs loi (id={$id}, tieuchi_id={$tieuchi_id}): " . $e->getMessage());
+                }
+            }
 
             $message = "Đã lưu điểm đánh giá thành công";
             $message_type = "success";
