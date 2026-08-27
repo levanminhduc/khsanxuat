@@ -1,5 +1,5 @@
 <?php
-session_start();
+// Forwarder: logout huy phien dung chung → lan ra MOI du an cung host, khong rieng khsanxuat.
 require_once __DIR__ . '/../bootstrap.php';
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
 
@@ -11,20 +11,5 @@ if (!validateCsrfToken($token)) {
     exit;
 }
 
-$_SESSION = [];
-if (ini_get('session.use_cookies')) {
-    $params = session_get_cookie_params();
-    setcookie(
-        session_name(),
-        '',
-        time() - 42000,
-        $params['path'],
-        $params['domain'],
-        $params['secure'],
-        $params['httponly']
-    );
-}
-session_destroy();
-
-header('Location: ' . BASE_URL . '/account/login.php?success_message=' . urlencode('Đã đăng xuất'));
+header('Location: ' . \Hoatho\SharedAuth\EnvConfig::logoutUrl(BASE_URL . '/index.php'), true, 302);
 exit;

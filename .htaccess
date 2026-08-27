@@ -1,3 +1,9 @@
+# SHARED-AUTH (authV2): nạp autoload + cấu hình phiên dùng chung TRƯỚC mọi request PHP, để ~25
+# session_start() rải rác cùng tham gia phiên SSO mà không phải sửa từng file.
+# mod_php (apache2handler) → php_value. PHP-FPM/CGI thì thay bằng .user.ini.
+# ⚠️ PRODUCTION (XAMPP): đổi path cho khớp, vd "C:/xampp/htdocs/authV2/prepend.php".
+php_value auto_prepend_file "C:/laragon/www/authV2/prepend.php"
+
 # Block development-only artifacts from direct web access.
 <IfModule mod_rewrite.c>
     RewriteEngine On

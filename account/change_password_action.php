@@ -7,7 +7,7 @@ require_once BASE_PATH . '/includes/security/csrf-helper.php';
 requireLogin();
 verifyCsrfOrDie();
 
-$user_id = $_SESSION['user_id'];
+$user_id = \Hoatho\SharedAuth\SessionContract::userId();
 
 // Mat khau khong trim - giu nguyen theo quy uoc cu
 $current_password = $_POST['current_password'] ?? '';
@@ -40,8 +40,13 @@ if (mysqli_stmt_num_rows($check_stmt) > 0) {
     mysqli_stmt_fetch($check_stmt);
     mysqli_stmt_close($check_stmt);
 
-    // So sanh plaintext - giu nguyen co che cu (bang user dung chung ~10 du an)
-    if ($current_password !== $db_password) {
+    // Diem DOC password: phai hieu ca plaintext lan bcrypt (bat bien rollout authV2), vi bang user
+    // dung chung ~10 du an va se co hash tron lan khi bat upgrade-on-login o Giai doan 2.
+    $current_ok = strncmp($db_password, '$2', 2) === 0
+        ? password_verify($current_password, $db_password)
+        : hash_equals($db_password, $current_password);
+
+    if (!$current_ok) {
         header("Location: " . BASE_URL . "/account/change_password.php?error_message=Mật khẩu hiện tại không đúng");
         exit();
     }

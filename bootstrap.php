@@ -7,9 +7,11 @@ if (!defined('BASE_PATH')) {
 
 require_once BASE_PATH . '/config/app.php';
 
-// session_start có guard: an toàn cho file đã tự gọi session_start trước đó.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Phiên dùng chung authV2 (SSO nội bộ). .htaccess auto_prepend_file đã cấu hình phiên trước mọi
+// request; start() ở đây là điểm neo idempotent cho file nào chưa tự session_start.
+require_once __DIR__ . '/../authV2/bootstrap.php';
 
 require_once BASE_PATH . '/config/database.php'; // cung cấp $connect
+
+require_once BASE_PATH . '/includes/security/session_context.php';
+khsxSyncSessionContext($connect);

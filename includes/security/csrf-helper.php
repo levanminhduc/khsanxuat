@@ -35,7 +35,6 @@ function verifyCsrfOrDie() {
         http_response_code(403);
         die('CSRF token validation failed');
     }
-    rotateCsrfToken();
 }
 
 function rotateCsrfToken() {

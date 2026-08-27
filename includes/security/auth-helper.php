@@ -1,7 +1,8 @@
 <?php
 // includes/security/auth-helper.php
-// Phan quyen per-app: role nap vao $_SESSION['app_role'] luc login (1 lan; thu hoi quyen
-// co hieu luc khi login lai). Call-site check theo FEATURE, khong so role truc tiep.
+// Phan quyen per-app: role nap vao $_SESSION['app_role'] moi request boi khsxSyncSessionContext().
+// Call-site check theo FEATURE, khong so role truc tiep.
+// Authentication (ai dang dang nhap) do authV2 lo; file nay chi con AUTHORIZATION.
 // Yeu cau nap SAU bootstrap.php (da start session + define BASE_URL).
 
 // Nguon duy nhat dinh nghia quyen cua khsanxuat. Them role/feature = sua mang nay.
@@ -17,7 +18,7 @@ function currentAppRole()
 
 function isLoggedIn()
 {
-    return !empty($_SESSION['user_id']);
+    return \Hoatho\SharedAuth\SessionContract::isLoggedIn();
 }
 
 function userCan($feature)
@@ -32,21 +33,28 @@ function userCan($feature)
     return in_array($feature, $GLOBALS['app_role_features'][$role], true);
 }
 
-function requireLogin()
+function requireLogin($mode = 'page')
 {
-    if (isLoggedIn()) {
-        return;
+    // Endpoint JSON khong the nhan 302 sang trang login: fetch() se follow redirect roi
+    // tra ve HTML, JS parse JSON that bai va user thay loi kho hieu thay vi "het phien".
+    if ($mode === 'json' && !isLoggedIn()) {
+        http_response_code(401);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Phiên đăng nhập đã hết hạn, vui lòng tải lại trang để đăng nhập lại']);
+        exit;
     }
-    // Luu URL hien tai de login_action redirect ve (pattern redirect_url co san)
-    $_SESSION['redirect_url'] = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : BASE_URL . '/index.php';
-    header('Location: ' . BASE_URL . '/account/login.php');
-    exit;
+    (new \Hoatho\SharedAuth\Guard())->requireLogin();
 }
 
 function requireFeature($feature, $mode)
 {
     if (userCan($feature)) {
         return;
+    }
+    // Chua/het dang nhap KHAC thieu quyen: dua ve trang login thay vi bao "khong co quyen"
+    // (phien het han hoac phien cu truoc port authV2 se gay hieu nham "mat quyen").
+    if (!isLoggedIn()) {
+        requireLogin($mode); // json -> 401 JSON; con lai -> 302 sang login kem ?redirect=
     }
     $message = 'Bạn không có quyền thực hiện thao tác này';
     if ($mode === 'json') {
