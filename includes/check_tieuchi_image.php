@@ -79,4 +79,3 @@ function createUploadImageButton($id, $dept, $tieuchi_id, $tieuchi_name = '') {
     
     return '<a href="' . $url . '" class="btn-upload-tieuchi"><i class="fas fa-images"></i> ' . $button_text . '</a>';
 }
-?> 

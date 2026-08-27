@@ -581,4 +581,3 @@ function getDateDisplay($date, $format = 'd/m/Y') {
         return $date;
     }
 }
-?> 
