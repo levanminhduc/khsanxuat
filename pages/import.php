@@ -387,7 +387,7 @@ function processDefaultSettings($batch_ids, $success, $errors)
 
                     // Include file xử lý cài đặt mặc định
     try {
-        include_once 'apply_default_settings.php';
+        include_once BASE_PATH . '/actions/apply_default_settings.php';
         require_once BASE_PATH . '/includes/display_deadline.php'; // Include file tính toán hạn xử lý
 
         // Debug - kiểm tra xem hàm có tồn tại không
@@ -504,16 +504,16 @@ function processDefaultSettings($batch_ids, $success, $errors)
 
 // Xử lý file Excel khi tải lên và ghi vào cơ sở dữ liệu
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
-    require_once 'vendor/autoload.php'; // Sử dụng thư viện PhpSpreadsheet
+    require_once BASE_PATH . '/vendor/autoload.php'; // Sử dụng thư viện PhpSpreadsheet
     $inputFileName = $_FILES['excel_file']['tmp_name'];
     $errors = [];
     $success = [];
     $imported_ids = []; // Mảng lưu tất cả các ID đã import
-    $batch_size = 50; // Kích thước của mỗi lô dữ liệu
+    $batch_size = 100; // Kích thước của mỗi lô dữ liệu
     $current_batch = []; // Lô dữ liệu hiện tại
 
     // Thêm đoạn code tăng giới hạn thời gian thực thi
-    set_time_limit(300); // Tăng lên 5 phút thay vì 2 phút mặc định
+    set_time_limit(120); // Tăng lên 5 phút thay vì 2 phút mặc định
 
     try {
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
@@ -1099,7 +1099,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     function showSuccessModal(message) {
         document.getElementById('modalMessage').innerHTML = message;
         document.getElementById('successModal').style.display = 'block';
-        window.LoadingOverlay.hide(); // hide overlay when success modal appears
+        window.LoadingOverlay.hide();
     }
 
     function closeModal() {
@@ -1112,7 +1112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
             importForm.addEventListener('submit', function() {
                 const fileInput = document.querySelector('input[name="excel_file"]');
                 if (fileInput && fileInput.files.length > 0) {
-                    window.LoadingOverlay.show('Đang xử lý file Excel...');
+                    window.LoadingOverlay.show('Đang tải lên...');
                 }
             });
         }
