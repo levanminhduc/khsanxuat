@@ -11,7 +11,14 @@
    trong partial trước.
 
    Section order: LAYOUT → COMPONENTS → RESPONSIVE (trong mỗi tầng: default
-   settings → base dùng chung → staff → add criteria → deadline → score options)
+   settings → base dùng chung → staff → deadline → score options)
+
+   ĐANG CHUYỂN SANG TAILWIND (assets/css/tailwind.css, xem tools/tailwind/README.md):
+   modal nào đã port thì style nằm hết ở class tw-* trong partial, file này chỉ
+   giữ lại phần Tailwind không làm được (hook JS/state, @keyframes, selector ID,
+   font-family inherit + khôi phục .fas).
+   - Đã port: add-criteria.
+   - Chưa port: default-settings, staff, deadline, score-options.
    ========================================================== */
 
 /* ================= LAYOUT ================= */
@@ -260,47 +267,10 @@
 }
 
 /* Add criteria modal - layout tier */
-.add-criteria-modal__content {
-    font-family: inherit;
-    width: min(760px, 92vw);
-    max-height: 88vh;
-    margin: 6vh auto;
-    padding: 0;
-    border: 1px solid #cfd8e6;
-    border-radius: 10px !important;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
-}
 
-.add-criteria-modal__header {
-    padding: 22px 24px 16px;
-    border-bottom: 1px solid #e2e8f0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-}
 
-.add-criteria-modal__body {
-    padding: 18px 20px 16px;
-    background: #f8fafc;
-}
 
-.add-criteria-modal__form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 0;
-    text-align: left;
-}
 
-.add-criteria-modal__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    border-top: 1px solid #e2e8f0;
-    margin-top: 6px;
-    padding-top: 14px;
-}
 
 /* Deadline modal - layout tier */
 .deadline-modal__content {
@@ -750,99 +720,16 @@
 }
 
 /* Add criteria modal - component tier */
-.add-criteria-modal__close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #334155;
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    font-family: inherit;
-    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
-}
 
-.add-criteria-modal__close:hover {
-    background: #e2e8f0;
-    color: #0f172a;
-    transform: translateY(-1px);
-}
 
-.add-criteria-modal__title {
-    margin: 0;
-    color: #0f172a;
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1.2;
-    text-align: left;
-    text-wrap: balance;
-}
 
-.add-criteria-modal__subtitle {
-    margin: 0;
-    color: #475569;
-    font-size: 14px;
-    line-height: 1.4;
-    text-align: left;
-}
 
-.add-criteria-modal__group {
-    margin-bottom: 0;
-}
 
-.add-criteria-modal__group--sm {
-    max-width: 160px;
-}
 
-.add-criteria-modal__label {
-    display: block;
-    margin: 0 0 4px;
-    color: #334155;
-    font-size: 12px;
-    font-weight: 700;
-    text-align: left;
-}
 
-.add-criteria-modal__control {
-    min-height: 34px;
-    padding: 6px 9px;
-    font-family: inherit;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: #fff;
-    color: #0f172a;
-    font-size: 13px;
-    line-height: 1.28;
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
-    transition: border-color 0.18s ease, box-shadow 0.18s ease;
-}
 
-.add-criteria-modal__control:focus {
-    border-color: #143583;
-    box-shadow: 0 0 0 2px rgba(20, 53, 131, 0.15);
-    outline: none;
-}
 
-.add-criteria-modal__textarea {
-    min-height: 112px;
-    padding-top: 7px;
-    resize: vertical;
-}
 
-.add-criteria-modal__btn {
-    min-height: 34px;
-    min-width: 102px;
-    padding: 0 11px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-}
 
 /* Modern modal shell should inherit the page font; icon fonts are restored below. */
 .add-criteria-modal,
@@ -1872,42 +1759,16 @@ body.indexdept-modal-open {
 
 /* Add criteria modal - responsive tier */
 @media screen and (max-width: 1024px) {
-    .add-criteria-modal__content {
-        width: 94vw;
-        max-height: 90vh;
+    
     }
-
-    .add-criteria-modal__title {
-        font-size: 18px;
-    }
-}
 
 @media screen and (max-width: 768px) {
-    .add-criteria-modal__header {
-        padding: 12px 44px 10px 10px;
+    
+    
+    
+    
+    
     }
-
-    .add-criteria-modal__body {
-        padding: 10px;
-    }
-
-    .add-criteria-modal__title {
-        font-size: 18px;
-    }
-
-    .add-criteria-modal__group--sm {
-        max-width: 100%;
-    }
-
-    .add-criteria-modal__actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .add-criteria-modal__btn {
-        width: 100%;
-    }
-}
 
 /* Generic modal - responsive tier
    VỊ TRÍ QUAN TRỌNG: .modal-content @768 dùng !important, cùng specificity với
@@ -2132,7 +1993,6 @@ body.indexdept-modal-open {
 
 /* Unified modal footer action order for indexdept mobile dialogs */
 @media screen and (max-width: 768px) {
-    .add-criteria-modal__actions,
     .deadline-modal__actions,
     .default-settings-modal__footer-actions,
     .score-options-modal__footer-actions {
@@ -2144,7 +2004,6 @@ body.indexdept-modal-open {
         width: 100% !important;
     }
 
-    .add-criteria-modal__actions .score-options-modal__btn,
     .deadline-modal__actions .score-options-modal__btn,
     .default-settings-modal__footer-actions .score-options-modal__btn,
     .score-options-modal__footer-actions .score-options-modal__btn {
@@ -2154,14 +2013,12 @@ body.indexdept-modal-open {
         white-space: nowrap;
     }
 
-    .add-criteria-modal__actions .score-options-modal__btn--secondary,
     .deadline-modal__actions .score-options-modal__btn--secondary,
     .default-settings-modal__footer-actions .score-options-modal__btn--secondary,
     .score-options-modal__footer-actions .score-options-modal__btn--secondary {
         min-width: 92px;
     }
 
-    .add-criteria-modal__actions .score-options-modal__btn--primary,
     .deadline-modal__actions .score-options-modal__btn--primary,
     .default-settings-modal__footer-actions .score-options-modal__btn--primary,
     .score-options-modal__footer-actions .score-options-modal__btn--primary {

@@ -18,6 +18,14 @@ module.exports = {
     ],
     theme: {
         extend: {
+            // Breakpoint cua du an la max-width 1200/1024/768 (xem docs/code-standards.md),
+            // nguoc chieu voi sm/md/lg mac dinh cua Tailwind. Them vao chu khong thay the:
+            // cac class sm:/md: dang dung van giu nguyen y nghia.
+            screens: {
+                max1200: { max: '1200px' },
+                max1024: { max: '1024px' },
+                max768: { max: '768px' }
+            },
             boxShadow: {
                 'modal-soft': '0 26px 80px rgba(15, 23, 42, 0.28)'
             }
