@@ -121,20 +121,38 @@ function renderActivityDetails(array $activity)
         $html .= '<div><strong>Thay đổi:</strong> ' . activityEscape($info['changes']) . '</div>';
     }
 
+    // Dòng đã gộp nhiều thao tác của một đợt làm việc: hiện khoảng thời gian của cả đợt.
+    if (isset($info['bat_dau']) && is_string($info['bat_dau']) && $info['bat_dau'] !== $activity['action_time']) {
+        $html .= '<div class="log-phien">Đợt cập nhật: ' . activityEscape($info['bat_dau'])
+            . ' → ' . activityEscape($activity['action_time']) . '</div>';
+    }
+
     if (isset($info['changed_tieuchi']) && is_array($info['changed_tieuchi'])) {
         $diff = parseTieuchiDiff($activity['old_value'], $activity['new_value']);
+        $so_lan_map = isset($info['so_lan']) && is_array($info['so_lan']) ? $info['so_lan'] : [];
         $items = '';
 
         foreach ($info['changed_tieuchi'] as $tieuchi) {
             $thutu = isset($tieuchi['thutu']) ? $tieuchi['thutu'] : '';
-            if (!isset($diff[$thutu])) {
+            $changes = isset($diff[$thutu]) ? $diff[$thutu] : [];
+            $so_lan = isset($so_lan_map[$thutu]) ? (int) $so_lan_map[$thutu] : 1;
+
+            // Sửa rồi sửa lại về đúng giá trị cũ: diff rỗng nhưng vẫn phải hiện dòng,
+            // nếu không thao tác đó biến mất hoàn toàn khỏi log.
+            if (empty($changes) && $so_lan < 2) {
                 continue;
             }
 
             $items .= '<li>Tiêu chí ' . activityEscape($thutu) . ': '
-                . activityEscape(isset($tieuchi['noidung']) ? $tieuchi['noidung'] : '')
-                . '<div class="tieuchi-change">';
-            foreach ($diff[$thutu] as $change) {
+                . activityEscape(isset($tieuchi['noidung']) ? $tieuchi['noidung'] : '');
+            if ($so_lan > 1) {
+                $items .= ' <span class="tieuchi-solan">đã sửa ' . $so_lan . ' lần</span>';
+            }
+            $items .= '<div class="tieuchi-change">';
+            if (empty($changes)) {
+                $items .= '- Kết quả cuối không đổi<br>';
+            }
+            foreach ($changes as $change) {
                 $items .= '- ' . activityEscape($change) . '<br>';
             }
             $items .= '</div></li>';
