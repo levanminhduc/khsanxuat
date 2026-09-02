@@ -63,7 +63,7 @@
                                     <td class="tw-border tw-border-solid tw-border-[#ddd] tw-px-2 tw-py-2"><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.chuc_vu || '')}"></td>
                                     <td class="tw-border tw-border-solid tw-border-[#ddd] tw-px-2 tw-py-2">
                                         <div class="staff-modal__action-list">
-                                            <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary staff-modal__action-btn tw-inline-flex tw-h-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-2 tw-text-xs tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">
+                                            <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria staff-modal__action-btn tw-inline-flex tw-h-8 tw-min-h-[34px] tw-items-center tw-justify-center tw-gap-2 tw-rounded-md tw-border tw-border-solid tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-2 tw-text-xs tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe] hover:tw-text-slate-900 active:tw-scale-[0.96] max768:tw-mr-0 max768:tw-flex-1">
                                                 <i class="fas fa-floppy-disk" aria-hidden="true"></i>
                                                 Cập nhật
                                             </button>
