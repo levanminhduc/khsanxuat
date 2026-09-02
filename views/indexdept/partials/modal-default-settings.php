@@ -1,9 +1,21 @@
+        <?php
+        // Ô select/input của modal: phần chung; kích thước + padding đặt riêng trên từng ô
+        $ds_field = 'tw-box-border tw-rounded-md tw-border tw-border-solid tw-border-slate-300 tw-bg-white tw-text-slate-900 tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15';
+        // Ô trong bảng: kế thừa font của modal, số dạng tabular
+        $ds_table_field = $ds_field . ' tw-h-8 tw-min-h-8 tw-px-2 tw-py-[5px] [font-family:inherit] tw-text-[13px] tw-font-bold tw-tabular-nums';
+        $ds_label = 'tw-mb-1 tw-block tw-text-xs tw-font-bold tw-text-slate-700';
+        $ds_th = 'tw-sticky tw-top-0 tw-z-10 tw-box-border tw-border tw-border-solid tw-border-[#ddd] tw-border-b-[#0f2861] tw-bg-[#143583] tw-px-2 tw-py-[7px] tw-text-center tw-text-[12px] tw-font-bold tw-leading-[1.25] tw-tracking-normal tw-text-slate-50 tw-whitespace-nowrap [word-break:keep-all] tw-break-words tw-align-middle tw-shadow-[0_1px_0_rgba(0,0,0,0.1)]';
+        // Ô dữ liệu: màu chữ đặt riêng trên từng ô (utility màu cùng nhóm sẽ đè nhau theo thứ tự build)
+        $ds_td = 'tw-border tw-border-solid tw-border-[#ddd] tw-border-b-[#eef2f7] tw-bg-white tw-px-2 tw-py-[5px] tw-align-middle tw-text-[12.5px] tw-leading-[1.28] group-hover:tw-bg-slate-50 max1024:tw-text-[12px] max768:tw-p-1.5 max768:tw-text-[12px]';
+        // Nút footer trên mobile: không giãn, giữ 1 dòng (khớp footer chung của các modal)
+        $ds_action_btn = 'max768:tw-mr-0 max768:tw-w-auto max768:tw-flex-none max768:tw-whitespace-nowrap';
+        ?>
         <!-- Modal cài đặt hạn xử lý mặc định -->
-        <div id="defaultSettingModal" class="modal default-settings-modal score-options-modal indexdept-modern-modal tw-fixed tw-inset-0 tw-z-[10000] tw-hidden tw-items-center tw-justify-center tw-overflow-y-auto tw-bg-slate-950/55 tw-p-3 tw-backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="default-setting-title" hidden>
-            <div class="modal-content default-settings-modal__content score-options-modal__content tw-relative tw-m-0 tw-flex tw-max-h-[92vh] tw-w-full tw-max-w-7xl tw-flex-col tw-overflow-hidden tw-rounded-lg tw-border tw-border-white/70 tw-bg-white tw-p-0 tw-shadow-modal-soft">
-                <button type="button" class="close default-settings-modal__close tw-absolute tw-right-3 tw-top-3 tw-z-20 tw-inline-flex tw-h-8 tw-w-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-slate-200 tw-bg-white/90 tw-text-xl tw-leading-none tw-text-slate-500 tw-shadow-sm tw-transition hover:tw-bg-slate-100 hover:tw-text-slate-900" onclick="closeDefaultSettingModal()" aria-label="Đóng cài đặt mặc định">&times;</button>
+        <div id="defaultSettingModal" class="modal score-options-modal indexdept-modern-modal tw-fixed tw-inset-0 tw-z-[10000] tw-hidden tw-items-center tw-justify-center tw-overflow-y-auto tw-bg-slate-950/55 tw-p-3 tw-backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="default-setting-title" hidden>
+            <div class="modal-content score-options-modal__content tw-relative tw-m-0 tw-flex tw-max-h-[92vh] tw-w-full tw-max-w-7xl tw-flex-col tw-overflow-hidden tw-rounded-lg tw-border tw-border-white/70 tw-bg-white tw-p-0 tw-shadow-modal-soft">
+                <button type="button" class="close tw-absolute tw-right-3 tw-top-3 tw-z-20 tw-inline-flex tw-h-8 tw-w-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-solid tw-border-slate-200 tw-bg-white/90 [font-family:inherit] tw-text-xl tw-leading-none tw-text-slate-500 tw-shadow-sm tw-transition hover:-tw-translate-y-px hover:tw-bg-slate-100 hover:tw-text-slate-900" onclick="closeDefaultSettingModal()" aria-label="Đóng cài đặt mặc định">&times;</button>
 
-                <div class="default-settings-modal__header score-options-modal__header tw-border-b tw-border-slate-200 tw-bg-slate-50 tw-px-4 tw-py-3">
+                <div class="score-options-modal__header tw-border-b tw-border-slate-200 tw-bg-slate-50 tw-px-4 tw-py-3">
                     <div class="tw-flex tw-items-start tw-justify-between tw-gap-4">
                         <div class="score-options-modal__heading tw-flex tw-min-w-0 tw-items-start tw-gap-3">
                             <span class="score-options-modal__icon tw-inline-flex tw-h-9 tw-w-9 tw-flex-none tw-items-center tw-justify-center tw-rounded-md tw-bg-[#143583] tw-text-white tw-shadow-lg tw-shadow-[#0f2861]/20" aria-hidden="true">
@@ -11,10 +23,10 @@
                             </span>
                             <div class="tw-min-w-0">
                                 <span class="score-options-modal__eyebrow tw-text-xs tw-font-bold tw-text-[#143583]">Mặc định</span>
-                                <h3 id="default-setting-title" class="modal-title default-settings-modal__title score-options-modal__title tw-m-0 tw-pr-10 tw-text-xl tw-font-bold tw-leading-tight tw-text-slate-950">
+                                <h3 id="default-setting-title" class="modal-title score-options-modal__title tw-m-0 tw-pr-10 tw-text-xl tw-font-bold tw-leading-tight tw-text-slate-950">
                                     Cài đặt hạn xử lý
                                 </h3>
-                                <span class="default-settings-modal__xuong-badge tw-mt-1 tw-inline-flex tw-max-w-full tw-items-center tw-rounded-md tw-border tw-border-[#d7e4fb] tw-bg-[#eef5ff] tw-px-2 tw-py-1 tw-text-xs tw-font-semibold tw-text-slate-700">
+                                <span class="tw-mt-1 tw-inline-flex tw-min-h-[26px] tw-max-w-full tw-items-center tw-rounded-md tw-border tw-border-[#d7e4fb] tw-bg-[#eef5ff] tw-px-2 tw-py-1 tw-text-xs tw-font-semibold tw-text-slate-700">
                                     Xưởng: <span id="xuong_display_name" class="tw-ml-1 tw-text-[#143583]">Tất cả xưởng</span>
                                 </span>
                             </div>
@@ -25,15 +37,16 @@
                     </div>
                 </div>
 
-                <div id="default_settings_status" class="default-settings-modal__status score-options-modal__status tw-mx-4 tw-mt-2" hidden></div>
+                <div id="default_settings_status" class="score-options-modal__status tw-mx-4 tw-mt-2 tw-rounded-md tw-px-[9px] tw-py-[7px] tw-text-center" hidden></div>
                 <input type="hidden" id="current_dept" value="<?php echo htmlspecialchars($dept); ?>">
 
-                <div class="default-settings-modal__body score-options-modal__body tw-flex tw-min-h-0 tw-flex-1 tw-flex-col tw-gap-3 tw-px-4 tw-py-3">
-                    <div class="default-settings-modal__toolbar default-settings-modal__toolbar--top tw-flex tw-flex-col tw-gap-3 tw-rounded-md tw-border tw-border-slate-200 tw-bg-slate-50 tw-p-3 lg:tw-flex-row lg:tw-items-end lg:tw-justify-between">
-                        <div class="default-settings-modal__toolbar-left tw-flex tw-flex-col tw-gap-3 lg:tw-flex-row lg:tw-items-end">
-                            <div class="default-settings-modal__xuong-filter tw-min-w-[240px]">
-                                <label for="selected_xuong" class="default-settings-modal__label tw-mb-1 tw-block tw-text-xs tw-font-bold tw-text-slate-700">Chọn xưởng</label>
-                                <select id="selected_xuong" class="form-control default-settings-modal__select-xuong tw-h-9 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-slate-900 tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" onchange="changeSelectedXuong()">
+                <div class="score-options-modal__body tw-flex tw-min-h-0 tw-flex-1 tw-flex-col tw-gap-3 tw-px-4 tw-py-3">
+                    <!-- max768:tw-w-full: giữ đúng kiểu cũ (width 100% + padding, content-box) nên khối này rộng hơn thân modal 24px trên mobile -->
+                    <div class="tw-flex tw-flex-col tw-items-center tw-justify-between tw-gap-3 tw-rounded-md tw-border tw-border-slate-200 tw-bg-slate-50 tw-p-3 max768:tw-w-full max768:tw-items-stretch lg:tw-flex-row lg:tw-items-end">
+                        <div class="tw-flex tw-flex-col tw-flex-wrap tw-items-center tw-gap-3 max768:tw-items-stretch lg:tw-flex-row lg:tw-items-end">
+                            <div class="tw-flex tw-min-w-[240px] tw-items-center tw-gap-2 max768:tw-flex-col max768:tw-items-stretch">
+                                <label for="selected_xuong" class="<?php echo $ds_label; ?>">Chọn xưởng</label>
+                                <select id="selected_xuong" class="<?php echo $ds_field; ?> tw-h-9 tw-min-h-[34px] tw-w-[220px] tw-px-2 tw-py-[5px] tw-text-[13px] tw-font-bold max768:tw-w-full" onchange="changeSelectedXuong()">
                                     <?php
                                     // Lấy danh sách xưởng từ bảng khsanxuat
                                     $sql_xuong = "SELECT DISTINCT xuong FROM khsanxuat WHERE xuong != '' ORDER BY xuong";
@@ -50,15 +63,15 @@
                                 </select>
                             </div>
 
-                            <div class="default-settings-modal__line-filter tw-min-w-[160px]">
-                                <label for="selected_line" class="default-settings-modal__label tw-mb-1 tw-block tw-text-xs tw-font-bold tw-text-slate-700">Chọn line</label>
-                                <select id="selected_line" class="form-control default-settings-modal__select-line tw-h-9 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-slate-900 tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15 disabled:tw-cursor-not-allowed disabled:tw-bg-slate-100" onchange="changeSelectedLine()" disabled>
+                            <div class="tw-min-w-[160px]">
+                                <label for="selected_line" class="<?php echo $ds_label; ?>">Chọn line</label>
+                                <select id="selected_line" class="<?php echo $ds_field; ?> tw-h-9 tw-w-full tw-p-2 tw-text-[14px] disabled:tw-cursor-not-allowed disabled:tw-bg-slate-100" onchange="changeSelectedLine()" disabled>
                                     <option value="">-- Tất cả line --</option>
                                 </select>
                             </div>
 
-                            <div class="default-settings-modal__actions tw-flex tw-flex-wrap tw-gap-2">
-                                <button type="button" onclick="openStaffModal('<?php echo htmlspecialchars($dept); ?>')" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary default-settings-modal__btn default-settings-modal__btn--info tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-3 tw-text-sm tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">
+                            <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2 max768:tw-flex-col max768:tw-items-stretch">
+                                <button type="button" onclick="openStaffModal('<?php echo htmlspecialchars($dept); ?>')" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-3 tw-text-sm tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">
                                     <i class="fas fa-users tw-mr-2" aria-hidden="true"></i>
                                     Người thực hiện
                                 </button>
@@ -66,16 +79,16 @@
                         </div>
                     </div>
 
-                    <div class="table-container default-settings-modal__table-wrap score-options-modal__table-wrap tw-min-h-0 tw-flex-1 tw-overflow-auto tw-rounded-md tw-border tw-border-slate-200 tw-bg-white">
-                        <table class="evaluation-table default-settings-modal__table tw-w-full tw-border-collapse tw-text-sm">
+                    <div class="score-options-modal__table-wrap tw-min-h-0 tw-flex-1 tw-overflow-auto tw-rounded-md tw-border tw-border-solid tw-border-slate-200 tw-bg-white">
+                        <table class="tw-mb-5 tw-w-full tw-min-w-full tw-border-collapse tw-border-spacing-0 tw-text-sm max1024:tw-min-w-[1020px] max768:tw-min-w-[980px]">
                             <thead class="tw-sticky tw-top-0 tw-z-10">
                                 <tr class="tw-bg-slate-100 tw-text-left tw-text-xs tw-font-bold tw-tracking-wide tw-text-slate-600">
-                                    <th class="default-settings-modal__col default-settings-modal__col--stt tw-px-2 tw-py-2">STT</th>
-                                    <th class="default-settings-modal__col default-settings-modal__col--criteria tw-px-2 tw-py-2">Tiêu chí đánh giá</th>
-                                    <th class="default-settings-modal__col default-settings-modal__col--type tw-px-2 tw-py-2">Loại tính hạn</th>
-                                    <th class="default-settings-modal__col default-settings-modal__col--days tw-px-2 tw-py-2">Số ngày</th>
-                                    <th class="default-settings-modal__col default-settings-modal__col--owner tw-px-2 tw-py-2">Người chịu trách nhiệm</th>
-                                    <th class="default-settings-modal__col default-settings-modal__col--actions tw-px-2 tw-py-2">Thao tác</th>
+                                    <th class="<?php echo $ds_th; ?> tw-w-11 tw-min-w-[44px]">STT</th>
+                                    <th class="<?php echo $ds_th; ?> tw-w-[360px] tw-min-w-[360px]">Tiêu chí đánh giá</th>
+                                    <th class="<?php echo $ds_th; ?> tw-w-[210px] tw-min-w-[210px]">Loại tính hạn</th>
+                                    <th class="<?php echo $ds_th; ?> tw-w-[92px] tw-min-w-[92px]">Số ngày</th>
+                                    <th class="<?php echo $ds_th; ?> tw-w-[230px] tw-min-w-[230px]">Người chịu trách nhiệm</th>
+                                    <th class="<?php echo $ds_th; ?> tw-w-[70px] tw-min-w-[70px]">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="default_settings_tbody" class="tw-divide-y tw-divide-slate-100">
@@ -118,7 +131,7 @@
                                         $nhom_display = getNhomDisplayName($dept, $row['nhom']);
                                         ?>
                                         <tr>
-                                            <td colspan="6" class="default-settings-modal__group-row tw-bg-slate-900 tw-px-2 tw-py-1 tw-text-left tw-text-xs tw-font-bold tw-tracking-wide tw-text-slate-700">
+                                            <td colspan="6" class="tw-border tw-border-solid tw-border-[#ddd] tw-border-t-[#d7e4fb] tw-border-b-[#d7e4fb] tw-bg-[#eef5ff] tw-px-2 tw-py-1.5 tw-text-left tw-align-middle tw-text-[12.5px] tw-font-bold tw-leading-[1.28] tw-text-[#143583] max1024:tw-text-[12px] max768:tw-p-1.5 max768:tw-text-[12px]">
                                                 <?php echo htmlspecialchars($nhom_display); ?>
                                             </td>
                                         </tr>
@@ -130,22 +143,22 @@
                                     $so_ngay_xuly = isset($row['so_ngay_xuly']) ? intval($row['so_ngay_xuly']) : 7;
                                     $nguoi_chiu_trachnhiem_default = isset($row['nguoi_chiu_trachnhiem_default']) ? intval($row['nguoi_chiu_trachnhiem_default']) : 0;
                                     ?>
-                                    <tr id="ds_row_<?php echo (int) $row['id']; ?>" class="tw-bg-white tw-transition hover:tw-bg-[#eef5ff]/60">
-                                        <td class="default-settings-modal__index tw-whitespace-nowrap tw-px-2 tw-py-2 tw-font-bold tw-text-slate-700"><?php echo (int) $row['thutu']; ?></td>
-                                        <td class="text-left default-settings-modal__criteria-cell tw-min-w-[260px] tw-px-2 tw-py-2 tw-leading-5 tw-text-slate-800"><?php echo htmlspecialchars($row['noidung']); ?></td>
-                                        <td class="tw-px-2 tw-py-2">
-                                            <select id="ds_ngay_tinh_han_<?php echo (int) $row['id']; ?>" class="form-control default-settings-modal__method-select tw-h-8 tw-min-w-[180px] tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15">
+                                    <tr id="ds_row_<?php echo (int) $row['id']; ?>" class="tw-group tw-bg-white tw-transition hover:tw-bg-[#eef5ff]/60">
+                                        <td class="<?php echo $ds_td; ?> tw-whitespace-nowrap tw-text-center tw-font-bold tw-tabular-nums tw-text-slate-900"><?php echo (int) $row['thutu']; ?></td>
+                                        <td class="<?php echo $ds_td; ?> tw-min-w-[330px] tw-text-left tw-font-semibold tw-text-gray-800"><?php echo htmlspecialchars($row['noidung']); ?></td>
+                                        <td class="<?php echo $ds_td; ?> tw-text-slate-700">
+                                            <select id="ds_ngay_tinh_han_<?php echo (int) $row['id']; ?>" class="<?php echo $ds_table_field; ?> tw-w-full tw-min-w-[200px]">
                                                 <option value="ngay_vao" <?php echo ($ngay_tinh_han == 'ngay_vao') ? 'selected' : ''; ?>>Ngày vào trừ số ngày</option>
                                                 <option value="ngay_vao_cong" <?php echo ($ngay_tinh_han == 'ngay_vao_cong') ? 'selected' : ''; ?>>Ngày vào cộng số ngày</option>
                                                 <option value="ngay_ra" <?php echo ($ngay_tinh_han == 'ngay_ra') ? 'selected' : ''; ?>>Ngày ra cộng số ngày</option>
                                                 <option value="ngay_ra_tru" <?php echo ($ngay_tinh_han == 'ngay_ra_tru') ? 'selected' : ''; ?>>Ngày ra trừ số ngày</option>
                                             </select>
                                         </td>
-                                        <td class="tw-px-2 tw-py-2">
-                                            <input type="number" id="ds_so_ngay_xuly_<?php echo (int) $row['id']; ?>" class="form-control default-settings-modal__days-input tw-h-8 tw-w-20 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="<?php echo (int) $so_ngay_xuly; ?>" min="0" max="365">
+                                        <td class="<?php echo $ds_td; ?> tw-text-slate-700">
+                                            <input type="number" id="ds_so_ngay_xuly_<?php echo (int) $row['id']; ?>" class="<?php echo $ds_table_field; ?> tw-w-[78px] tw-min-w-[78px] tw-leading-5" value="<?php echo (int) $so_ngay_xuly; ?>" min="0" max="365">
                                         </td>
-                                        <td class="tw-px-2 tw-py-2">
-                                            <select id="ds_nguoi_chiu_trachnhiem_<?php echo (int) $row['id']; ?>" class="form-control default-settings-modal__owner-select tw-h-8 tw-min-w-[220px] tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15">
+                                        <td class="<?php echo $ds_td; ?> tw-text-slate-700">
+                                            <select id="ds_nguoi_chiu_trachnhiem_<?php echo (int) $row['id']; ?>" class="<?php echo $ds_table_field; ?> tw-w-full tw-min-w-[90px] max768:tw-min-w-[200px] max768:tw-text-[12px]">
                                                 <option value="0">-- Chọn người chịu trách nhiệm --</option>
                                                 <?php
                                                 // Lấy danh sách người thực hiện thuộc bộ phận
@@ -162,7 +175,7 @@
                                                 ?>
                                             </select>
                                         </td>
-                                        <td class="tw-px-2 tw-py-2">
+                                        <td class="<?php echo $ds_td; ?> tw-text-slate-700">
                                             <button type="button" onclick="saveDefaultSetting(<?php echo (int) $row['id']; ?>, '<?php echo htmlspecialchars($dept); ?>')" class="btn-default-setting score-options-modal__row-btn score-options-modal__row-btn--save tw-inline-flex tw-h-8 tw-w-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]" title="Lưu dòng này" aria-label="Lưu cài đặt cho tiêu chí <?php echo (int) $row['thutu']; ?>">
                                                 <i class="fas fa-check" aria-hidden="true"></i>
                                                 <span class="score-options-modal__sr-only">Lưu</span>
@@ -176,14 +189,14 @@
                         </table>
                     </div>
 
-                    <div class="default-settings-modal__toolbar default-settings-modal__toolbar--bottom score-options-modal__toolbar score-options-modal__toolbar--bottom tw-flex tw-flex-col tw-gap-2 tw-border-t tw-border-slate-100 tw-pt-3 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
-                        <div class="default-settings-modal__footer-meta"><?php echo (int) $default_settings_count; ?> dòng cài đặt</div>
-                        <div class="default-settings-modal__footer-actions tw-flex tw-flex-col-reverse tw-gap-2 sm:tw-flex-row sm:tw-justify-end">
-                            <button type="button" onclick="closeDefaultSettingModal()" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary default-settings-modal__btn default-settings-modal__btn--secondary tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-slate-300 tw-bg-white tw-px-3 tw-text-sm tw-font-bold tw-text-slate-700 tw-shadow-sm tw-transition hover:tw-bg-slate-50">
+                    <div class="score-options-modal__toolbar score-options-modal__toolbar--bottom tw-flex tw-flex-col tw-gap-2 tw-border-t tw-border-slate-100 tw-pt-3 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                        <div class="tw-inline-flex tw-min-h-7 tw-items-center tw-text-[12px] tw-font-extrabold tw-text-slate-500"><?php echo (int) $default_settings_count; ?> dòng cài đặt</div>
+                        <div class="tw-flex tw-items-center tw-justify-end tw-gap-2 max768:tw-w-full max768:tw-justify-between">
+                            <button type="button" onclick="closeDefaultSettingModal()" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary <?php echo $ds_action_btn; ?> tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-slate-300 tw-bg-white tw-px-3 tw-text-sm tw-font-bold tw-text-slate-700 tw-shadow-sm tw-transition hover:tw-bg-slate-50 max768:tw-min-w-[92px]">
                                 <i class="fas fa-times tw-mr-2" aria-hidden="true"></i>
                                 Đóng
                             </button>
-                            <button type="button" onclick="saveAllDefaultSettings('<?php echo htmlspecialchars($dept); ?>')" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--primary default-settings-modal__btn default-settings-modal__btn--primary tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#143583] tw-bg-[#143583] tw-px-3 tw-text-sm tw-font-bold tw-text-white tw-shadow-lg tw-shadow-[#0f2861]/20 tw-transition hover:tw-bg-[#1a4299]">
+                            <button type="button" onclick="saveAllDefaultSettings('<?php echo htmlspecialchars($dept); ?>')" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--primary <?php echo $ds_action_btn; ?> tw-inline-flex tw-h-9 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#143583] tw-bg-[#143583] tw-px-3 tw-text-sm tw-font-bold tw-text-white tw-shadow-lg tw-shadow-[#0f2861]/20 tw-transition hover:tw-bg-[#1a4299] max768:tw-max-w-[calc(100%-108px)] max768:tw-min-w-[min(220px,calc(100%-108px))]">
                                 <i class="fas fa-floppy-disk tw-mr-2" aria-hidden="true"></i>
                                 Lưu tất cả cài đặt
                             </button>

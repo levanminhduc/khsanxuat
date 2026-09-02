@@ -67,7 +67,7 @@
                                                 <i class="fas fa-floppy-disk" aria-hidden="true"></i>
                                                 Cập nhật
                                             </button>
-                                            <button type="button" onclick="deleteStaff(${staff.id})" class="btn-add-criteria default-settings-modal__btn staff-modal__action-btn staff-modal__action-btn--danger tw-inline-flex tw-h-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-rose-200 tw-bg-rose-50 tw-px-2 tw-text-xs tw-font-bold tw-text-rose-800 tw-shadow-sm tw-transition hover:tw-bg-rose-100">
+                                            <button type="button" onclick="deleteStaff(${staff.id})" class="btn-add-criteria staff-modal__action-btn active:tw-scale-[0.96] staff-modal__action-btn--danger tw-inline-flex tw-h-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-rose-200 tw-bg-rose-50 tw-px-2 tw-text-xs tw-font-bold tw-text-rose-800 tw-shadow-sm tw-transition hover:tw-bg-rose-100">
                                                 <i class="fas fa-trash" aria-hidden="true"></i>
                                                 Xóa
                                             </button>

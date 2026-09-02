@@ -10,15 +10,15 @@
    theo đúng vị trí hiện tại. Muốn gom theo modal thì phải đổi tên class base
    trong partial trước.
 
-   Section order: LAYOUT → COMPONENTS → RESPONSIVE (trong mỗi tầng: default
-   settings → base dùng chung → staff → deadline → score options)
+   Section order: LAYOUT → COMPONENTS → RESPONSIVE (trong mỗi tầng: base dùng
+   chung → staff → deadline → score options)
 
    ĐANG CHUYỂN SANG TAILWIND (assets/css/tailwind.css, xem tools/tailwind/README.md):
    modal nào đã port thì style nằm hết ở class tw-* trong partial, file này chỉ
    giữ lại phần Tailwind không làm được (hook JS/state, @keyframes, selector ID,
    font-family inherit + khôi phục .fas).
-   - Đã port: add-criteria, staff, deadline.
-   - Chưa port: default-settings, score-options.
+   - Đã port: add-criteria, staff, deadline, default-settings.
+   - Chưa port: score-options.
    ========================================================== */
 
 /* ================= LAYOUT ================= */
@@ -46,90 +46,6 @@
     background-color: #f8f9fa;
     z-index: 10;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-}
-
-/* Default settings modal - layout tier */
-.default-settings-modal__content {
-    font-family: inherit;
-    width: 80%;
-    max-width: 80%;
-    max-height: 88vh;
-    margin: 4vh auto;
-    padding: 0;
-    border: 1px solid #d7dde6;
-    border-radius: 10px !important;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 18px 42px rgba(14, 30, 62, 0.2);
-}
-
-.default-settings-modal__header {
-    padding: 20px 24px 14px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #ffffff;
-}
-
-.default-settings-modal__body {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    padding: 14px 20px 16px;
-    background: #f8fafc;
-}
-
-.default-settings-modal__toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.default-settings-modal__toolbar--top {
-    padding-bottom: 12px;
-}
-
-.default-settings-modal__toolbar--bottom {
-    border-top: 1px solid #e5e7eb;
-    margin-top: 12px;
-    padding-top: 12px;
-}
-
-.default-settings-modal__toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.default-settings-modal__actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.default-settings-modal__xuong-filter {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.default-settings-modal__table-wrap {
-    flex: 1;
-    min-height: 0;
-    margin-bottom: 0;
-    border: 1px solid #dbe3ee;
-    background: #fff;
-    overflow: auto;
-}
-
-.default-settings-modal__table {
-    width: max-content;
-    min-width: 100%;
-    table-layout: auto;
-    border-collapse: separate;
-    border-spacing: 0;
 }
 
 /* Base dùng chung cho mọi modal (đặt tên score-options vì lịch sử —
@@ -197,243 +113,9 @@
     min-width: 900px;
 }
 
-/* Staff modal - layout tier */
-
-/* Add criteria modal - layout tier */
-
-/* Deadline modal - layout tier */
-
 /* ================= COMPONENTS ================= */
-/* Default settings modal - component tier */
-.default-settings-modal {
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.default-settings-modal__close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #64748b;
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
-}
-
-.default-settings-modal__close:hover {
-    background: #e2e8f0;
-    color: #0f172a;
-    transform: translateY(-1px);
-}
-
-.default-settings-modal__title {
-    margin: 0;
-    color: #0f172a;
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1.2;
-    text-wrap: balance;
-}
-
-.default-settings-modal__subtitle {
-    margin: 0;
-    color: #475569;
-    font-size: 14px;
-}
-
-.default-settings-modal__label {
-    margin: 0;
-    color: #334155;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.default-settings-modal__select-xuong {
-    width: 220px;
-    min-height: 34px;
-    padding: 5px 8px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.default-settings-modal__status {
-    margin: 8px 12px 0;
-    padding: 7px 9px;
-    border-radius: 6px;
-}
-
-.default-settings-modal__btn {
-    min-height: 34px;
-    border-radius: 6px;
-    font-weight: 700;
-    box-shadow: none;
-    transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
-}
-
-.default-settings-modal__btn:active {
-    transform: scale(0.96);
-}
-
-.default-settings-modal__btn--primary {
-    background-color: #143583;
-}
-
-.default-settings-modal__btn--primary:hover {
-    background-color: #1a4299;
-}
-
-.default-settings-modal__btn--info {
-    background-color: #143583;
-}
-
-.default-settings-modal__btn--info:hover {
-    background-color: #1a4299;
-}
-
-.default-settings-modal__btn--secondary {
-    background-color: #64748b;
-}
-
-.default-settings-modal__btn--secondary:hover {
-    background-color: #475569;
-}
-
-.default-settings-modal__table thead th {
-    background: #143583;
-    color: #f8fafc;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.25;
-    padding: 7px 8px !important;
-    text-align: center;
-    border-bottom: 1px solid #0f2861;
-    white-space: nowrap;
-    word-break: keep-all;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-#default_settings_tbody td {
-    padding: 5px 8px;
-    vertical-align: middle;
-    border-bottom: 1px solid #eef2f7;
-    background: #fff;
-    color: #334155;
-    font-size: 12.5px;
-    line-height: 1.28;
-}
-
-#default_settings_tbody .text-left {
-    text-align: left;
-    min-width: 330px;
-    line-height: 1.28;
-}
-
-.default-settings-modal__table tbody tr:hover td {
-    background: #f8fafc;
-}
-
-.default-settings-modal__group-row {
-    background: #eef5ff !important;
-    color: #143583;
-    font-weight: 700;
-    text-align: left;
-    padding: 6px 8px !important;
-    border-top: 1px solid #d7e4fb;
-    border-bottom: 1px solid #d7e4fb !important;
-}
-
-.default-settings-modal__table .form-control {
-    min-width: 90px;
-    min-height: 32px;
-    padding: 5px 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    color: #0f172a;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    font-variant-numeric: tabular-nums;
-}
-
-.default-settings-modal__owner-select {
-    min-height: 32px;
-    min-width: 210px;
-}
-
-.default-settings-modal__col {
-    white-space: nowrap;
-}
-
-.default-settings-modal__col--stt {
-    width: 44px;
-    min-width: 44px;
-}
-
-.default-settings-modal__col--criteria {
-    width: 360px;
-    min-width: 360px;
-}
-
-.default-settings-modal__col--type {
-    width: 210px;
-    min-width: 210px;
-}
-
-.default-settings-modal__col--days {
-    width: 92px;
-    min-width: 92px;
-}
-
-.default-settings-modal__col--owner {
-    width: 230px;
-    min-width: 230px;
-}
-
-.default-settings-modal__col--actions {
-    width: 70px;
-    min-width: 70px;
-}
-
-.default-settings-modal__xuong-badge {
-    min-height: 26px;
-}
-
-.default-settings-modal__toolbar--top,
-.default-settings-modal__table-wrap {
-    border-radius: 6px !important;
-}
-
-.default-settings-modal__index {
-    text-align: center;
-    color: #0f172a !important;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-}
-
-.default-settings-modal__criteria-cell {
-    color: #1f2937 !important;
-    font-weight: 600;
-}
-
-.default-settings-modal__method-select {
-    min-width: 200px !important;
-}
-
-.default-settings-modal__days-input {
-    width: 78px !important;
-    min-width: 78px !important;
-}
 
 /* Footer meta dùng chung 2 modal chưa port */
-.default-settings-modal__footer-meta,
 .score-options-modal__footer-meta {
     display: inline-flex;
     align-items: center;
@@ -448,14 +130,8 @@
     color: #64748b;
 }
 
-.default-settings-modal__footer-actions {
-    align-items: center;
-}
-
 /* Ensure buttons use project default font */
-.default-settings-modal__btn,
-.staff-modal__action-btn,
-.default-settings-modal__close {
+.staff-modal__action-btn {
     font-family: inherit;
 }
 
@@ -534,8 +210,6 @@
     color: #881337;
 }
 
-/* Add criteria modal - component tier */
-
 /* Modern modal shell should inherit the page font; icon fonts are restored below. */
 .add-criteria-modal,
 .add-criteria-modal *,
@@ -546,7 +220,6 @@
 
 .add-criteria-modal .fas,
 .deadline-modal .fas,
-.default-settings-modal .fas,
 .score-options-modal .fas,
 .staff-modal .fas {
     font-family: "Font Awesome 6 Free" !important;
@@ -556,9 +229,6 @@
 /* Deadline modal - danh sách tiêu chí */
 
 /* Status text dùng chung 3 modal */
-.default-settings-modal__status {
-    text-align: center;
-}
 
 /* Tiện ích global: giữ !important để thắng mọi display do class Tailwind/BEM đặt. */
 [hidden] {
@@ -742,6 +412,9 @@ body.indexdept-modal-open {
     padding: 7px 8px !important;
     text-transform: none;
     letter-spacing: 0;
+    /* Trước đây thừa hưởng từ rule .default-settings-modal__table thead th (đã port) */
+    white-space: nowrap;
+    word-break: keep-all;
 }
 
 .score-options-modal__table thead th:last-child {
@@ -1090,127 +763,18 @@ body.indexdept-modal-open {
 }
 
 /* ================= RESPONSIVE ================= */
-/* Default settings modal - responsive tier */
-@media screen and (max-width: 1024px) {
-    .default-settings-modal__content {
-        width: 96vw;
-        max-width: 96vw;
-        max-height: 92vh;
-    }
-
-    .default-settings-modal__title {
-        font-size: 18px;
-    }
-
-    .default-settings-modal__table thead th,
-#default_settings_tbody td {
-        font-size: 12px;
-    }
-
-    .default-settings-modal__table {
-        min-width: 1020px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .default-settings-modal__content {
-        width: 96vw !important;
-        max-width: 96vw !important;
-        max-height: 94vh;
-        margin: 3vh auto !important;
-        padding: 0 !important;
-    }
-
-    .default-settings-modal__header {
-        padding: 12px 44px 10px 10px;
-    }
-
-    .default-settings-modal__body {
-        padding: 8px;
-        gap: 8px;
-    }
-
-    .default-settings-modal__toolbar,
-.default-settings-modal__toolbar-left,
-.default-settings-modal__actions,
-.default-settings-modal__xuong-filter {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 8px;
-    }
-
-    .default-settings-modal__select-xuong,
-.default-settings-modal__btn {
-        width: 100%;
-        margin-right: 0;
-    }
-
-    .default-settings-modal__table-wrap {
-        overflow: auto;
-        border-radius: 6px;
-    }
-
-    .default-settings-modal__table {
-        min-width: 980px;
-    }
-
-    .default-settings-modal__table th,
-.default-settings-modal__table td {
-        padding: 6px 6px !important;
-        font-size: 12px !important;
-    }
-
-    /* Owner select specific in default settings */
-    .default-settings-modal__owner-select {
-        min-width: 200px !important;
-        font-size: 12px !important;
-    }
-
-    .default-settings-modal__toolbar--bottom,
-.default-settings-modal__footer-actions {
-        width: 100%;
-    }
-
-    .default-settings-modal__footer-actions {
-        align-items: stretch;
-    }
-}
 
 /* Staff modal - responsive tier */
 @media screen and (max-width: 1024px) {
-    
-    
+
     #staff_tbody td {
         font-size: 12px;
     }
 }
 
-@media screen and (max-width: 768px) {
-    
-    
-    
-    
-    
-    
-    }
-
-/* Add criteria modal - responsive tier */
-@media screen and (max-width: 1024px) {
-    
-    }
-
-@media screen and (max-width: 768px) {
-    
-    
-    
-    
-    
-    }
-
 /* Generic modal - responsive tier
    VỊ TRÍ QUAN TRỌNG: .modal-content @768 dùng !important, cùng specificity với
-   các *__content @768 bên dưới. Phải nằm SAU default-settings/staff/add-criteria
+   các *__content @768 bên dưới. Phải nằm SAU staff/add-criteria
    và TRƯỚC deadline/score-options thì thứ tự thắng/thua mới giữ nguyên. */
 @media screen and (max-width: 768px) {
     .modal-content {
@@ -1218,7 +782,7 @@ body.indexdept-modal-open {
         margin: 10% auto !important;
         padding: 15px !important;
     }
-    
+
     .quick-suggestion {
         display: flex;
         flex-wrap: wrap;
@@ -1231,21 +795,6 @@ body.indexdept-modal-open {
         font-size: 12px;
     }
 }
-
-/* Deadline modal - responsive tier */
-@media screen and (max-width: 768px) {
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    }
 
 /* Score options modal - responsive tier */
 @media screen and (max-width: 1024px) {
@@ -1382,8 +931,7 @@ body.indexdept-modal-open {
 
 /* Unified modal footer action order for indexdept mobile dialogs */
 @media screen and (max-width: 768px) {
-    .default-settings-modal__footer-actions,
-.score-options-modal__footer-actions {
+    .score-options-modal__footer-actions {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
@@ -1392,21 +940,18 @@ body.indexdept-modal-open {
         width: 100% !important;
     }
 
-    .default-settings-modal__footer-actions .score-options-modal__btn,
-.score-options-modal__footer-actions .score-options-modal__btn {
+    .score-options-modal__footer-actions .score-options-modal__btn {
         flex: 0 0 auto !important;
         width: auto !important;
         margin-right: 0 !important;
         white-space: nowrap;
     }
 
-    .default-settings-modal__footer-actions .score-options-modal__btn--secondary,
-.score-options-modal__footer-actions .score-options-modal__btn--secondary {
+    .score-options-modal__footer-actions .score-options-modal__btn--secondary {
         min-width: 92px;
     }
 
-    .default-settings-modal__footer-actions .score-options-modal__btn--primary,
-.score-options-modal__footer-actions .score-options-modal__btn--primary {
+    .score-options-modal__footer-actions .score-options-modal__btn--primary {
         max-width: calc(100% - 108px);
         min-width: min(220px, calc(100% - 108px));
     }
