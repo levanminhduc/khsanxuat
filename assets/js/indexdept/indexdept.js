@@ -610,7 +610,6 @@
         if (!element) return;
 
         const tieuchi_id = element.getAttribute('data-tieuchi-id');
-        const checkbox = document.getElementById('checkbox_' + tieuchi_id);
         const hiddenField = document.getElementById('da_thuchien_' + tieuchi_id);
         const label = document.getElementById('checkbox_label_' + tieuchi_id);
         const diem = parseFloat(element.value);
@@ -633,9 +632,6 @@
         // Auto-save điểm
         window._autoSaveScore(tieuchi_id, element.value);
     }
-
-    function autoSaveScore() {}
-    function showAutoSaveToast() {}
 
     // Hàm cập nhật tổng điểm
     function updateTotalPoints() {
@@ -739,9 +735,6 @@
         const dateDisplay = document.getElementById('date_display_' + idTieuchi);
         const originalText = dateDisplay.innerHTML;
 
-        // Lấy giá trị xưởng hiện tại (nếu có)
-        const currentXuong = (INDEXDEPT_BOOTSTRAP.xuong || '');
-
         // Hiển thị trạng thái đang cập nhật
         setDeadlineState(dateDisplay, 'loading', buildLoadingIcon('loading-icon--md', 'Đang cập nhật') + ' Đang cập nhật...');
 
@@ -768,10 +761,7 @@
                                 clearDeadlineState(dateDisplay);
                             }, 2000);
 
-                            // Comment phần confirm này lại vì người dùng không muốn nó xuất hiện
-                            /*if (confirm('Bạn có muốn lưu số ngày này vào cài đặt mặc định cho xưởng này không?')) {
-                                saveDefaultSetting(idTieuchi, dept);
-                            }*/
+                            // Không hỏi lưu vào cài đặt mặc định: người dùng không muốn confirm ở đây
                         } else {
                             // Hiển thị lỗi trong khung deadline
                             setDeadlineState(dateDisplay, 'error', '<span class="text-danger">' + escapeHtml(response.message || 'Lỗi không xác định') + '</span>');
@@ -866,17 +856,8 @@
                                 });
                             }
 
-                            // Hiển thị thông báo hỏi về việc lưu cài đặt mặc định
+                            // Không hỏi lưu làm cài đặt mặc định: người dùng không muốn confirm ở đây
                             setTimeout(function() {
-                                // Comment phần confirm này lại vì người dùng không muốn nó xuất hiện
-                                /*if (confirm('Bạn có muốn lưu các cài đặt này làm mặc định cho tất cả tiêu chí không?')) {
-                                    // Gọi hàm lưu tất cả cài đặt mặc định
-                                    saveAllDefaultSettings(dept);
-                                } else {
-                                    hideElement(updateStatusDiv);
-                                    closeDeadlineModal();
-                                }*/
-
                                 // Chỉ đóng modal sau khi hoàn thành
                                 hideElement(updateStatusDiv);
                                 closeDeadlineModal();
@@ -959,7 +940,7 @@
     function openStaffModal(dept) {
         document.getElementById('current_staff_dept').value = dept;
         showElement(document.getElementById('staffModal'), 'block');
-        document.getElementById('dept_display_name').textContent = getDeptDisplayName(dept);
+        document.getElementById('dept_display_name').textContent = (INDEXDEPT_BOOTSTRAP.deptDisplayName || '');
 
         loadStaffList(dept);
         setTimeout(function() {
@@ -968,24 +949,6 @@
                 nameField.focus();
             }
         }, 0);
-    }
-
-    // Hàm lấy tên hiển thị của bộ phận
-    function getDeptDisplayName(dept) {
-        const deptNames = {
-            'kehoach': 'BỘ PHẬN KẾ HOẠCH',
-            'chuanbi_sanxuat_phong_kt': 'BỘ PHẬN CHUẨN BỊ SẢN XUẤT (PHÒNG KT)',
-            'kho': 'KHO NGUYÊN, PHỤ LIỆU',
-            'cat': 'BỘ PHẬN CẮT',
-            'ep_keo': 'BỘ PHẬN ÉP KEO',
-            'co_dien': 'BỘ PHẬN CƠ ĐIỆN',
-            'chuyen_may': 'BỘ PHẬN CHUYỀN MAY',
-            'kcs': 'BỘ PHẬN KCS',
-            'ui_thanh_pham': 'BỘ PHẬN ỦI THÀNH PHẨM',
-            'hoan_thanh': 'BỘ PHẬN HOÀN THÀNH'
-        };
-
-        return deptNames[dept] || 'KHÔNG XÁC ĐỊNH';
     }
 
     // Hàm tải danh sách người thực hiện
@@ -1108,12 +1071,6 @@
         if (document.getElementById('ngay_tinh_han')) {
             changeNgayTinhHan();
         }
-
-        // Khởi tạo giá trị completedCount và totalCriteria
-        let completedCount = (INDEXDEPT_BOOTSTRAP.completedTieuchi || 0);
-        const totalCriteria = (INDEXDEPT_BOOTSTRAP.totalTieuchi || 0);
-        let totalPoints = 0;
-        const maxPoints = (INDEXDEPT_BOOTSTRAP.maxPossiblePoints || 0);
 
         // Cập nhật trạng thái checkbox ban đầu
         document.querySelectorAll('.diem-dropdown').forEach(element => {
@@ -1288,9 +1245,6 @@
         };
         xhr.send('action=delete&id=' + encodeURIComponent(staffId));
     }
-
-    // Hàm đóng modal quản lý người thực hiện
-
 
     // Hàm thay đổi xưởng được chọn
     function changeSelectedXuong() {
@@ -1567,116 +1521,6 @@
         xhr.send('dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&line=' + encodeURIComponent(selectedLine) + '&settings=' + JSON.stringify(settings) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
     }
 
-    // Hàm mở modal cài đặt mặc định
-
-
-    // Hàm áp dụng cài đặt mặc định cho một tiêu chí
-    function applyDefaultSetting(id_tieuchi, dept) {
-        const selectedXuong = document.getElementById('selected_xuong').value;
-        const statusDiv = document.getElementById('default_settings_status');
-        const row = document.getElementById('ds_row_' + id_tieuchi);
-
-        showElement(statusDiv, 'block');
-        setStatusMessage(statusDiv, 'info', 'Đang áp dụng cài đặt mặc định...');
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', window.BASE_URL + '/actions/apply_default_setting.php', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onreadystatechange = function() {
-            if (this.readyState === 4) {
-                if (this.status === 200) {
-                    try {
-                        const response = JSON.parse(this.responseText);
-                        if (response.success) {
-                            setStatusMessage(statusDiv, 'success', 'Đã áp dụng cài đặt mặc định thành công!');
-                            flashRow(row, 'row-flash--success');
-                            setTimeout(function() {
-                                hideElement(statusDiv);
-                            }, 2000);
-                        } else {
-                            setStatusMessage(statusDiv, 'error', 'Lỗi: ' + response.message);
-                        }
-                    } catch (e) {
-                        console.error(e);
-                        setStatusMessage(statusDiv, 'error', 'Lỗi khi xử lý phản hồi từ máy chủ.');
-                    }
-                } else {
-                    setStatusMessage(statusDiv, 'error', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
-                }
-            }
-        };
-        xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
-    }
-
-    // Hàm áp dụng tất cả cài đặt mặc định
-    function applyAllDefaultSettings(dept) {
-        const selectedXuong = document.getElementById('selected_xuong').value;
-        const statusDiv = document.getElementById('default_settings_status');
-        const tableBody = document.getElementById('default_settings_tbody');
-
-        if (!confirm('Bạn có chắc chắn muốn áp dụng tất cả cài đặt mặc định cho ' +
-                    (selectedXuong ? 'xưởng ' + selectedXuong : 'tất cả xưởng') + ' không?')) {
-            return;
-        }
-
-        showElement(statusDiv, 'block');
-        setStatusMessage(statusDiv, 'info', 'Đang áp dụng tất cả cài đặt mặc định...');
-
-        const rows = tableBody.querySelectorAll('tr[id^="ds_row_"]');
-        let completedCount = 0;
-        let errorCount = 0;
-
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const id_tieuchi = row.id.replace('ds_row_', '');
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', window.BASE_URL + '/actions/apply_default_setting.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (this.readyState === 4) {
-                    if (this.status === 200) {
-                        try {
-                            const response = JSON.parse(this.responseText);
-                            if (response.success) {
-                                completedCount++;
-                                flashRow(row, 'row-flash--success');
-                            } else {
-                                errorCount++;
-                                flashRow(row, 'row-flash--error');
-                            }
-
-                            // Kiểm tra nếu đã hoàn thành tất cả
-                            if (completedCount + errorCount === rows.length) {
-                                if (errorCount === 0) {
-                                    setStatusMessage(statusDiv, 'success', 'Đã áp dụng tất cả cài đặt mặc định thành công!');
-                                } else {
-                                    setStatusMessage(statusDiv, 'warning', 'Đã áp dụng ' + completedCount + '/' + rows.length + ' cài đặt mặc định. Có ' + errorCount + ' lỗi.');
-                                }
-
-                                setTimeout(function() {
-                                    hideElement(statusDiv);
-                                }, 3000);
-                            }
-                        } catch (e) {
-                            console.error(e);
-                            errorCount++;
-                        }
-                    } else {
-                        errorCount++;
-                    }
-                }
-            };
-            xhr.send('id_tieuchi=' + id_tieuchi + '&dept=' + dept + '&xuong=' + encodeURIComponent(selectedXuong) + '&csrf_token=' + encodeURIComponent(getCsrfToken()));
-        }
-    }
-
-    // Thêm gọi hàm đồng bộ khi trang được tải
-    document.addEventListener('DOMContentLoaded', function() {
-        // Comment dòng này lại để không tự động đồng bộ khi load trang
-        // syncTieuChiWithDefaultSettings((INDEXDEPT_BOOTSTRAP.dept || ''), (INDEXDEPT_BOOTSTRAP.xuong || ''));
-    });
-
     // Hàm kiểm tra có hình ảnh cho tiêu chí hay không
     function checkImageForTieuchi(tieuchiId, selectElement) {
         console.log("Kiểm tra hình ảnh cho tiêu chí: " + tieuchiId);
@@ -1709,7 +1553,6 @@
                             selectElement.value = '0';
 
                             // Cập nhật trạng thái checkbox thành X đỏ
-                            const checkbox = document.getElementById('checkbox_' + tieuchiId);
                             const label = document.getElementById('checkbox_label_' + tieuchiId);
                             const hiddenField = document.getElementById('da_thuchien_' + tieuchiId);
 

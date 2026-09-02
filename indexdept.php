@@ -232,6 +232,7 @@ $header_config = [
 window.INDEXDEPT_BOOTSTRAP = {
     id: <?php echo json_encode((int) $id); ?>,
     dept: <?php echo json_encode($dept); ?>,
+    deptDisplayName: <?php echo json_encode($dept_display_name); ?>,
     xuong: <?php echo json_encode($xuong); ?>,
     maxPossiblePoints: <?php echo json_encode((float) $max_possible_points); ?>,
     completedTieuchi: <?php echo json_encode((int) $completed_tieuchi); ?>,
