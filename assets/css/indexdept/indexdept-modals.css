@@ -17,8 +17,8 @@
    modal nào đã port thì style nằm hết ở class tw-* trong partial, file này chỉ
    giữ lại phần Tailwind không làm được (hook JS/state, @keyframes, selector ID,
    font-family inherit + khôi phục .fas).
-   - Đã port: add-criteria.
-   - Chưa port: default-settings, staff, deadline, score-options.
+   - Đã port: add-criteria, staff.
+   - Chưa port: default-settings, deadline, score-options.
    ========================================================== */
 
 /* ================= LAYOUT ================= */
@@ -198,73 +198,13 @@
 }
 
 /* Staff modal - layout tier */
-.staff-modal__content {
-    font-family: inherit;
-    width: 80%;
-    max-width: 80%;
-    max-height: 88vh;
-    margin: 4vh auto;
-    padding: 0;
-    border: 1px solid #d7dde6;
-    border-radius: 10px !important;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 18px 42px rgba(14, 30, 62, 0.2);
-}
 
-.staff-modal__header {
-    padding: 20px 24px 14px;
-    border-bottom: 1px solid #e5e7eb;
-    background: #ffffff;
-}
 
-.staff-modal__body {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 0;
-    padding: 14px 20px 16px;
-    background: #f8fafc;
-}
 
-.staff-modal__form-card {
-    border: 1px solid #dbe3ee;
-    border-radius: 6px !important;
-    background: #ffffff;
-    padding: 12px;
-}
 
-.staff-modal__form-row {
-    display: grid;
-    grid-template-columns: minmax(260px, 1fr) minmax(220px, 0.9fr) auto;
-    gap: 10px;
-    align-items: center;
-}
 
-.staff-modal__table-wrap {
-    flex: 1;
-    min-height: 0;
-    margin-bottom: 0;
-    border: 1px solid #dbe3ee;
-    background: #fff;
-    overflow: auto;
-}
 
-.staff-modal__table {
-    width: 100%;
-    min-width: 100%;
-    table-layout: fixed;
-    border-collapse: separate;
-    border-spacing: 0;
-}
 
-.staff-modal__footer {
-    display: flex;
-    justify-content: flex-end;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 12px;
-}
 
 /* Add criteria modal - layout tier */
 
@@ -550,61 +490,16 @@
 /* Ensure buttons use project default font */
 .default-settings-modal__btn,
 .staff-modal__action-btn,
-.default-settings-modal__close,
-.staff-modal__close {
+.default-settings-modal__close {
     font-family: inherit;
 }
 
 /* Staff modal - component tier */
-.staff-modal__close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #334155;
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
-}
 
-.staff-modal__close:hover {
-    background: #e2e8f0;
-    color: #0f172a;
-    transform: translateY(-1px);
-}
 
-.staff-modal__title {
-    margin: 0;
-    color: #0f172a;
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1.2;
-    text-wrap: balance;
-}
 
-.staff-modal__subtitle {
-    margin: 0;
-    color: #475569;
-    font-size: 14px;
-}
 
-.staff-modal__status {
-    margin: 8px 16px 0;
-    padding: 7px 9px;
-    border-radius: 6px;
-}
 
-.staff-modal__form-title {
-    margin: 0 0 8px;
-    color: #1e293b;
-    font-size: 13px;
-    font-weight: 700;
-}
 
 .staff-modal__input {
     width: 100%;
@@ -624,23 +519,7 @@
     outline: none;
 }
 
-.staff-modal__btn-add {
-    min-width: 76px;
-}
 
-.staff-modal__table thead th {
-    background: #143583;
-    color: #f8fafc;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.25;
-    padding: 7px 8px !important;
-    text-align: left;
-    border-bottom: 1px solid #0f2861;
-    text-transform: none;
-    letter-spacing: 0;
-}
 
 #staff_tbody td {
     padding: 5px 8px !important;
@@ -663,27 +542,10 @@
     background: #f8fafc;
 }
 
-.staff-modal__col {
-    white-space: nowrap;
-}
 
-.staff-modal__col--stt {
-    width: 48px;
-    min-width: 48px;
-}
 
-.staff-modal__col--name {
-    width: 36%;
-}
 
-.staff-modal__col--position {
-    width: 30%;
-}
 
-.staff-modal__col--actions {
-    width: 154px;
-    min-width: 154px;
-}
 
 .staff-modal__action-list {
     display: flex;
@@ -838,8 +700,7 @@
 
 /* Status text dùng chung 3 modal */
 .deadline-modal__update-status,
-.default-settings-modal__status,
-.staff-modal__status {
+.default-settings-modal__status {
     text-align: center;
 }
 
@@ -1631,7 +1492,7 @@ body.indexdept-modal-open {
     }
 
     .default-settings-modal__table thead th,
-    #default_settings_tbody td {
+#default_settings_tbody td {
         font-size: 12px;
     }
 
@@ -1659,9 +1520,9 @@ body.indexdept-modal-open {
     }
 
     .default-settings-modal__toolbar,
-    .default-settings-modal__toolbar-left,
-    .default-settings-modal__actions,
-    .default-settings-modal__xuong-filter {
+.default-settings-modal__toolbar-left,
+.default-settings-modal__actions,
+.default-settings-modal__xuong-filter {
         width: 100%;
         flex-direction: column;
         align-items: stretch !important;
@@ -1669,7 +1530,7 @@ body.indexdept-modal-open {
     }
 
     .default-settings-modal__select-xuong,
-    .default-settings-modal__btn {
+.default-settings-modal__btn {
         width: 100%;
         margin-right: 0;
     }
@@ -1684,7 +1545,7 @@ body.indexdept-modal-open {
     }
 
     .default-settings-modal__table th,
-    .default-settings-modal__table td {
+.default-settings-modal__table td {
         padding: 6px 6px !important;
         font-size: 12px !important;
     }
@@ -1696,7 +1557,7 @@ body.indexdept-modal-open {
     }
 
     .default-settings-modal__toolbar--bottom,
-    .default-settings-modal__footer-actions {
+.default-settings-modal__footer-actions {
         width: 100%;
     }
 
@@ -1707,55 +1568,21 @@ body.indexdept-modal-open {
 
 /* Staff modal - responsive tier */
 @media screen and (max-width: 1024px) {
-    .staff-modal__content {
-        width: 95vw;
-        max-height: 90vh;
-    }
-
-    .staff-modal__title {
-        font-size: 18px;
-    }
-
-    .staff-modal__table thead th,
+    
+    
     #staff_tbody td {
         font-size: 12px;
     }
 }
 
 @media screen and (max-width: 768px) {
-    .staff-modal__header {
-        padding: 12px 44px 10px 10px;
+    
+    
+    
+    
+    
+    
     }
-
-    .staff-modal__body {
-        padding: 10px;
-        gap: 10px;
-    }
-
-    .staff-modal__form-row {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .staff-modal__btn-add {
-        width: 100%;
-        margin-right: 0;
-    }
-
-    .staff-modal__table-wrap {
-        overflow: auto;
-        border-radius: 6px;
-    }
-
-    .staff-modal__table {
-        min-width: 640px;
-    }
-
-    .staff-modal__footer .score-options-modal__btn {
-        width: 100%;
-    }
-}
 
 /* Add criteria modal - responsive tier */
 @media screen and (max-width: 1024px) {
@@ -1832,13 +1659,13 @@ body.indexdept-modal-open {
     }
 
     .deadline-modal__criteria-toolbar,
-    .deadline-modal__group--actions {
+.deadline-modal__group--actions {
         align-items: stretch;
         flex-direction: column;
     }
 
     .deadline-modal__criteria-table-head,
-    .deadline-modal__criteria-item {
+.deadline-modal__criteria-item {
         grid-template-columns: 38px 42px minmax(0, 1fr);
     }
 
@@ -1924,7 +1751,7 @@ body.indexdept-modal-open {
     }
 
     .score-options-modal__toolbar,
-    .score-options-modal__actions {
+.score-options-modal__actions {
         width: 100%;
         flex-direction: row;
         align-items: stretch;
@@ -1947,13 +1774,13 @@ body.indexdept-modal-open {
     }
 
     .score-options-modal__table th,
-    #score_options_tbody td {
+#score_options_tbody td {
         padding: 6px 6px !important;
         font-size: 12px !important;
     }
 
     .score-options-modal__input-cell,
-    .score-options-modal__score-editor {
+.score-options-modal__score-editor {
         min-width: 230px;
     }
 
@@ -1994,8 +1821,8 @@ body.indexdept-modal-open {
 /* Unified modal footer action order for indexdept mobile dialogs */
 @media screen and (max-width: 768px) {
     .deadline-modal__actions,
-    .default-settings-modal__footer-actions,
-    .score-options-modal__footer-actions {
+.default-settings-modal__footer-actions,
+.score-options-modal__footer-actions {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
@@ -2005,8 +1832,8 @@ body.indexdept-modal-open {
     }
 
     .deadline-modal__actions .score-options-modal__btn,
-    .default-settings-modal__footer-actions .score-options-modal__btn,
-    .score-options-modal__footer-actions .score-options-modal__btn {
+.default-settings-modal__footer-actions .score-options-modal__btn,
+.score-options-modal__footer-actions .score-options-modal__btn {
         flex: 0 0 auto !important;
         width: auto !important;
         margin-right: 0 !important;
@@ -2014,14 +1841,14 @@ body.indexdept-modal-open {
     }
 
     .deadline-modal__actions .score-options-modal__btn--secondary,
-    .default-settings-modal__footer-actions .score-options-modal__btn--secondary,
-    .score-options-modal__footer-actions .score-options-modal__btn--secondary {
+.default-settings-modal__footer-actions .score-options-modal__btn--secondary,
+.score-options-modal__footer-actions .score-options-modal__btn--secondary {
         min-width: 92px;
     }
 
     .deadline-modal__actions .score-options-modal__btn--primary,
-    .default-settings-modal__footer-actions .score-options-modal__btn--primary,
-    .score-options-modal__footer-actions .score-options-modal__btn--primary {
+.default-settings-modal__footer-actions .score-options-modal__btn--primary,
+.score-options-modal__footer-actions .score-options-modal__btn--primary {
         max-width: calc(100% - 108px);
         min-width: min(220px, calc(100% - 108px));
     }

@@ -58,10 +58,10 @@
                             staffList.forEach(function(staff, index) {
                                 html += `
                                 <tr id="staff_row_${staff.id}" class="staff-modal__row tw-bg-white tw-transition hover:tw-bg-[#eef5ff]/60">
-                                    <td class="staff-modal__index-cell tw-whitespace-nowrap tw-px-2 tw-py-2">${index + 1}</td>
-                                    <td class="tw-px-2 tw-py-2"><input type="text" id="staff_name_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.ten)}"></td>
-                                    <td class="tw-px-2 tw-py-2"><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.chuc_vu || '')}"></td>
-                                    <td class="tw-px-2 tw-py-2">
+                                    <td class="staff-modal__index-cell tw-whitespace-nowrap tw-border tw-border-solid tw-border-[#ddd] tw-px-2 tw-py-2">${index + 1}</td>
+                                    <td class="tw-border tw-border-solid tw-border-[#ddd] tw-px-2 tw-py-2"><input type="text" id="staff_name_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.ten)}"></td>
+                                    <td class="tw-border tw-border-solid tw-border-[#ddd] tw-px-2 tw-py-2"><input type="text" id="staff_position_${staff.id}" class="form-control staff-modal__input tw-h-8 tw-rounded-md tw-border-slate-300 tw-bg-white tw-text-sm tw-shadow-sm focus:tw-border-[#143583] focus:tw-ring-2 focus:tw-ring-[#143583]/15" value="${escapeHtml(staff.chuc_vu || '')}"></td>
+                                    <td class="tw-border tw-border-solid tw-border-[#ddd] tw-px-2 tw-py-2">
                                         <div class="staff-modal__action-list">
                                             <button type="button" onclick="updateStaff(${staff.id})" class="btn-add-criteria score-options-modal__btn score-options-modal__btn--secondary staff-modal__action-btn tw-inline-flex tw-h-8 tw-items-center tw-justify-center tw-rounded-md tw-border tw-border-[#b8cdf4] tw-bg-[#eef5ff] tw-px-2 tw-text-xs tw-font-bold tw-text-[#143583] tw-shadow-sm tw-transition hover:tw-bg-[#dbeafe]">
                                                 <i class="fas fa-floppy-disk" aria-hidden="true"></i>
