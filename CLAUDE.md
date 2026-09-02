@@ -48,6 +48,21 @@ When you need to read a specific file but don't know the exact line range, use t
 Đường dẫn: include qua `BASE_PATH`/`__DIR__`; link/redirect/form qua `BASE_URL`;
 JS fetch qua `window.BASE_URL`.
 
+### JS của trang indexdept
+
+`assets/js/indexdept/` tách theo TÍNH NĂNG, nối nhau bằng namespace `window.IndexDept`
+(không dùng ES module vì scope module sẽ làm chết ~31 chỗ `onclick=` inline trong partial):
+
+- `indexdept-core.js` — namespace, helper DOM/chuỗi/trạng thái, vỏ modal dùng chung.
+  **Phải nạp trước** 4 file còn lại (`-score-options`, `-deadline`, `-staff`, `-evaluation`).
+- Mỗi file giữ IIFE riêng, đầu file alias helper của core (`const showElement = ns.showElement`).
+- **Một điểm khởi tạo duy nhất**: file tính năng khai báo `ns.initXxx`, core chạy một
+  `DOMContentLoaded` gọi lần lượt. Đừng thêm `DOMContentLoaded` mới trong file tính năng.
+- Hàm cho `onclick=` gán `window.<tên> = <tên>;` ngay dưới định nghĩa, kèm comment nêu
+  partial nào gọi. Không gom thành block export cuối file.
+- Core không tham chiếu ngược lên file tính năng; cần thì file tính năng tự đăng ký
+  (xem `registerModalCloseHandler`).
+
 ## Xác thực (Authentication) — authV2
 
 Dự án KHÔNG tự xác thực. Login/logout ở `authV2` (`C:\laragon\www\authV2`, package `Hoatho\SharedAuth\`), phiên `HTSSOSESSID` dùng chung với các dự án cùng host.
