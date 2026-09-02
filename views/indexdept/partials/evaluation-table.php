@@ -9,13 +9,22 @@
             <div class="evaluation-section__header">
                 <h2>Tiêu chí đánh giá</h2>
                 <button type="button" id="toggleCompletedRows" class="btn-toggle-completed" onclick="toggleCompletedRows()">
-                    <i class="fas fa-eye"></i> <span id="toggleCompletedLabel">Hiện đã hoàn thành</span>
+                    <i class="fas fa-eye"></i>
+                    <span id="toggleCompletedLabel">Hiện đã hoàn thành</span>
+                    <span class="hidden-count" id="hiddenRowsCount"></span>
                 </button>
             </div>
             <form action="<?php echo BASE_URL; ?>/actions/save_danhgia_with_log.php" method="POST" id="danhgiaForm">
                 <?php echo getCsrfInput(); ?>
                 <input type="hidden" name="id_sanxuat" value="<?php echo $id; ?>">
                 <input type="hidden" name="dept" value="<?php echo $dept; ?>">
+
+                <!-- Mobile: gom tiêu chí đã chấm (không tính loại đạt mặc định, đã có nút riêng) sau 1 dòng bật/tắt -->
+                <button type="button" class="scored-toggle" id="scoredToggle" onclick="toggleScoredRows()" aria-expanded="false">
+                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                    <span class="scored-toggle__label">Đã chấm <span id="scoredToggleCount">0</span></span>
+                    <span class="scored-toggle__action" id="scoredToggleAction">Hiện</span>
+                </button>
 
                 <div class="table-responsive table-responsive--spaced">
                     <table class="evaluation-table">
@@ -53,7 +62,6 @@
 
                         $total_tieuchi = 0;
                         $completed_tieuchi = 0;
-                        $current_nhom = '';
                         $total_points = 0; // Biến lưu tổng điểm
                         $max_possible_points = 0; // Biến lưu tổng điểm tối đa có thể đạt được
 
@@ -68,21 +76,20 @@
                             $staff_list[] = $staff_row;
                         }
 
-                        while ($row = $result->fetch_assoc()) {
-                            if ($current_nhom != $row['nhom']) {
-                                $current_nhom = $row['nhom'];
+                        // ---- Pha 1: thu thập + tính toán (chưa render) ----
+                        // Tách khỏi render vì 2 khoá ưu tiên (quá hạn / đã chấm) chỉ tồn tại ở
+                        // tầng PHP: hạn xử lý có thể fallback về $han_xuly, còn điểm hiệu lực
+                        // phụ thuộc getDefaultScoreValueForCriteria(). SQL không sắp được.
+                        $rows_data = [];
+                        $nhom_order_map = []; // giữ đúng thứ tự nhóm do getNhomOrderByCase() trả về
+                        $now = new DateTime();
 
-                                // Hiển thị tên nhóm
-                                $nhom_display = getNhomDisplayName($dept, $row['nhom']);
-                                ?>
-                                <tr>
-                                    <td colspan="7" class="evaluation-group-row">
-                                        <?php echo $nhom_display; ?>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
+                        while ($row = $result->fetch_assoc()) {
                             $total_tieuchi++;
+
+                            if (!array_key_exists((string) $row['nhom'], $nhom_order_map)) {
+                                $nhom_order_map[(string) $row['nhom']] = count($nhom_order_map);
+                            }
 
                             $score_options = getScoreOptionsForCriteria($connect, $row['id'], $dept, $row['thutu']);
                             $default_score_value = getDefaultScoreValueForCriteria($connect, $row['id'], $dept, $row['thutu']);
@@ -93,10 +100,7 @@
                                 $completed_tieuchi++;
                             }
 
-                            // Cộng điểm vào tổng
-                            $diem_hien_tai = $effective_score;
-                            $total_points += $diem_hien_tai;
-
+                            $total_points += $effective_score;
                             $max_possible_points += getMaxScoreFromOptions($score_options);
 
                             // Xử lý hạn xử lý cho từng tiêu chí
@@ -114,20 +118,123 @@
                                 $tc_ngay_tinh_han = 'ngay_vao'; // Giá trị mặc định
                             }
 
-                            // Kiểm tra nếu đã quá hạn (chỉ hiển thị cảnh báo nếu chưa hoàn thành)
-                            $now = new DateTime();
-                            // Chỉ hiển thị màu đỏ khi: 1) Đã quá hạn VÀ 2) Chưa hoàn thành (dấu X đỏ)
-                            $is_overdue = ($han_tc < $now && $effective_score <= 0);
-                            $deadline_class = $is_overdue ? 'overdue' : '';
-
-                            // Biến kiểm tra tiêu chí đã hoàn thành hay chưa (để hiển thị khác nhau)
                             $is_completed = ($effective_score > 0);
+                            // Chỉ báo quá hạn khi: đã qua hạn VÀ chưa hoàn thành
+                            $is_overdue = ($han_tc < $now && !$is_completed);
                             // Ẩn tiêu chí có default score >= 1 (set mặc định sẵn, không phải user chọn)
                             $has_high_default = (floatval($default_score_value) >= 1);
+
+                            if ($is_overdue) {
+                                $priority = 0;
+                            } elseif (!$is_completed) {
+                                $priority = 1;
+                            } else {
+                                $priority = 2;
+                            }
+
+                            $rows_data[] = [
+                                'row' => $row,
+                                'nhom' => (string) $row['nhom'],
+                                'nhom_order' => $nhom_order_map[(string) $row['nhom']],
+                                'thutu' => intval($row['thutu']),
+                                'priority' => $priority,
+                                'score_options' => $score_options,
+                                'effective_score' => $effective_score,
+                                'han_tc_formatted' => $han_tc_formatted,
+                                'tc_so_ngay_xuly' => $tc_so_ngay_xuly,
+                                'tc_ngay_tinh_han' => $tc_ngay_tinh_han,
+                                'is_overdue' => $is_overdue,
+                                'is_completed' => $is_completed,
+                                'has_high_default' => $has_high_default,
+                            ];
+                        }
+
+                        // usort của PHP 7.4 không ổn định nên phải tie-break bằng thutu
+                        usort($rows_data, function ($a, $b) {
+                            if ($a['nhom_order'] !== $b['nhom_order']) {
+                                return $a['nhom_order'] - $b['nhom_order'];
+                            }
+                            if ($a['priority'] !== $b['priority']) {
+                                return $a['priority'] - $b['priority'];
+                            }
+                            return $a['thutu'] - $b['thutu'];
+                        });
+
+                        // ---- Pha 2: render ----
+                        $current_nhom = false;
+
+                        foreach ($rows_data as $item) {
+                            $row = $item['row'];
+
+                            if ($current_nhom !== $item['nhom']) {
+                                $current_nhom = $item['nhom'];
+
+                                // Hiển thị tên nhóm
+                                $nhom_display = getNhomDisplayName($dept, $row['nhom']);
+                                ?>
+                                <tr>
+                                    <td colspan="7" class="evaluation-group-row">
+                                        <?php echo $nhom_display; ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+
+                            $score_options = $item['score_options'];
+                            $effective_score = $item['effective_score'];
+                            $han_tc_formatted = $item['han_tc_formatted'];
+                            $tc_so_ngay_xuly = $item['tc_so_ngay_xuly'];
+                            $tc_ngay_tinh_han = $item['tc_ngay_tinh_han'];
+                            $is_overdue = $item['is_overdue'];
+                            $is_completed = $item['is_completed'];
+                            $has_high_default = $item['has_high_default'];
+                            $deadline_class = $is_overdue ? 'overdue' : '';
+
+                            // Parse CSV id (tương thích dữ liệu cũ chỉ 1 id)
+                            $selected_ids = array_filter(array_map('intval', explode(',', (string) $row['nguoi_thuchien'])));
+
+                            // Tên người phụ trách dạng text cho dòng gọn ở mobile
+                            $owner_names = [];
+                            foreach ($staff_list as $staff) {
+                                if (in_array((int) $staff['id'], $selected_ids, true)) {
+                                    $owner_names[] = $staff['ten'];
+                                }
+                            }
+
+                            // Nhãn điểm hiện tại (badge của dòng gọn)
+                            $current_score_label = '';
+                            foreach ($score_options as $score_option) {
+                                if (scoreValuesAreEqual($effective_score, $score_option['value'])) {
+                                    $current_score_label = $score_option['label'];
+                                    break;
+                                }
+                            }
+
+                            $row_classes = [];
+                            if ($has_high_default) {
+                                $row_classes[] = 'row-completed';
+                            }
+                            if ($is_completed) {
+                                $row_classes[] = 'is-scored';
+                            }
+                            if ($is_overdue) {
+                                $row_classes[] = 'is-overdue';
+                            }
+                            // Mobile: ô ghi chú ẩn sau nút "Ghi chú", mở sẵn khi đã có nội dung
+                            $note_text = trim((string) ($row['ghichu'] ?? ''));
+                            if ($note_text !== '') {
+                                $row_classes[] = 'is-note-open';
+                            }
                             ?>
-                            <tr class="<?php echo $has_high_default ? 'row-completed' : ''; ?>" data-has-default="<?php echo $has_high_default ? '1' : '0'; ?>">
+                            <tr class="<?php echo implode(' ', $row_classes); ?>" data-has-default="<?php echo $has_high_default ? '1' : '0'; ?>" data-overdue="<?php echo $is_overdue ? '1' : '0'; ?>" data-tieuchi-row="<?php echo $row['id']; ?>">
                                 <td><?php echo $row['thutu']; ?></td>
-                                <td class="text-left;"><?php echo htmlspecialchars($row['noidung']); ?></td>
+                                <td class="text-left;">
+                                    <span class="tc-stt-inline"><?php echo $row['thutu']; ?></span>
+                                    <span class="tc-noidung"><?php echo htmlspecialchars($row['noidung']); ?></span>
+                                    <span class="tc-score-badge" id="tc_score_badge_<?php echo $row['id']; ?>"><?php echo htmlspecialchars($current_score_label); ?></span>
+                                    <span class="tc-owner-flat" id="owner_flat_<?php echo $row['id']; ?>"><?php echo htmlspecialchars(implode(' · ', $owner_names)); ?></span>
+                                    <span class="tc-note-flat" id="tc_note_flat_<?php echo $row['id']; ?>"><?php echo htmlspecialchars($note_text); ?></span>
+                                </td>
                                 <td class="deadline-info">
                                     <span class="deadline-date <?php echo $deadline_class; ?>" id="date_display_<?php echo $row['id']; ?>"><?php echo $han_tc_formatted; ?></span>
                                     <?php /* if($is_admin): */ ?>
@@ -151,10 +258,6 @@
                                 <td class="owner-cell">
                                     <!-- Marker phân biệt "đã submit nhưng bỏ chọn hết" với "không submit" -->
                                     <input type="hidden" name="nguoi_thuchien_present_<?php echo $row['id']; ?>" value="1">
-                                    <?php
-                                    // Parse CSV id (tương thích dữ liệu cũ chỉ 1 id)
-                                    $selected_ids = array_filter(array_map('intval', explode(',', (string) $row['nguoi_thuchien'])));
-                                    ?>
                                     <?php if (!empty($staff_list)) : ?>
                                         <div class="owner-select" data-owner-select>
                                             <button type="button" class="owner-select__toggle" data-owner-toggle
@@ -200,6 +303,18 @@
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <!-- Segmented control cho mobile: chỉ điều khiển select ở trên, không có name nên không vào form -->
+                                    <div class="score-seg" data-score-seg data-tieuchi-id="<?php echo $row['id']; ?>">
+                                        <?php foreach ($score_options as $score_option) : ?>
+                                            <?php $is_selected = scoreValuesAreEqual($effective_score, $score_option['value']); ?>
+                                            <button type="button"
+                                                    class="score-seg__opt <?php echo $is_selected ? 'is-active' : ''; ?>"
+                                                    data-value="<?php echo htmlspecialchars($score_option['value']); ?>">
+                                                <?php echo htmlspecialchars($score_option['label']); ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <button type="button" class="note-toggle" data-note-toggle aria-expanded="<?php echo $note_text !== '' ? 'true' : 'false'; ?>">Ghi chú</button>
                                 </td>
                                 <td>
                                     <input type="checkbox"
@@ -268,6 +383,9 @@
     </div>
 </div>
 
-
-
-
+<div class="save-pill" id="savePill">
+    <button type="submit" form="danhgiaForm" class="save-pill__btn">
+        <i class="fas fa-save" aria-hidden="true"></i>
+        <span class="save-pill__label" id="savePillLabel">Lưu thay đổi</span>
+    </button>
+</div>

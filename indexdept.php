@@ -189,9 +189,19 @@ $header_config = [
             'tooltip' => 'Biểu mẫu'
         ],
         [
+            'title' => 'Lưu đánh giá',
+            'icon_class' => 'fas fa-save',
+            'onclick' => 'submitDanhgiaForm()'
+        ],
+        [
             'title' => 'Thêm tiêu chí',
             'icon_class' => 'fas fa-plus',
             'onclick' => 'openModal()'
+        ],
+        [
+            'title' => 'Cài đặt hạn xử lý',
+            'icon_class' => 'fas fa-calendar-alt',
+            'onclick' => 'openDeadlineModal()'
         ],
         [
             'title' => 'Cài đặt mặc định',

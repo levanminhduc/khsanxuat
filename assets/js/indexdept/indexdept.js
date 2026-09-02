@@ -2005,3 +2005,275 @@ window._showAutoSaveToast = function(msg, isError) {
         setTimeout(function() { toast.remove(); }, 300);
     }, 2000);
 };
+
+/* ============================================================
+   Mobile card list: segmented điểm, thu gọn/mở lại, dirty state
+   ============================================================ */
+(function () {
+    'use strict';
+
+    var ownerSnapshot = {};
+
+    function getForm() {
+        return document.getElementById('danhgiaForm');
+    }
+
+    function currentOwnerKey(tr) {
+        var ids = [];
+        tr.querySelectorAll('.owner-select__panel input[type="checkbox"]:checked').forEach(function (cb) {
+            ids.push(cb.value);
+        });
+        return ids.sort().join(',');
+    }
+
+    function snapshotOwners() {
+        var form = getForm();
+        if (!form) return;
+        form.querySelectorAll('tr[data-tieuchi-row]').forEach(function (tr) {
+            ownerSnapshot[tr.getAttribute('data-tieuchi-row')] = currentOwnerKey(tr);
+        });
+    }
+
+    function normalizeNewlines(str) {
+        return String(str || '').replace(/\r\n?/g, '\n');
+    }
+
+    function refreshDirtyState() {
+        var form = getForm();
+        if (!form) return;
+
+        var dirty = 0;
+        form.querySelectorAll('tr[data-tieuchi-row]').forEach(function (tr) {
+            var id = tr.getAttribute('data-tieuchi-row');
+            var note = tr.querySelector('textarea[name="ghichu_' + id + '"]');
+            var oldNote = tr.querySelector('input[name="old_ghichu_' + id + '"]');
+            var isDirty = false;
+
+            // textarea.value đã normalize về LF, còn hidden input giữ nguyên CRLF từ DB
+            if (note && oldNote && normalizeNewlines(note.value) !== normalizeNewlines(oldNote.value)) {
+                isDirty = true;
+            }
+            if (!isDirty && ownerSnapshot[id] !== undefined && currentOwnerKey(tr) !== ownerSnapshot[id]) {
+                isDirty = true;
+            }
+            if (isDirty) dirty++;
+        });
+
+        document.body.classList.toggle('has-dirty', dirty > 0);
+        var label = document.getElementById('savePillLabel');
+        if (label) {
+            label.textContent = dirty > 0 ? ('Lưu ' + dirty + ' thay đổi') : 'Lưu thay đổi';
+        }
+    }
+
+    // Strip đầu trang không biết tổng điểm (render trước bảng) nên lấy lại từ tfoot
+    function syncOrderStrip() {
+        var totalEl = document.getElementById('total_points');
+        var scoreEl = document.getElementById('orderStripScore');
+        if (!totalEl || !scoreEl) return;
+
+        var text = (totalEl.textContent || '').trim();
+        scoreEl.textContent = text;
+
+        var parts = text.split('/');
+        var current = parseFloat(parts[0]) || 0;
+        var max = parseFloat(parts[1]) || 0;
+        var percent = max > 0 ? (current / max) * 100 : 0;
+
+        var progressEl = document.getElementById('orderStripProgress');
+        if (progressEl) {
+            progressEl.style.width = percent.toFixed(1) + '%';
+        }
+    }
+
+    function updateHiddenCount() {
+        var form = getForm();
+        var badge = document.getElementById('hiddenRowsCount');
+        if (!form || !badge) return;
+        badge.textContent = form.querySelectorAll('tr[data-has-default="1"]').length;
+    }
+
+    // Đếm tiêu chí đã chấm đang gom sau dòng "Đã chấm n" (loại đạt mặc định có nút riêng)
+    function updateScoredCount() {
+        var form = getForm();
+        var toggle = document.getElementById('scoredToggle');
+        var countEl = document.getElementById('scoredToggleCount');
+        if (!form || !toggle || !countEl) return;
+        var n = form.querySelectorAll('tr.is-scored:not(.row-completed)').length;
+        countEl.textContent = n;
+        toggle.classList.toggle('is-empty', n === 0);
+    }
+
+    function syncScoreUi(select) {
+        var id = select.getAttribute('data-tieuchi-id');
+        var value = parseFloat(select.value);
+        var optionLabel = select.options[select.selectedIndex] ? select.options[select.selectedIndex].text.trim() : '';
+
+        var badge = document.getElementById('tc_score_badge_' + id);
+        if (badge) badge.textContent = optionLabel;
+
+        var tr = document.querySelector('tr[data-tieuchi-row="' + id + '"]');
+        if (tr) {
+            tr.classList.toggle('is-scored', value > 0);
+            tr.classList.toggle('is-overdue', value <= 0 && tr.getAttribute('data-overdue') === '1');
+            // Vừa chấm xong thì giữ thẻ mở để user thấy ngay kết quả
+            tr.classList.toggle('is-expanded', value > 0);
+        }
+
+        var seg = document.querySelector('.score-seg[data-tieuchi-id="' + id + '"]');
+        if (seg) {
+            seg.querySelectorAll('.score-seg__opt').forEach(function (btn) {
+                btn.classList.toggle('is-active', btn.getAttribute('data-value') === select.value);
+            });
+        }
+
+        syncOrderStrip();
+        updateScoredCount();
+        syncGroupHeaders();
+    }
+
+    // Ẩn header nhóm khi mọi dòng trong nhóm đang bị gom/ẩn (chỉ có tác dụng ở mobile qua CSS)
+    function syncGroupHeaders() {
+        var form = getForm();
+        if (!form) return;
+        var rows = form.querySelectorAll('.evaluation-table tbody > tr');
+        var header = null;
+        var hasVisible = false;
+        var flush = function () {
+            if (header) header.classList.toggle('is-empty-group', !hasVisible);
+        };
+        rows.forEach(function (tr) {
+            if (tr.querySelector('.evaluation-group-row')) {
+                flush();
+                header = tr;
+                hasVisible = false;
+                return;
+            }
+            if (!hasVisible && tr.hasAttribute('data-tieuchi-row') && getComputedStyle(tr).display !== 'none') {
+                hasVisible = true;
+            }
+        });
+        flush();
+    }
+
+    window.toggleScoredRows = function () {
+        var form = getForm();
+        var table = form ? form.querySelector('.evaluation-table') : null;
+        var toggle = document.getElementById('scoredToggle');
+        var action = document.getElementById('scoredToggleAction');
+        if (!table || !toggle) return;
+        var isOpen = table.classList.toggle('show-scored');
+        toggle.classList.toggle('is-open', isOpen);
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (action) action.textContent = isOpen ? 'Ẩn' : 'Hiện';
+        syncGroupHeaders();
+    };
+
+    var originalToggleCompletedRows = window.toggleCompletedRows;
+    if (typeof originalToggleCompletedRows === 'function') {
+        window.toggleCompletedRows = function () {
+            originalToggleCompletedRows.apply(this, arguments);
+            syncGroupHeaders();
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = getForm();
+        if (!form) return;
+
+        snapshotOwners();
+        refreshDirtyState();
+        updateHiddenCount();
+        updateScoredCount();
+        syncOrderStrip();
+        syncGroupHeaders();
+
+        var tbody = form.querySelector('.evaluation-table tbody');
+        if (!tbody) return;
+
+        // Segmented control chỉ điều khiển select gốc, select vẫn là nguồn duy nhất gửi form
+        tbody.addEventListener('click', function (event) {
+            // Chip hạn xử lý mở/đóng form chỉnh hạn của chính dòng đó (mobile)
+            var deadlineChip = event.target.closest('.deadline-date');
+            if (deadlineChip) {
+                var deadlineRow = deadlineChip.closest('tr[data-tieuchi-row]');
+                if (deadlineRow) deadlineRow.classList.toggle('is-deadline-open');
+                return;
+            }
+
+            // Nút "Ghi chú" mở/đóng ô ghi chú của chính dòng đó (mobile)
+            var noteToggle = event.target.closest('[data-note-toggle]');
+            if (noteToggle) {
+                var noteRow = noteToggle.closest('tr[data-tieuchi-row]');
+                if (noteRow) {
+                    var noteOpen = noteRow.classList.toggle('is-note-open');
+                    noteToggle.setAttribute('aria-expanded', noteOpen ? 'true' : 'false');
+                    if (noteOpen) {
+                        var noteArea = noteRow.querySelector('.evaluation-note-textarea');
+                        if (noteArea) noteArea.focus();
+                    }
+                }
+                return;
+            }
+
+            var opt = event.target.closest('.score-seg__opt');
+            if (opt) {
+                var seg = opt.closest('.score-seg');
+                var select = form.querySelector('.diem-dropdown[data-tieuchi-id="' + seg.getAttribute('data-tieuchi-id') + '"]');
+                if (select && select.value !== opt.getAttribute('data-value')) {
+                    select.value = opt.getAttribute('data-value');
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                return;
+            }
+
+            // Chạm vào dòng gọn để mở lại thành thẻ đầy đủ
+            if (event.target.closest('select, textarea, button, input, label, a, .owner-select')) return;
+            var tr = event.target.closest('tr.is-scored');
+            if (tr) tr.classList.toggle('is-expanded');
+        });
+
+        tbody.addEventListener('input', function (event) {
+            if (event.target.classList.contains('evaluation-note-textarea')) {
+                var noteTr = event.target.closest('tr[data-tieuchi-row]');
+                var noteFlat = noteTr ? document.getElementById('tc_note_flat_' + noteTr.getAttribute('data-tieuchi-row')) : null;
+                if (noteFlat) noteFlat.textContent = event.target.value.trim();
+                refreshDirtyState();
+            }
+        });
+
+        tbody.addEventListener('change', function (event) {
+            var target = event.target;
+            if (target.classList.contains('diem-dropdown')) {
+                syncScoreUi(target);
+                return;
+            }
+            if (target.type === 'checkbox' && target.name.indexOf('nguoi_thuchien_') === 0) {
+                var tr = target.closest('tr[data-tieuchi-row]');
+                if (tr) {
+                    var flat = document.getElementById('owner_flat_' + tr.getAttribute('data-tieuchi-row'));
+                    if (flat) {
+                        var names = [];
+                        tr.querySelectorAll('.owner-select__panel input[type="checkbox"]:checked').forEach(function (cb) {
+                            var nameEl = cb.parentElement.querySelector('.owner-checklist__name');
+                            if (nameEl) names.push(nameEl.textContent.trim());
+                        });
+                        flat.textContent = names.join(' · ');
+                    }
+                }
+                refreshDirtyState();
+            }
+        });
+    });
+
+    // Lối vào dự phòng từ menu mobile khi pill Lưu không hiển thị
+    window.submitDanhgiaForm = function () {
+        var form = getForm();
+        if (!form) return;
+        if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+        } else {
+            form.submit();
+        }
+    };
+})();

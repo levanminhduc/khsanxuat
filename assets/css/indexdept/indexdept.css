@@ -2880,54 +2880,17 @@ select[id^="ngay_tinh_han_"] {
         margin-top: 20px;
     }
 
-    .data-table, .evaluation-table {
-        display: table; /* Reset from block to maintain table layout inside scrollable wrapper */
-        width: 100%;
-    }
-
+    /* Bảng đánh giá chuyển sang dạng thẻ, không còn vùng cuộn ngang */
     .table-responsive {
         width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-bottom: 20px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        overflow-x: visible;
+        margin-bottom: 12px;
+        border: 0;
+        border-radius: 0;
     }
 
-    /* Keep tables from shrinking too much to ensure readability */
-    .data-table {
-        min-width: 900px;
-    }
-
-    .evaluation-table {
-        min-width: 1100px;
-    }
-
-    /* Make evaluation table cells more compact on mobile */
-    .evaluation-table th, .evaluation-table td {
-        padding: 8px 4px !important;
-        font-size: 12px !important;
-    }
-
-    /* Compact deadline info for mobile */
     .deadline-form {
         padding: 2px !important;
-    }
-
-    .deadline-input {
-        width: 35px !important;
-        height: 24px !important;
-    }
-
-    .deadline-button {
-        padding: 2px 5px !important;
-        font-size: 9px !important;
-    }
-
-    .ngay-tinh-han-select {
-        font-size: 11px !important;
-        height: 24px !important;
-        width: 130px !important;
     }
 
     .button-group {
@@ -3404,5 +3367,743 @@ select[id^="ngay_tinh_han_"] {
     .score-options-modal__footer-actions .score-options-modal__btn--primary {
         max-width: calc(100% - 108px);
         min-width: min(220px, calc(100% - 108px));
+    }
+}
+
+/* ============================================================
+   Mobile card list cho bảng đánh giá tiêu chí
+   Desktop: mọi phần tử dưới đây đều ẩn, bảng giữ nguyên như cũ
+   ============================================================ */
+.tc-stt-inline,
+.tc-score-badge,
+.tc-owner-flat,
+.score-seg,
+.note-toggle,
+.tc-note-flat,
+.scored-toggle,
+.order-strip,
+.save-pill,
+.hidden-count {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    /* --- Strip thông tin đơn hàng thay cho bảng data-table --- */
+    .order-info-table-wrap {
+        display: none;
+    }
+
+    .order-strip {
+        display: block;
+        margin: 0 0 10px;
+        padding: 6px 10px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .order-strip__row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+    }
+
+    .order-strip__meta {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .order-strip__sep {
+        color: #cbd5e1;
+        margin: 0 4px;
+    }
+
+    .order-strip__style {
+        font-weight: 500;
+        color: #475569;
+    }
+
+    .order-strip__score {
+        flex: 0 0 auto;
+        font-size: 12px;
+        font-weight: 700;
+        color: #143583;
+    }
+
+    .order-strip__btn {
+        position: relative;
+        flex: 0 0 auto;
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #143583;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .order-strip__badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 8px;
+        background: #dc2626;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 16px;
+        text-align: center;
+    }
+
+    .order-strip__progress {
+        height: 4px;
+        margin-top: 4px;
+        border-radius: 2px;
+        background: #e2e8f0;
+        overflow: hidden;
+    }
+
+    .order-strip__progress span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: #143583;
+        transition: width 0.3s;
+    }
+
+    /* --- Nút toggle mục ẩn thu thành pill --- */
+    .evaluation-section__header {
+        margin-bottom: 8px;
+    }
+
+    .evaluation-section__header h2 {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .btn-toggle-completed {
+        padding: 0 8px;
+        height: 26px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    #toggleCompletedLabel {
+        display: none;
+    }
+
+    .hidden-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 8px;
+        background: #e2e8f0;
+        color: #475569;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .btn-toggle-completed.active .hidden-count {
+        background: #bbf7d0;
+        color: #166534;
+    }
+
+    /* --- Bảng đánh giá thành danh sách thẻ --- */
+    /* Scope #danhgiaForm: các modal (mốc điểm, mặc định, nhân sự) cũng dùng class .evaluation-table */
+    #danhgiaForm .table-responsive,
+    .table-responsive--spaced {
+        overflow-x: visible;
+    }
+
+    .evaluation-section--wide #danhgiaForm .evaluation-table,
+    #danhgiaForm .evaluation-table {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        table-layout: auto;
+        border: 0;
+        border-collapse: separate;
+    }
+
+    #danhgiaForm .evaluation-table thead,
+    #danhgiaForm .evaluation-table tfoot,
+    .evaluation-actions {
+        display: none;
+    }
+
+    #danhgiaForm .evaluation-table tbody {
+        display: block;
+    }
+
+    #danhgiaForm .evaluation-table tr {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    /* Giữ cơ chế ẩn/hiện tiêu chí đạt mặc định; cần specificity cao hơn `.evaluation-table tr` */
+    #danhgiaForm .evaluation-table tbody tr.row-completed {
+        display: none;
+    }
+
+    #danhgiaForm .evaluation-table.show-completed tbody tr.row-completed {
+        display: flex;
+    }
+
+    #danhgiaForm .evaluation-table td {
+        display: block;
+        flex: 0 0 100%;
+        min-width: 0; /* flex item mặc định min-width:auto sẽ phình theo text nowrap bên trong */
+        border: 0;
+        padding: 0;
+    }
+
+    #danhgiaForm .evaluation-table .evaluation-group-row {
+        margin: 14px 0 8px;
+        padding: 0;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #64748b;
+        background: transparent;
+    }
+
+    /* Dòng bật/tắt gom tiêu chí đã chấm; các thẻ đã chấm ẩn cho tới khi bật */
+    .scored-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        height: 34px;
+        margin: 0 0 8px;
+        padding: 0 10px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .scored-toggle:hover,
+    .scored-toggle:focus {
+        background: #f8fafc;
+        color: #475569;
+        outline: none;
+    }
+
+    .scored-toggle__label {
+        flex: 1 1 auto;
+    }
+
+    .scored-toggle__action {
+        font-size: 11px;
+        font-weight: 700;
+        color: #143583;
+    }
+
+    .scored-toggle.is-open,
+    .scored-toggle.is-open:hover,
+    .scored-toggle.is-open:focus {
+        background: #dcfce7;
+        border-color: #86efac;
+        color: #166534;
+    }
+
+    .scored-toggle.is-open .scored-toggle__action {
+        color: #166534;
+    }
+
+    .scored-toggle.is-empty {
+        display: none;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr.is-scored:not(.is-expanded):not(.row-completed) {
+        display: none;
+    }
+
+    #danhgiaForm .evaluation-table.show-scored tbody tr.is-scored:not(.row-completed) {
+        display: flex;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr.is-empty-group {
+        display: none;
+    }
+
+    /* Thẻ tiêu chí */
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] {
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 8px;
+        padding: 10px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid #cbd5e1;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    #danhgiaForm .evaluation-table tbody tr.is-overdue {
+        border-left-color: #dc2626;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr.is-scored {
+        background: #f8fafc;
+        border-left-color: #16a34a;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(1),
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(6) {
+        display: none;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(2) {
+        order: 1;
+        text-align: left;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(3) {
+        order: 2;
+        flex: 0 0 auto;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(4) {
+        order: 3;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    /* Hàng điểm: dải segmented + nút "Ghi chú" cùng hàng */
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(5) {
+        order: 4;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Ô ghi chú ẩn cho tới khi bấm "Ghi chú" hoặc đã có nội dung; dòng gọn không bao giờ hiện ô này */
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] > td:nth-child(7) {
+        order: 5;
+        display: none;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr.is-note-open:not(.is-scored) > td:nth-child(7),
+    #danhgiaForm .evaluation-table tbody tr.is-note-open.is-expanded > td:nth-child(7) {
+        display: block;
+    }
+
+    /* Ô nội dung */
+    .tc-stt-inline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        margin-right: 6px;
+        padding: 0 4px;
+        border-radius: 6px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 700;
+        vertical-align: middle;
+    }
+
+    #danhgiaForm tr.is-overdue .tc-stt-inline {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    #danhgiaForm tr.is-scored .tc-stt-inline {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .tc-noidung {
+        font-size: 13.5px;
+        line-height: 1.35;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    /* Hạn xử lý: chip, form chỉnh sửa mở khi chạm vào chip */
+    /* Bỏ layout flex cột căn giữa của desktop để chip nằm 1 dòng, cùng hàng với người phụ trách */
+    #danhgiaForm .evaluation-table td.deadline-info {
+        display: block;
+        padding: 0;
+        text-align: left;
+    }
+
+    .deadline-date {
+        /* inline-block thay vì inline-flex: Chrome bỏ ::before khi tính max-content của inline-flex,
+           làm td3 (flex-basis auto) bị bó hẹp và chữ "Quá hạn" tràn ra ngoài chip */
+        display: inline-block;
+        height: 22px;
+        line-height: 22px;
+        width: auto;
+        overflow: visible;
+        margin: 0;
+        white-space: nowrap;
+        padding: 0 8px;
+        border-radius: 11px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 11.5px;
+        font-weight: 600;
+    }
+
+    /* Reset hiệu ứng blink/shimmer của .overdue desktop, chip chỉ đổi màu + chữ "Quá hạn" */
+    .deadline-date.overdue {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 0;
+        padding: 0 8px;
+        box-shadow: none;
+        animation: none;
+        overflow: visible;
+    }
+
+    .deadline-date.overdue::before {
+        content: "Quá hạn ";
+        position: static;
+        width: auto;
+        height: auto;
+        background: none;
+        animation: none;
+        font-weight: 700;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr[data-tieuchi-row] .deadline-form {
+        display: none;
+        margin-top: 6px;
+    }
+
+    #danhgiaForm .evaluation-table tbody tr.is-deadline-open .deadline-form {
+        display: block;
+        flex: 0 0 100%;
+    }
+
+    .deadline-input {
+        width: 52px;
+        height: 30px;
+    }
+
+    .deadline-button {
+        height: 30px;
+        padding: 0 10px;
+        font-size: 11px;
+    }
+
+    .ngay-tinh-han-select {
+        height: 30px;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    /* Người chịu trách nhiệm: chip + nút chọn trên 1 hàng, không chừa padding-top cho nút tuyệt đối */
+    #danhgiaForm .evaluation-table td.owner-cell {
+        padding: 0;
+    }
+
+    .owner-select {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding-top: 0;
+    }
+
+    .owner-select__chips {
+        flex: 1 1 auto;
+        justify-content: flex-end;
+    }
+
+    .owner-select__toggle {
+        position: static;
+        flex: 0 0 auto;
+        order: 2;
+    }
+
+    /* Panel checklist nằm trong luồng, xuống hàng riêng dưới chip + nút */
+    .owner-select__panel {
+        flex: 0 0 100%;
+        order: 3;
+        text-align: left;
+    }
+
+    /* Người chịu trách nhiệm: chip nhỏ, hiện hết, tự xuống dòng */
+    .owner-chip {
+        padding: 0 8px;
+        height: 20px;
+        line-height: 20px;
+        border-radius: 10px;
+        font-size: 11px;
+    }
+
+    .owner-select__toggle {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+
+    /* Dải chọn điểm */
+    .diem-dropdown {
+        display: none;
+    }
+
+    .score-seg {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .score-seg__opt {
+        flex: 1 1 0;
+        min-width: 0;
+        height: 38px;
+        padding: 0 6px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 12.5px;
+        font-weight: 600;
+        line-height: 1.2;
+        cursor: pointer;
+    }
+
+    /* Ghi đè form button:hover toàn cục (style.css) vì :hover dính sau khi chạm trên mobile */
+    .score-seg__opt:hover,
+    .score-seg__opt:focus {
+        background: #ffffff;
+        color: #475569;
+        outline: none;
+    }
+
+    .score-seg__opt:active {
+        background: #e2e8f0;
+    }
+
+    .score-seg__opt:focus-visible {
+        box-shadow: 0 0 0 2px #93c5fd;
+    }
+
+    .score-seg__opt.is-active,
+    .score-seg__opt.is-active:hover,
+    .score-seg__opt.is-active:focus,
+    .score-seg__opt.is-active:active {
+        background: #143583;
+        border-color: #143583;
+        color: #ffffff;
+    }
+
+    .evaluation-note-textarea {
+        width: 100%;
+        min-height: 38px;
+        font-size: 13px;
+    }
+
+    .note-toggle {
+        display: inline-block;
+        flex: 0 0 auto;
+        height: 38px;
+        padding: 0 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .note-toggle:hover,
+    .note-toggle:focus {
+        background: #f8fafc;
+        color: #475569;
+        outline: none;
+    }
+
+    .note-toggle:focus-visible {
+        box-shadow: 0 0 0 2px #93c5fd;
+    }
+
+    #danhgiaForm tr.is-note-open .note-toggle,
+    #danhgiaForm tr.is-note-open .note-toggle:hover,
+    #danhgiaForm tr.is-note-open .note-toggle:focus {
+        background: #eef2f7;
+        border-color: #94a3b8;
+        color: #143583;
+    }
+
+    /* --- Dòng gọn cho tiêu chí đã chấm --- */
+    #danhgiaForm .evaluation-table tbody tr.is-scored:not(.is-expanded) {
+        padding: 8px 10px;
+        gap: 0;
+    }
+
+    /* Cần đủ specificity để thắng rule display:flex của td:nth-child(5) phía trên */
+    #danhgiaForm .evaluation-table tbody tr.is-scored:not(.is-expanded) > td:nth-child(3),
+    #danhgiaForm .evaluation-table tbody tr.is-scored:not(.is-expanded) > td:nth-child(4),
+    #danhgiaForm .evaluation-table tbody tr.is-scored:not(.is-expanded) > td:nth-child(5),
+    #danhgiaForm .evaluation-table tbody tr.is-scored:not(.is-expanded) > td:nth-child(7) {
+        display: none;
+    }
+
+    #danhgiaForm tr.is-scored:not(.is-expanded) .tc-noidung {
+        display: inline-block;
+        max-width: calc(100% - 110px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+        font-weight: 500;
+        color: #334155;
+    }
+
+    #danhgiaForm tr.is-scored:not(.is-expanded) .tc-score-badge {
+        display: inline-flex;
+        align-items: center;
+        height: 20px;
+        margin-left: 6px;
+        padding: 0 8px;
+        border-radius: 10px;
+        background: #dcfce7;
+        color: #166534;
+        font-size: 11px;
+        font-weight: 700;
+        vertical-align: middle;
+    }
+
+    #danhgiaForm tr.is-scored:not(.is-expanded) .tc-score-badge::before {
+        content: "\2713\00a0";
+    }
+
+    #danhgiaForm tr.is-scored:not(.is-expanded) .tc-owner-flat {
+        display: block;
+        margin-top: 2px;
+        padding-left: 26px;
+        font-size: 11.5px;
+        color: #64748b;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Dòng gọn có ghi chú thì hiện luôn nội dung dưới tên người phụ trách */
+    #danhgiaForm tr.is-scored:not(.is-expanded) .tc-note-flat:not(:empty) {
+        display: block;
+        margin-top: 2px;
+        padding-left: 26px;
+        font-size: 11.5px;
+        line-height: 1.35;
+        color: #475569;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    #danhgiaForm tr.is-scored:not(.is-expanded) .tc-note-flat:not(:empty)::before {
+        content: "\270E\00a0";
+        color: #94a3b8;
+    }
+
+    #danhgiaForm tr.is-scored.is-expanded {
+        border-color: #86efac;
+    }
+
+    /* --- Pill Lưu neo đáy, chỉ hiện khi có thay đổi chưa lưu --- */
+    body.has-dirty {
+        padding-bottom: 64px;
+    }
+
+    body.has-dirty .save-pill {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 12px;
+        justify-content: center;
+        z-index: 9998;
+        pointer-events: none;
+    }
+
+    .save-pill__btn {
+        pointer-events: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 22px;
+        border: 0;
+        border-radius: 21px;
+        background: #143583;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+        cursor: pointer;
+    }
+
+    .autosave-toast {
+        right: 12px;
+        bottom: 66px;
+    }
+
+    /* --- Cảnh báo ảnh bắt buộc + nút upload: tông slate/navy, bỏ màu cam --- */
+    .evaluation-alert {
+        width: auto;
+        margin: 0 0 10px;
+        padding: 10px 12px;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-left: 3px solid #143583;
+        border-radius: 8px;
+        color: #143583;
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    .evaluation-alert a {
+        color: #143583;
+        font-weight: 700;
+    }
+
+    .btn-upload-image,
+    .btn-upload-file {
+        background-color: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #143583;
+    }
+
+    .btn-upload-image:hover,
+    .btn-upload-file:hover {
+        background-color: #e2e8f0;
+        color: #143583;
+    }
+
+    .warning-icon {
+        color: #143583;
+        animation: none;
     }
 }

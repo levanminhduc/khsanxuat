@@ -1,4 +1,28 @@
-    <div class="table-responsive table-responsive--spaced">
+    <!-- Strip rút gọn: chỉ hiện ở mobile, thay cho bảng thông tin đơn hàng -->
+    <div class="order-strip">
+        <div class="order-strip__row">
+            <div class="order-strip__meta">
+                <span class="order-strip__po"><?php echo htmlspecialchars($po); ?></span>
+                <span class="order-strip__sep">·</span>
+                <span class="order-strip__style"><?php echo htmlspecialchars($style); ?></span>
+            </div>
+            <span class="order-strip__score" id="orderStripScore"></span>
+            <a href="<?php echo BASE_URL; ?>/pages/image_handler.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>"
+               class="order-strip__btn" title="Xử lý hình ảnh" aria-label="Xử lý hình ảnh">
+                <i class="fas fa-image" aria-hidden="true"></i>
+                <?php if ($image_count > 0) : ?>
+                <span class="order-strip__badge"><?php echo $image_count; ?></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?php echo BASE_URL; ?>/pages/file_templates.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>"
+               class="order-strip__btn" title="Biểu mẫu" aria-label="Biểu mẫu">
+                <i class="fas fa-file-alt" aria-hidden="true"></i>
+            </a>
+        </div>
+        <div class="order-strip__progress"><span id="orderStripProgress"></span></div>
+    </div>
+
+    <div class="table-responsive table-responsive--spaced order-info-table-wrap">
         <table class="data-table">
             <thead>
                 <tr>
