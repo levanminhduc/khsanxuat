@@ -242,7 +242,12 @@ window.INDEXDEPT_BOOTSTRAP = {
     autoSelectTieuchiId: <?php echo json_encode(isset($_REQUEST['tieuchi_id']) ? (int) $_REQUEST['tieuchi_id'] : null); ?>
 };
 </script>
-<script src="assets/js/indexdept/indexdept.js?v=<?php echo filemtime('assets/js/indexdept/indexdept.js'); ?>"></script>
+<!-- indexdept-core.js phải nạp TRƯỚC: nó dựng namespace window.IndexDept và chạy khởi tạo chung -->
+<script src="assets/js/indexdept/indexdept-core.js?v=<?php echo filemtime('assets/js/indexdept/indexdept-core.js'); ?>"></script>
+<script src="assets/js/indexdept/indexdept-score-options.js?v=<?php echo filemtime('assets/js/indexdept/indexdept-score-options.js'); ?>"></script>
+<script src="assets/js/indexdept/indexdept-deadline.js?v=<?php echo filemtime('assets/js/indexdept/indexdept-deadline.js'); ?>"></script>
+<script src="assets/js/indexdept/indexdept-staff.js?v=<?php echo filemtime('assets/js/indexdept/indexdept-staff.js'); ?>"></script>
+<script src="assets/js/indexdept/indexdept-evaluation.js?v=<?php echo filemtime('assets/js/indexdept/indexdept-evaluation.js'); ?>"></script>
 <script src="assets/js/indexdept/owner-multiselect.js?v=<?php echo filemtime('assets/js/indexdept/owner-multiselect.js'); ?>"></script>
 <script src="assets/js/header.js?v=<?php echo filemtime('assets/js/header.js'); ?>"></script>
 <?php include 'components/back-to-top.php'; ?>
