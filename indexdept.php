@@ -137,22 +137,10 @@ $missing_files = checkMissingFiles($required_settings_files);
     <link rel="stylesheet" href="assets/css/indexdept/indexdept.css?v=<?php echo filemtime('assets/css/indexdept/indexdept.css'); ?>">
     <!-- Phải nạp SAU indexdept.css: modal dựa vào thứ tự cascade này -->
     <link rel="stylesheet" href="assets/css/indexdept/indexdept-modals.css?v=<?php echo filemtime('assets/css/indexdept/indexdept-modals.css'); ?>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            prefix: 'tw-',
-            corePlugins: {
-                preflight: false
-            },
-            theme: {
-                extend: {
-                    boxShadow: {
-                        'modal-soft': '0 26px 80px rgba(15, 23, 42, 0.28)'
-                    }
-                }
-            }
-        };
-    </script>
+    <!-- Utilities tw-* cho 5 modal. Phải nạp CUỐI CÙNG: bản CDN cũ chèn <style> sau
+         mọi <link> nên thắng cascade so với BEM; đổi vị trí là đổi giao diện.
+         Build lại bằng tools\tailwind\build.cmd sau khi sửa class tw-*. -->
+    <link rel="stylesheet" href="assets/css/tailwind.css?v=<?php echo filemtime('assets/css/tailwind.css'); ?>">
 </head>
 <body>
 

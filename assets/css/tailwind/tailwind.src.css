@@ -1,0 +1,11 @@
+/* Nguon cho tools\tailwind\build.cmd -> assets/css/tailwind.css
+
+   @tailwind base BAT BUOC phai co: preflight da tat trong config nen tang base
+   chi con khoi gia tri mac dinh cua cac bien --tw-* tren `*, ::before, ::after`.
+   Thieu khoi nay thi cac utility ghep bien se hong — vi du tw-backdrop-blur-sm
+   sinh `backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) ...`,
+   cac bien con lai khong co gia tri -> ca khai bao thanh khong hop le -> mat hieu ung.
+
+   Tang components (.container/.prose) khong dung o day nen khong nap. */
+@tailwind base;
+@tailwind utilities;

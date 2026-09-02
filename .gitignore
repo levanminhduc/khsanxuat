@@ -36,3 +36,6 @@ playwright_test/
 node_modules/
 dev-tools/
 .claude/settings.local.json
+
+# Tailwind standalone CLI (40MB, tai lai theo tools/tailwind/README.md)
+tools/tailwind/tailwindcss.exe
