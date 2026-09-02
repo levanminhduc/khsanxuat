@@ -72,6 +72,120 @@ function getEvaluationCriteria($connect, $id, $dept) {
     return $stmt->get_result();
 }
 
+/**
+ * Thu thập + tính toán dữ liệu bảng đánh giá, đã sắp xếp sẵn để render.
+ *
+ * Tách khỏi phần render vì 2 khoá ưu tiên (quá hạn / đã chấm) chỉ tồn tại ở tầng PHP:
+ * hạn xử lý của tiêu chí có thể NULL rồi fallback về $han_xuly (do calculateDeadline()
+ * tính), còn điểm hiệu lực phụ thuộc getDefaultScoreValueForCriteria(). SQL không biết
+ * hai giá trị này nên không sắp xếp được bằng ORDER BY.
+ *
+ * @param DateTime $han_xuly           Hạn chung của đơn, dùng khi tiêu chí chưa có hạn riêng.
+ * @param string   $han_xuly_formatted Chuỗi d/m/Y tương ứng $han_xuly.
+ * @return array{rows: array, staff_list: array, total_tieuchi: int, completed_tieuchi: int,
+ *               total_points: float, max_possible_points: float}
+ */
+function fetchEvaluationRows($connect, $id, $dept, $han_xuly, $han_xuly_formatted, $so_ngay_xuly) {
+    $result = getEvaluationCriteria($connect, $id, $dept);
+
+    $staff_list = [];
+    $result_staff = getStaffByDept($connect, $dept);
+    while ($staff_row = $result_staff->fetch_assoc()) {
+        $staff_list[] = $staff_row;
+    }
+
+    $total_tieuchi = 0;
+    $completed_tieuchi = 0;
+    $total_points = 0;
+    $max_possible_points = 0;
+
+    $rows_data = [];
+    $nhom_order_map = []; // giữ đúng thứ tự nhóm do getNhomOrderByCase() trả về
+    $now = new DateTime();
+
+    while ($row = $result->fetch_assoc()) {
+        $total_tieuchi++;
+
+        if (!array_key_exists((string) $row['nhom'], $nhom_order_map)) {
+            $nhom_order_map[(string) $row['nhom']] = count($nhom_order_map);
+        }
+
+        $score_options = getScoreOptionsForCriteria($connect, $row['id'], $dept, $row['thutu']);
+        $default_score_value = getDefaultScoreValueForCriteria($connect, $row['id'], $dept, $row['thutu']);
+        $has_saved_score = isset($row['diem_danhgia']) && $row['diem_danhgia'] !== null;
+        $effective_score = $has_saved_score ? floatval($row['diem_danhgia']) : floatval($default_score_value);
+
+        if ($effective_score > 0) {
+            $completed_tieuchi++;
+        }
+
+        $total_points += $effective_score;
+        $max_possible_points += getMaxScoreFromOptions($score_options);
+
+        if (isset($row['han_xuly']) && !empty($row['han_xuly'])) {
+            $han_tc = new DateTime($row['han_xuly']);
+            $han_tc_formatted = $han_tc->format('d/m/Y');
+            $tc_so_ngay_xuly = isset($row['so_ngay_xuly']) ? intval($row['so_ngay_xuly']) : $so_ngay_xuly;
+            $tc_ngay_tinh_han = isset($row['ngay_tinh_han']) ? $row['ngay_tinh_han'] : 'ngay_vao';
+        } else {
+            $han_tc = clone $han_xuly;
+            $han_tc_formatted = $han_xuly_formatted;
+            $tc_so_ngay_xuly = $so_ngay_xuly;
+            $tc_ngay_tinh_han = 'ngay_vao';
+        }
+
+        $is_completed = ($effective_score > 0);
+        // Chỉ báo quá hạn khi: đã qua hạn VÀ chưa hoàn thành
+        $is_overdue = ($han_tc < $now && !$is_completed);
+        // Ẩn tiêu chí có default score >= 1 (set mặc định sẵn, không phải user chọn)
+        $has_high_default = (floatval($default_score_value) >= 1);
+
+        if ($is_overdue) {
+            $priority = 0;
+        } elseif (!$is_completed) {
+            $priority = 1;
+        } else {
+            $priority = 2;
+        }
+
+        $rows_data[] = [
+            'row' => $row,
+            'nhom' => (string) $row['nhom'],
+            'nhom_order' => $nhom_order_map[(string) $row['nhom']],
+            'thutu' => intval($row['thutu']),
+            'priority' => $priority,
+            'score_options' => $score_options,
+            'effective_score' => $effective_score,
+            'han_tc_formatted' => $han_tc_formatted,
+            'tc_so_ngay_xuly' => $tc_so_ngay_xuly,
+            'tc_ngay_tinh_han' => $tc_ngay_tinh_han,
+            'is_overdue' => $is_overdue,
+            'is_completed' => $is_completed,
+            'has_high_default' => $has_high_default,
+        ];
+    }
+
+    // usort của PHP 7.4 không ổn định nên phải tie-break bằng thutu
+    usort($rows_data, function ($a, $b) {
+        if ($a['nhom_order'] !== $b['nhom_order']) {
+            return $a['nhom_order'] - $b['nhom_order'];
+        }
+        if ($a['priority'] !== $b['priority']) {
+            return $a['priority'] - $b['priority'];
+        }
+        return $a['thutu'] - $b['thutu'];
+    });
+
+    return [
+        'rows' => $rows_data,
+        'staff_list' => $staff_list,
+        'total_tieuchi' => $total_tieuchi,
+        'completed_tieuchi' => $completed_tieuchi,
+        'total_points' => $total_points,
+        'max_possible_points' => $max_possible_points,
+    ];
+}
+
 function getCriteriaList($connect, $dept) {
     $sql = "SELECT id, thutu, noidung FROM tieuchi_dept WHERE dept = ? ORDER BY thutu";
     $stmt = $connect->prepare($sql);

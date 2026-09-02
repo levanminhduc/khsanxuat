@@ -45,122 +45,18 @@
                         </thead>
                         <tbody>
                         <?php
-                        // Lấy danh sách tiêu chí và trạng thái đánh giá
-                        $sql = "SELECT tc.*, dg.nguoi_thuchien, dg.da_thuchien, dg.diem_danhgia, dg.ghichu, dg.han_xuly, dg.so_ngay_xuly, dg.ngay_tinh_han
-                               FROM tieuchi_dept tc
-                               LEFT JOIN danhgia_tieuchi dg ON tc.id = dg.id_tieuchi
-                                    AND dg.id_sanxuat = ?
-                               WHERE tc.dept = ?
-                               ORDER BY
-                                   " . getNhomOrderByCase() . ",
-                                   tc.thutu";
+                        // Thu thập + tính toán ở fetchEvaluationRows() (includes/indexdept/functions.php);
+                        // phần dưới chỉ render. $total_tieuchi / $completed_tieuchi / $max_possible_points
+                        // còn được indexdept.php đọc lại để dựng window.INDEXDEPT_BOOTSTRAP.
+                        $evaluation_data = fetchEvaluationRows($connect, $id, $dept, $han_xuly, $han_xuly_formatted, $so_ngay_xuly);
 
-                        $stmt = $connect->prepare($sql);
-                        $stmt->bind_param("is", $id, $dept);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
+                        $rows_data           = $evaluation_data['rows'];
+                        $staff_list          = $evaluation_data['staff_list'];
+                        $total_tieuchi       = $evaluation_data['total_tieuchi'];
+                        $completed_tieuchi   = $evaluation_data['completed_tieuchi'];
+                        $total_points        = $evaluation_data['total_points'];
+                        $max_possible_points = $evaluation_data['max_possible_points'];
 
-                        $total_tieuchi = 0;
-                        $completed_tieuchi = 0;
-                        $total_points = 0; // Biến lưu tổng điểm
-                        $max_possible_points = 0; // Biến lưu tổng điểm tối đa có thể đạt được
-
-                        // Query 1 lần dùng chung cho checkbox mọi dòng tiêu chí
-                        $staff_list = [];
-                        $sql_staff_all = "SELECT id, ten FROM nhan_vien WHERE phong_ban = ? AND active = 1 ORDER BY ten";
-                        $stmt_staff_all = $connect->prepare($sql_staff_all);
-                        $stmt_staff_all->bind_param("s", $dept);
-                        $stmt_staff_all->execute();
-                        $result_staff_all = $stmt_staff_all->get_result();
-                        while ($staff_row = $result_staff_all->fetch_assoc()) {
-                            $staff_list[] = $staff_row;
-                        }
-
-                        // ---- Pha 1: thu thập + tính toán (chưa render) ----
-                        // Tách khỏi render vì 2 khoá ưu tiên (quá hạn / đã chấm) chỉ tồn tại ở
-                        // tầng PHP: hạn xử lý có thể fallback về $han_xuly, còn điểm hiệu lực
-                        // phụ thuộc getDefaultScoreValueForCriteria(). SQL không sắp được.
-                        $rows_data = [];
-                        $nhom_order_map = []; // giữ đúng thứ tự nhóm do getNhomOrderByCase() trả về
-                        $now = new DateTime();
-
-                        while ($row = $result->fetch_assoc()) {
-                            $total_tieuchi++;
-
-                            if (!array_key_exists((string) $row['nhom'], $nhom_order_map)) {
-                                $nhom_order_map[(string) $row['nhom']] = count($nhom_order_map);
-                            }
-
-                            $score_options = getScoreOptionsForCriteria($connect, $row['id'], $dept, $row['thutu']);
-                            $default_score_value = getDefaultScoreValueForCriteria($connect, $row['id'], $dept, $row['thutu']);
-                            $has_saved_score = isset($row['diem_danhgia']) && $row['diem_danhgia'] !== null;
-                            $effective_score = $has_saved_score ? floatval($row['diem_danhgia']) : floatval($default_score_value);
-
-                            if ($effective_score > 0) {
-                                $completed_tieuchi++;
-                            }
-
-                            $total_points += $effective_score;
-                            $max_possible_points += getMaxScoreFromOptions($score_options);
-
-                            // Xử lý hạn xử lý cho từng tiêu chí
-                            if (isset($row['han_xuly']) && !empty($row['han_xuly'])) {
-                                // Sử dụng hạn xử lý riêng của tiêu chí nếu có
-                                $han_tc = new DateTime($row['han_xuly']);
-                                $han_tc_formatted = $han_tc->format('d/m/Y');
-                                $tc_so_ngay_xuly = isset($row['so_ngay_xuly']) ? intval($row['so_ngay_xuly']) : $so_ngay_xuly;
-                                $tc_ngay_tinh_han = isset($row['ngay_tinh_han']) ? $row['ngay_tinh_han'] : 'ngay_vao';
-                            } else {
-                                // Nếu chưa có hạn xử lý riêng, sử dụng hạn xử lý chung
-                                $han_tc = clone $han_xuly;
-                                $han_tc_formatted = $han_xuly_formatted;
-                                $tc_so_ngay_xuly = $so_ngay_xuly;
-                                $tc_ngay_tinh_han = 'ngay_vao'; // Giá trị mặc định
-                            }
-
-                            $is_completed = ($effective_score > 0);
-                            // Chỉ báo quá hạn khi: đã qua hạn VÀ chưa hoàn thành
-                            $is_overdue = ($han_tc < $now && !$is_completed);
-                            // Ẩn tiêu chí có default score >= 1 (set mặc định sẵn, không phải user chọn)
-                            $has_high_default = (floatval($default_score_value) >= 1);
-
-                            if ($is_overdue) {
-                                $priority = 0;
-                            } elseif (!$is_completed) {
-                                $priority = 1;
-                            } else {
-                                $priority = 2;
-                            }
-
-                            $rows_data[] = [
-                                'row' => $row,
-                                'nhom' => (string) $row['nhom'],
-                                'nhom_order' => $nhom_order_map[(string) $row['nhom']],
-                                'thutu' => intval($row['thutu']),
-                                'priority' => $priority,
-                                'score_options' => $score_options,
-                                'effective_score' => $effective_score,
-                                'han_tc_formatted' => $han_tc_formatted,
-                                'tc_so_ngay_xuly' => $tc_so_ngay_xuly,
-                                'tc_ngay_tinh_han' => $tc_ngay_tinh_han,
-                                'is_overdue' => $is_overdue,
-                                'is_completed' => $is_completed,
-                                'has_high_default' => $has_high_default,
-                            ];
-                        }
-
-                        // usort của PHP 7.4 không ổn định nên phải tie-break bằng thutu
-                        usort($rows_data, function ($a, $b) {
-                            if ($a['nhom_order'] !== $b['nhom_order']) {
-                                return $a['nhom_order'] - $b['nhom_order'];
-                            }
-                            if ($a['priority'] !== $b['priority']) {
-                                return $a['priority'] - $b['priority'];
-                            }
-                            return $a['thutu'] - $b['thutu'];
-                        });
-
-                        // ---- Pha 2: render ----
                         $current_nhom = false;
 
                         foreach ($rows_data as $item) {
