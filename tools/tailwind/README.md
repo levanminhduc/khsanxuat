@@ -39,3 +39,8 @@ Xem `tailwind.config.js`:
   trong `style.css` / `style2.css`).
 - `preflight: false` — preflight reset toan trang, se dap vo cac trang CSS thuan.
 - `boxShadow.modal-soft` — do bong dung chung cua 5 modal.
+
+## Port them trang/khoi khac
+
+Quy trinh (golden master, phan loai rule, checklist): `docs/tailwind-porting-guide.md`.
+Script chup/so computed style: `tools/tailwind/golden/capture.js`, `compare.cjs`.
