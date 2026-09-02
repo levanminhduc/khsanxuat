@@ -41,6 +41,11 @@ When you need to read a specific file but don't know the exact line range, use t
 - `includes/` — config+function theo area (`index/`, `indexdept/`), `security/csrf-helper.php`, check_tieuchi_image, display_deadline. `includes/indexdept/config.php` là nguồn duy nhất định nghĩa `$dept_names` + `$dept_nhom_config` và các helper dept/nhom.
 - `components/`, `views/` — UI partial + template (`views/indexdept/page.php` + `partials/`).
 - `assets/` — css/js theo area (`css/index`, `css/indexdept`, `js/indexdept`).
+  5 modal của `indexdept.php` style bằng class `tw-*` (Tailwind v3 standalone, prefix `tw-`,
+  không preflight) ngay trong `views/indexdept/partials/modal-*.php`; sau khi sửa class `tw-*`
+  ở partial hoặc `assets/js/indexdept/*.js` phải chạy `tools	ailwinduild.cmd` và commit
+  `assets/css/tailwind.css` (xem `tools/tailwind/README.md`). `indexdept-modals.css` chỉ giữ
+  vỏ modal + hook JS/state.
 - `account/` — `login.php`/`login_action.php`/`logout.php` là forwarder sang authV2; còn lại là công cụ admin (register/change_password + `*_action.php`).
 - `sql/` — script SQL (migration, backup).
 - `dev-tools/` — script phụ trợ backup/check/debug/fixes/migrations (không thuộc runtime).
