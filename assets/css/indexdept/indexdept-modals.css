@@ -17,8 +17,8 @@
    modal nào đã port thì style nằm hết ở class tw-* trong partial, file này chỉ
    giữ lại phần Tailwind không làm được (hook JS/state, @keyframes, selector ID,
    font-family inherit + khôi phục .fas).
-   - Đã port: add-criteria, staff.
-   - Chưa port: default-settings, deadline, score-options.
+   - Đã port: add-criteria, staff, deadline.
+   - Chưa port: default-settings, score-options.
    ========================================================== */
 
 /* ================= LAYOUT ================= */
@@ -199,48 +199,9 @@
 
 /* Staff modal - layout tier */
 
-
-
-
-
-
-
-
 /* Add criteria modal - layout tier */
 
-
-
-
-
 /* Deadline modal - layout tier */
-.deadline-modal__content {
-    font-family: inherit;
-    width: min(720px, 92vw);
-    max-height: 88vh;
-    margin: 6vh auto;
-    padding: 0;
-    border: 1px solid #d7dde6;
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
-}
-
-.deadline-modal__header {
-    padding: 22px 24px 14px;
-    border-bottom: 1px solid #e2e8f0;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-}
-
-.deadline-modal__body {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 18px 20px 16px;
-    background: #f8fafc;
-}
-
 
 /* ================= COMPONENTS ================= */
 /* Default settings modal - component tier */
@@ -471,16 +432,20 @@
     min-width: 78px !important;
 }
 
-/* Footer meta dùng chung 3 modal */
+/* Footer meta dùng chung 2 modal chưa port */
 .default-settings-modal__footer-meta,
-.score-options-modal__footer-meta,
-.deadline-modal__footer-meta {
+.score-options-modal__footer-meta {
     display: inline-flex;
     align-items: center;
     min-height: 28px;
     color: #64748b;
     font-size: 12px;
     font-weight: 800;
+}
+
+/* Màu chữ đi cùng state --active do JS bật; layout đã port sang tw-* trong partial */
+.deadline-modal__footer-meta {
+    color: #64748b;
 }
 
 .default-settings-modal__footer-actions {
@@ -495,11 +460,6 @@
 }
 
 /* Staff modal - component tier */
-
-
-
-
-
 
 .staff-modal__input {
     width: 100%;
@@ -518,8 +478,6 @@
     box-shadow: 0 0 0 2px rgba(20, 53, 131, 0.15);
     outline: none;
 }
-
-
 
 #staff_tbody td {
     padding: 5px 8px !important;
@@ -541,11 +499,6 @@
 .staff-modal__table tbody tr:hover td {
     background: #f8fafc;
 }
-
-
-
-
-
 
 .staff-modal__action-list {
     display: flex;
@@ -583,16 +536,6 @@
 
 /* Add criteria modal - component tier */
 
-
-
-
-
-
-
-
-
-
-
 /* Modern modal shell should inherit the page font; icon fonts are restored below. */
 .add-criteria-modal,
 .add-criteria-modal *,
@@ -611,101 +554,13 @@
 }
 
 /* Deadline modal - danh sách tiêu chí */
-.deadline-modal__criteria-list {
-    max-height: min(48vh, 430px);
-    overflow-y: auto;
-    border: 1px solid #cbd5e1;
-    border-top: 0;
-    border-radius: 0 0 6px 6px;
-    background: #ffffff;
-    padding: 0;
-    margin-top: 0;
-}
-
-.deadline-modal__criteria-item {
-    display: grid !important;
-    grid-template-columns: 42px 54px minmax(0, 1fr);
-    align-items: center;
-    gap: 0;
-    width: 100%;
-    box-sizing: border-box;
-    min-height: 38px;
-    margin: 0;
-    border-bottom: 1px solid #e5e7eb;
-    color: #1f2937;
-    cursor: pointer;
-    transition: background-color 0.16s ease, box-shadow 0.16s ease;
-}
-
-.deadline-modal__criteria-item:hover {
-    background: #f8fafc;
-    box-shadow: inset 3px 0 0 #143583;
-}
-
-.deadline-modal__criteria-item .tieuchi-checkbox {
-    display: inline-block !important;
-    width: 16px !important;
-    min-width: 16px !important;
-    max-width: 16px !important;
-    height: 16px !important;
-    min-height: 16px !important;
-    flex: 0 0 16px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    accent-color: #143583;
-}
-
-.deadline-modal__criteria-check {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 38px;
-}
-
-.deadline-modal__criteria-index {
-    display: inline-flex;
-    align-items: center;
-    min-height: 38px;
-    padding: 0 8px;
-    color: #0f172a;
-    font-size: 12px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-}
-
-.deadline-modal__criteria-item .deadline-modal__criteria-label {
-    display: -webkit-box !important;
-    flex: 1 1 auto !important;
-    min-width: 0;
-    width: auto !important;
-    padding: 7px 8px;
-    text-align: left !important;
-    overflow: hidden;
-    color: #1f2937;
-    font-size: 12.5px;
-    font-weight: 600;
-    line-height: 1.3;
-    overflow-wrap: anywhere;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
-
-.deadline-modal__bulk-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 0;
-}
 
 /* Status text dùng chung 3 modal */
-.deadline-modal__update-status,
 .default-settings-modal__status {
     text-align: center;
 }
 
-/* Tiện ích global: phải đứng SAU .deadline-modal__criteria-item
-   (cùng specificity + !important) thì [hidden] mới thắng. */
+/* Tiện ích global: giữ !important để thắng mọi display do class Tailwind/BEM đặt. */
 [hidden] {
     display: none !important;
 }
@@ -1223,260 +1078,16 @@ body.indexdept-modal-open {
 }
 
 /* Deadline modal - header, form, tiêu chí, actions */
-.deadline-modal__close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #64748b;
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
-}
 
-.deadline-modal__close:hover {
-    background: #e2e8f0;
-    color: #0f172a;
-    transform: translateY(-1px);
-}
-
-.deadline-modal__title {
-    margin: 0;
-    color: #0f172a;
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1.2;
-    text-wrap: balance;
-}
-
-.deadline-modal__subtitle {
-    margin: 0;
-    color: #475569;
-    font-size: 14px;
-    line-height: 1.45;
-}
-
-.deadline-modal__group {
-    margin-bottom: 0;
-}
-
-.deadline-modal__controls {
-    display: grid;
-    grid-template-columns: 150px minmax(230px, 1fr) auto;
-    gap: 8px;
-    align-items: end;
-    padding: 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: #f8fafc;
-}
-
-.deadline-modal__field {
-    min-width: 0;
-}
-
-.deadline-modal__quick-field {
-    min-width: 150px;
-}
-
-.deadline-modal__label {
-    display: block;
-    margin: 0 0 5px;
-    color: #334155;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.deadline-modal__input,
-.deadline-modal__select {
-    width: 100%;
-    min-height: 32px;
-    padding: 5px 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: #fff;
-    color: #0f172a;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: inherit;
-    font-variant-numeric: tabular-nums;
-    box-sizing: border-box;
-    transition: border-color 0.16s ease, box-shadow 0.16s ease;
-}
-
-.deadline-modal__input:focus,
-.deadline-modal__select:focus {
-    border-color: #143583;
-    box-shadow: 0 0 0 2px rgba(20, 53, 131, 0.14);
-    outline: none;
-}
-
-.deadline-modal__quick-suggestion {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-    min-height: 32px;
-    margin-top: 0;
-}
-
-.deadline-modal .quick-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 30px;
-    padding: 0 9px;
-    border: 1px solid #b8cdf4;
-    border-radius: 6px;
-    background: #eef5ff;
-    color: #143583;
-    font-size: 12px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
-}
-
-.deadline-modal .quick-btn:hover,
+/* State do JS bật khi số ngày trùng gợi ý; hover đã port sang tw-* */
 .deadline-modal .quick-btn.active {
     background: #dbeafe;
     border-color: #8fb0eb;
 }
 
-.deadline-modal .quick-btn:active {
-    transform: scale(0.96);
-}
-
-.deadline-modal__note-strip {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    min-height: 30px;
-    padding: 6px 8px;
-    border: 1px solid #d7e4fb;
-    border-radius: 6px;
-    background: #eef5ff;
-    color: #143583;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.deadline-modal__note {
-    margin: 0;
-    font-size: 12px;
-    color: inherit;
-    font-style: normal;
-    line-height: 1.35;
-}
-
-.deadline-modal__criteria-panel {
-    display: flex;
-    min-height: 0;
-    flex: 1 1 auto;
-    flex-direction: column;
-}
-
-.deadline-modal__criteria-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 8px 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px 6px 0 0;
-    background: #f8fafc;
-}
-
-.deadline-modal__criteria-title {
-    margin: 0;
-}
-
-.deadline-modal__bulk-btn {
-    min-height: 28px;
-    padding: 0 9px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: #ffffff;
-    color: #334155;
-    font-size: 12px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
-}
-
-.deadline-modal__bulk-btn:hover {
-    background: #f1f5f9;
-    color: #0f172a;
-}
-
-.deadline-modal__bulk-btn:active {
-    transform: scale(0.96);
-}
-
-.deadline-modal__criteria-table-head {
-    display: grid;
-    grid-template-columns: 42px 54px minmax(0, 1fr);
-    align-items: center;
-    min-height: 30px;
-    border-right: 1px solid #cbd5e1;
-    border-left: 1px solid #cbd5e1;
-    background: #143583;
-    color: #f8fafc;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.deadline-modal__criteria-table-head span {
-    padding: 0 8px;
-}
-
-.deadline-modal__criteria-table-head span:first-child,
-.deadline-modal__criteria-table-head span:nth-child(2) {
-    text-align: center;
-}
-
-.deadline-modal__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
-.deadline-modal__action-btn {
-    min-height: 34px;
-    min-width: 110px;
-    border-radius: 6px;
-    font-weight: 700;
-}
-
-.deadline-modal__action-btn--secondary {
-    background-color: #ffffff;
-    color: #334155;
-}
-
-.deadline-modal__action-btn--secondary:hover {
-    background-color: #f1f5f9;
-    color: #0f172a;
-}
-
-.deadline-modal__group--actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding-top: 10px;
-    border-top: 1px solid #e5e7eb;
-}
-
 .deadline-modal__footer-meta--active {
     color: #143583;
 }
-
 
 /* ================= RESPONSIVE ================= */
 /* Default settings modal - responsive tier */
@@ -1623,67 +1234,18 @@ body.indexdept-modal-open {
 
 /* Deadline modal - responsive tier */
 @media screen and (max-width: 768px) {
-    .deadline-modal__content {
-        width: 96vw !important;
-        max-width: 96vw !important;
-        max-height: 94vh;
-        margin: 3vh auto !important;
-        padding: 0 !important;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     }
-
-    .deadline-modal__header {
-        padding: 12px 44px 10px 10px;
-    }
-
-    .deadline-modal__body {
-        padding: 8px;
-        gap: 8px;
-    }
-
-    .deadline-modal__title {
-        font-size: 18px;
-    }
-
-    .deadline-modal__controls {
-        grid-template-columns: 1fr;
-        gap: 7px;
-        padding: 8px;
-    }
-
-    .deadline-modal__quick-field {
-        min-width: 0;
-    }
-
-    .deadline-modal__criteria-list {
-        max-height: calc(94vh - 330px);
-    }
-
-    .deadline-modal__criteria-toolbar,
-.deadline-modal__group--actions {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .deadline-modal__criteria-table-head,
-.deadline-modal__criteria-item {
-        grid-template-columns: 38px 42px minmax(0, 1fr);
-    }
-
-    .deadline-modal__criteria-item .deadline-modal__criteria-label {
-        padding: 7px 6px;
-        font-size: 12px;
-    }
-
-    .deadline-modal__actions {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .deadline-modal__action-btn {
-        width: 100%;
-        margin-right: 0;
-    }
-}
 
 /* Score options modal - responsive tier */
 @media screen and (max-width: 1024px) {
@@ -1820,8 +1382,7 @@ body.indexdept-modal-open {
 
 /* Unified modal footer action order for indexdept mobile dialogs */
 @media screen and (max-width: 768px) {
-    .deadline-modal__actions,
-.default-settings-modal__footer-actions,
+    .default-settings-modal__footer-actions,
 .score-options-modal__footer-actions {
         display: flex !important;
         flex-direction: row !important;
@@ -1831,8 +1392,7 @@ body.indexdept-modal-open {
         width: 100% !important;
     }
 
-    .deadline-modal__actions .score-options-modal__btn,
-.default-settings-modal__footer-actions .score-options-modal__btn,
+    .default-settings-modal__footer-actions .score-options-modal__btn,
 .score-options-modal__footer-actions .score-options-modal__btn {
         flex: 0 0 auto !important;
         width: auto !important;
@@ -1840,14 +1400,12 @@ body.indexdept-modal-open {
         white-space: nowrap;
     }
 
-    .deadline-modal__actions .score-options-modal__btn--secondary,
-.default-settings-modal__footer-actions .score-options-modal__btn--secondary,
+    .default-settings-modal__footer-actions .score-options-modal__btn--secondary,
 .score-options-modal__footer-actions .score-options-modal__btn--secondary {
         min-width: 92px;
     }
 
-    .deadline-modal__actions .score-options-modal__btn--primary,
-.default-settings-modal__footer-actions .score-options-modal__btn--primary,
+    .default-settings-modal__footer-actions .score-options-modal__btn--primary,
 .score-options-modal__footer-actions .score-options-modal__btn--primary {
         max-width: calc(100% - 108px);
         min-width: min(220px, calc(100% - 108px));
