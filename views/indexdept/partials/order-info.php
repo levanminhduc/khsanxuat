@@ -2,11 +2,10 @@
     <div class="order-strip">
         <div class="order-strip__row">
             <div class="order-strip__meta">
-                <span class="order-strip__po"><?php echo htmlspecialchars($po); ?></span>
-                <span class="order-strip__sep">·</span>
-                <span class="order-strip__style"><?php echo htmlspecialchars($style); ?></span>
+                <span class="order-strip__label">PO:</span><span class="order-strip__po"><?php echo htmlspecialchars($po); ?></span>
+                <span class="order-strip__sep">-</span>
+                <span class="order-strip__label">Mã Hàng:</span><span class="order-strip__style"><?php echo htmlspecialchars($style); ?></span>
             </div>
-            <span class="order-strip__score" id="orderStripScore"></span>
             <a href="<?php echo BASE_URL; ?>/pages/image_handler.php?id=<?php echo $id; ?>&dept=<?php echo $dept; ?>"
                class="order-strip__btn" title="Xử lý hình ảnh" aria-label="Xử lý hình ảnh">
                 <i class="fas fa-image" aria-hidden="true"></i>
@@ -19,7 +18,17 @@
                 <i class="fas fa-file-alt" aria-hidden="true"></i>
             </a>
         </div>
-        <div class="order-strip__progress"><span id="orderStripProgress"></span></div>
+        <div class="order-strip__details">
+            <span class="order-strip__chip"><span class="order-strip__chip-label">Xưởng</span><?php echo htmlspecialchars($xuong); ?></span>
+            <span class="order-strip__chip"><span class="order-strip__chip-label">Line</span><?php echo htmlspecialchars($line); ?></span>
+            <span class="order-strip__chip"><span class="order-strip__chip-label">SL</span><?php echo is_numeric($qty) ? number_format((float)$qty, 0, ',', '.') : htmlspecialchars($qty); ?></span>
+            <span class="order-strip__chip"><span class="order-strip__chip-label">Vào</span><?php echo $ngayin_formatted; ?></span>
+            <span class="order-strip__chip"><span class="order-strip__chip-label">Ra</span><?php echo $ngayout_formatted; ?></span>
+        </div>
+        <div class="order-strip__progress">
+            <span class="order-strip__track"><span id="orderStripProgress"></span></span>
+            <span class="order-strip__score" id="orderStripScore"></span>
+        </div>
     </div>
 
     <div class="table-responsive table-responsive--spaced order-info-table-wrap">

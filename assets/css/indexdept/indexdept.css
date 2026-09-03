@@ -996,6 +996,7 @@ select[id^="ngay_tinh_han_"] {
 @media screen and (max-width: 768px) {
     .container {
         padding: 10px !important;
+        margin-top: 0;
     }
 
     h2 {
@@ -1009,12 +1010,20 @@ select[id^="ngay_tinh_han_"] {
         align-items: stretch !important;
         gap: 10px;
         text-align: center;
+        margin: 4px 0 8px;
     }
 
+    /* Mobile chi con h2 hien (header-actions da doi sang menu hamburger), nen thu gon
+       ve 1 dong: bo tien to "Thong tin chi tiet -" va bo padding/border cua h2 chung */
     .action-buttons h2 {
-        margin-bottom: 5px;
+        margin-bottom: 0;
+        padding-bottom: 0;
         border-bottom: none;
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+
+    .action-buttons__prefix {
+        display: none;
     }
 
     .action-buttons > .header-actions {
@@ -1138,6 +1147,13 @@ select[id^="ngay_tinh_han_"] {
         color: #0f172a;
     }
 
+    .order-strip__label {
+        margin-right: 3px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #64748b;
+    }
+
     .order-strip__sep {
         color: #cbd5e1;
         margin: 0 4px;
@@ -1153,6 +1169,7 @@ select[id^="ngay_tinh_han_"] {
         font-size: 12px;
         font-weight: 700;
         color: #143583;
+        white-space: nowrap;
     }
 
     .order-strip__btn {
@@ -1187,15 +1204,52 @@ select[id^="ngay_tinh_han_"] {
         text-align: center;
     }
 
+    .order-strip__details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 6px;
+        margin-top: 6px;
+    }
+
+    .order-strip__chip {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 4px;
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: #f1f5f9;
+        font-size: 12px;
+        font-weight: 600;
+        color: #0f172a;
+        white-space: nowrap;
+    }
+
+    .order-strip__chip-label {
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        color: #64748b;
+    }
+
+    /* Thanh tien do + diem/tong diem tren cung 1 dong, diem nam cuoi thanh */
     .order-strip__progress {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .order-strip__track {
+        flex: 1 1 auto;
+        min-width: 0;
         height: 4px;
-        margin-top: 4px;
         border-radius: 2px;
         background: #e2e8f0;
         overflow: hidden;
     }
 
-    .order-strip__progress span {
+    .order-strip__track > span {
         display: block;
         height: 100%;
         width: 0;
