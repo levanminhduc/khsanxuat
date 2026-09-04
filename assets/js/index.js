@@ -17,7 +17,9 @@
             'Chuyền May': 'chuyen_may',
             'KCS': 'kcs',
             'Ủi TP': 'ui_thanh_pham',
-            'Hoàn Thành': 'hoan_thanh'
+            'Hoàn Thành': 'hoan_thanh',
+            'Trung Tâm BTP': 'trung_tam_btp',
+            'TT BTP': 'trung_tam_btp'
         };
         return deptMap[deptName];
     }
@@ -130,29 +132,162 @@
         container.scrollTo({ left: 0, behavior: 'smooth' });
     }
 
+    var mobileBarLabelsPlugin = {
+        id: 'mobileBarLabels',
+        afterDatasetsDraw: function(chart) {
+            if (!chart.options || chart.options.indexAxis !== 'y') {
+                return;
+            }
+            var ctx = chart.ctx;
+            chart.data.datasets.forEach(function(dataset, datasetIndex) {
+                var meta = chart.getDatasetMeta(datasetIndex);
+                if (!meta || meta.hidden) return;
+                meta.data.forEach(function(element, index) {
+                    var val = dataset.data[index];
+                    if (val === undefined || val === null) return;
+                    var text = val + '%';
+                    ctx.save();
+                    ctx.font = '600 11px sans-serif';
+                    ctx.textBaseline = 'middle';
+                    var textWidth = ctx.measureText(text).width;
+                    var xPos = element.x + 4;
+                    if (xPos + textWidth > chart.width - 4) {
+                        xPos = Math.max(element.base + 4, element.x - textWidth - 4);
+                        ctx.fillStyle = (element.x - element.base > 36) ? '#ffffff' : '#1e293b';
+                    } else {
+                        ctx.fillStyle = '#1e293b';
+                    }
+                    ctx.fillText(text, xPos, element.y);
+                    ctx.restore();
+                });
+            });
+        }
+    };
+
+    function handleChartClick(e, elements) {
+        if (elements && elements.length > 0) {
+            var index = elements[0].index;
+            var deptName = this.data.labels[index];
+            var deptCode = getDeptCode(deptName);
+            if (deptCode) {
+                var baseUrl = window.BASE_URL || '';
+                window.location.href = baseUrl + '/pages/dept_statistics.php?dept=' + encodeURIComponent(deptCode) +
+                    '&month=' + encodeURIComponent(config.selectedMonth) + '&year=' + encodeURIComponent(config.selectedYear);
+            }
+        }
+    }
+
     function initChart() {
         var canvas = document.getElementById('departmentChart');
         if (!canvas || typeof Chart === 'undefined') return;
         if (!config.deptStats) return;
 
-        var ctx = canvas.getContext('2d');
-        var isMobile = window.innerWidth <= 428;
+        var isMobile = window.matchMedia('(max-width: 768px)').matches;
+        var container = canvas.parentElement;
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: config.deptStats.labels,
-                datasets: [{
-                    label: 'Tỷ lệ hoàn thành (%)',
-                    data: config.deptStats.data,
-                    backgroundColor: config.deptStats.colors,
-                    borderRadius: 8,
-                    maxBarThickness: 50,
-                    borderColor: 'rgba(255, 255, 255, 0.8)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
+        window.IndexPage = window.IndexPage || {};
+
+        if (isMobile && container) {
+            var deptCount = (config.deptStats.labels && config.deptStats.labels.length) ? config.deptStats.labels.length : 11;
+            container.style.height = (deptCount * 24 + 54) + 'px';
+        } else if (container) {
+            container.style.height = '';
+        }
+
+        if (window.IndexPage.chart) {
+            if (window.IndexPage.chartIsMobile === isMobile) {
+                return window.IndexPage.chart;
+            }
+            window.IndexPage.chart.destroy();
+            window.IndexPage.chart = null;
+        }
+
+        var ctx = canvas.getContext('2d');
+        window.IndexPage.chartIsMobile = isMobile;
+
+        var chartOptions;
+        if (isMobile) {
+            chartOptions = {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { top: 2, right: 28, bottom: 2, left: 0 }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Tỷ lệ hoàn thành - Tháng ' + config.selectedMonth + '/' + config.selectedYear,
+                        font: {
+                            size: 12,
+                            weight: 'bold',
+                            family: "'Segoe UI', 'Arial', sans-serif"
+                        },
+                        padding: { top: 2, bottom: 6 },
+                        color: 'rgb(226, 2, 2)'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        },
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        titleColor: '#1e293b',
+                        bodyColor: '#1e293b',
+                        borderColor: '#cbd5e1',
+                        borderWidth: 1,
+                        padding: 8,
+                        boxPadding: 4,
+                        usePointStyle: true
+                    }
+                },
+                onClick: handleChartClick,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 100,
+                        border: { display: false },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.06)',
+                            drawBorder: false,
+                            drawTicks: false
+                        },
+                        ticks: {
+                            stepSize: 50,
+                            autoSkip: false,
+                            callback: function(value) { return value + '%'; },
+                            font: { size: 10 },
+                            color: '#64748b',
+                            padding: 2
+                        }
+                    },
+                    y: {
+                        border: { display: false },
+                        grid: { display: false, drawBorder: false },
+                        ticks: {
+                            font: { size: 10.5, weight: '600' },
+                            color: '#1e293b',
+                            maxRotation: 0,
+                            minRotation: 0,
+                            padding: 3,
+                            callback: function(val) {
+                                var label = typeof val === 'string' ? val : (this.getLabelForValue ? this.getLabelForValue(val) : val);
+                                if (label === 'Trung Tâm BTP') {
+                                    return 'TT BTP';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                animation: { duration: 800, easing: 'easeInOutQuart' },
+                hover: { mode: 'index', intersect: false }
+            };
+        } else {
+            chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 layout: {
@@ -164,11 +299,11 @@
                         display: true,
                         text: 'Tỷ lệ hoàn thành - Tháng ' + config.selectedMonth + '/' + config.selectedYear,
                         font: {
-                            size: isMobile ? 16 : 24,
+                            size: 24,
                             weight: 'bold',
                             family: "'Segoe UI', 'Arial', sans-serif"
                         },
-                        padding: isMobile ? 10 : 20,
+                        padding: 20,
                         color: 'rgb(226, 2, 2)'
                     },
                     tooltip: {
@@ -187,17 +322,7 @@
                         usePointStyle: true
                     }
                 },
-                onClick: function(e, elements) {
-                    if (elements.length > 0) {
-                        var index = elements[0].index;
-                        var deptName = this.data.labels[index];
-                        var deptCode = getDeptCode(deptName);
-                        if (deptCode) {
-                            window.location.href = window.BASE_URL + '/pages/dept_statistics.php?dept=' + deptCode +
-                                '&month=' + config.selectedMonth + '&year=' + config.selectedYear;
-                        }
-                    }
-                },
+                onClick: handleChartClick,
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -205,14 +330,14 @@
                         grid: { color: 'rgba(0, 0, 0, 0.1)', drawBorder: false },
                         ticks: {
                             callback: function(value) { return value + '%'; },
-                            font: { size: isMobile ? 10 : 12 },
+                            font: { size: 12 },
                             color: '#666'
                         }
                     },
                     x: {
                         grid: { display: false },
                         ticks: {
-                            font: { size: isMobile ? 8 : 12 },
+                            font: { size: 12 },
                             color: '#666',
                             maxRotation: 45,
                             minRotation: 45
@@ -221,9 +346,32 @@
                 },
                 animation: { duration: 1000, easing: 'easeInOutQuart' },
                 hover: { mode: 'index', intersect: false }
-            }
+            };
+        }
+
+        window.IndexPage.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: config.deptStats.labels,
+                datasets: [{
+                    label: 'Tỷ lệ hoàn thành (%)',
+                    data: config.deptStats.data,
+                    backgroundColor: config.deptStats.colors,
+                    borderRadius: isMobile ? 4 : 8,
+                    maxBarThickness: isMobile ? 16 : 50,
+                    borderColor: 'rgba(255, 255, 255, 0.8)',
+                    borderWidth: isMobile ? 1 : 2
+                }]
+            },
+            options: chartOptions,
+            plugins: isMobile ? [mobileBarLabelsPlugin] : []
         });
+
+        return window.IndexPage.chart;
     }
+
+    window.IndexPage = window.IndexPage || {};
+    window.IndexPage.initChart = initChart;
 
     window.changeMonth = function(select) {
         var option = select.options[select.selectedIndex];
@@ -242,13 +390,22 @@
         window.location.href = url;
     };
 
-    // Initialize all on DOM ready
     document.addEventListener('DOMContentLoaded', function() {
         initSelectAllCheckbox();
         initRowHighlight();
         initDragToScroll();
         initCheckboxScroll();
-        initChart();
+        var isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (!isMobile) {
+            initChart();
+        }
+    });
+
+    window.addEventListener('resize', function() {
+        var isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (!isMobile && (!window.IndexPage || !window.IndexPage.chart || window.IndexPage.chartIsMobile)) {
+            initChart();
+        }
     });
 
 })();

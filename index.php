@@ -10,17 +10,56 @@ require_once 'includes/index/config.php';
 require_once 'includes/index/functions.php';
 require_once 'includes/security/csrf-helper.php';
 
-$selected_month = isset($_GET['month']) ? intval($_GET['month']) : intval(date('m'));
-$selected_year = isset($_GET['year']) ? intval($_GET['year']) : intval(date('Y'));
-
-if ($selected_month < 1 || $selected_month > 12) {
-    $selected_month = intval(date('m'));
-}
-if ($selected_year < 2000 || $selected_year > 2100) {
-    $selected_year = intval(date('Y'));
-}
-
 $available_months = getAvailableMonths($connect);
+
+$has_explicit_month = isset($_GET['month']) && is_numeric($_GET['month']) && intval($_GET['month']) >= 1 && intval($_GET['month']) <= 12;
+
+if ($has_explicit_month) {
+    $selected_month = intval($_GET['month']);
+    if (isset($_GET['year']) && is_numeric($_GET['year']) && intval($_GET['year']) >= 2000 && intval($_GET['year']) <= 2100) {
+        $selected_year = intval($_GET['year']);
+    } else {
+        $found_year = null;
+        foreach ($available_months as $m) {
+            if ((int) $m['month'] === $selected_month) {
+                $found_year = (int) $m['year'];
+                break;
+            }
+        }
+        $selected_year = $found_year !== null ? $found_year : intval(date('Y'));
+    }
+} else {
+    if (!empty($available_months)) {
+        $selected_month = (int) $available_months[0]['month'];
+        $selected_year = (int) $available_months[0]['year'];
+    } else {
+        $selected_month = intval(date('m'));
+        $selected_year = (isset($_GET['year']) && is_numeric($_GET['year']) && intval($_GET['year']) >= 2000 && intval($_GET['year']) <= 2100)
+            ? intval($_GET['year'])
+            : intval(date('Y'));
+    }
+}
+
+$selected_month_exists = false;
+foreach ($available_months as $m) {
+    if ((int) $m['month'] === (int) $selected_month && (int) $m['year'] === (int) $selected_year) {
+        $selected_month_exists = true;
+        break;
+    }
+}
+
+if (!$selected_month_exists) {
+    $available_months[] = [
+        'month' => $selected_month,
+        'year' => $selected_year,
+    ];
+    usort($available_months, function ($a, $b) {
+        if ((int) $a['year'] !== (int) $b['year']) {
+            return (int) $b['year'] - (int) $a['year'];
+        }
+        return (int) $b['month'] - (int) $a['month'];
+    });
+}
 $rows = getProductionData($connect, $selected_month, $selected_year,
     isset($_GET['search_value']) ? $_GET['search_value'] : '',
     isset($_GET['search_type']) ? $_GET['search_type'] : 'xuong'
@@ -37,6 +76,61 @@ $completion_percent = $stats['completion_percent'];
 $kehoach_percent = $stats['kehoach_percent'];
 $kho_percent = $stats['kho_percent'];
 
+$chart_departments = [
+    'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
+    'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
+    'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
+    'Trung Tâm BTP' => ['code' => 'trung_tam_btp', 'color' => '#8B5CF6'],
+    'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
+    'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF'],
+    'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#14B8A6'],
+    'KCS' => ['code' => 'kcs', 'color' => '#F97316']
+];
+
+$completion_rates = [];
+foreach ($chart_departments as $dept_name => $info) {
+    $completed = 0;
+    foreach ($rows as $row) {
+        if (getDeptStatusFromCache($status_map, $row['stt'], $info['code'])) {
+            $completed++;
+        }
+    }
+    $completion_rates[$dept_name] = $total_tasks > 0 ? round(($completed / $total_tasks) * 100) : 0;
+}
+
+$mobile_dept_codes = [];
+$mobile_depts_config = [];
+foreach ($chart_departments as $dept_name => $info) {
+    $mobile_dept_codes[] = $info['code'];
+    $mobile_depts_config[] = [
+        'code' => $info['code'],
+        'label' => $dept_name,
+        'percent' => $completion_rates[$dept_name],
+    ];
+}
+
+$mobile_selected_dept = isset($_GET['dept']) ? (string) $_GET['dept'] : '';
+if (!in_array($mobile_selected_dept, $mobile_dept_codes, true)) {
+    $mobile_selected_dept = '';
+}
+
+$incomplete_map = [];
+foreach ($rows as $row) {
+    $incomplete_map[$row['stt']] = hasIncompleteCriteria($connect, $row['style'], $row['stt']);
+}
+
+$mobile_rows = buildMobileDeptRows($rows, $status_map, $deadline_map, $incomplete_map, $mobile_dept_codes);
+$xuong_list = getDistinctXuong($connect);
+
+$mobile_months = [];
+foreach ($available_months as $month) {
+    $mobile_months[] = [
+        'month' => (int) $month['month'],
+        'year' => (int) $month['year'],
+        'label' => 'Tháng ' . date('m/Y', mktime(0, 0, 0, $month['month'], 1, $month['year'])),
+    ];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +146,7 @@ $kho_percent = $stats['kho_percent'];
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="assets/css/index/index.css?v=<?php echo filemtime('assets/css/index/index.css'); ?>">
+    <link rel="stylesheet" href="assets/css/index/index-mobile.css?v=<?php echo filemtime('assets/css/index/index-mobile.css'); ?>">
     <link rel="stylesheet" href="assets/css/loading-overlay.css">
 </head>
 <body>
@@ -110,6 +205,7 @@ $kho_percent = $stats['kho_percent'];
 
     
     <div class="container">
+    <?php include BASE_PATH . '/views/index/partials/mobile-dept-list.php'; ?>
     <h3>DANH SÁCH MÃ HÀNG SẢN XUẤT TRONG THÁNG</h3>
 
     
@@ -119,29 +215,6 @@ $kho_percent = $stats['kho_percent'];
 
     <div class="evaluation-container">
         <?php
-
-        $chart_departments = [
-            'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
-            'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
-            'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
-            'Trung Tâm BTP' => ['code' => 'trung_tam_btp', 'color' => '#8B5CF6'],
-            'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
-            'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF'],
-            'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#14B8A6'],
-            'KCS' => ['code' => 'kcs', 'color' => '#F97316']
-
-        ];
-
-        $completion_rates = [];
-        foreach ($chart_departments as $dept_name => $info) {
-            $completed = 0;
-            foreach ($rows as $row) {
-                if (getDeptStatusFromCache($status_map, $row['stt'], $info['code'])) {
-                    $completed++;
-                }
-            }
-            $completion_rates[$dept_name] = $total_tasks > 0 ? round(($completed / $total_tasks) * 100) : 0;
-        }
 
         $max_percent = max($completion_rates);
         $min_percent = min($completion_rates);
@@ -244,11 +317,11 @@ $kho_percent = $stats['kho_percent'];
                     <select name="month" id="month-select" onchange="changeMonth(this)">
                         <?php foreach ($available_months as $month) : ?>
                             <?php
-                                $month_name = date('m/Y', mktime(0, 0, 0, $month['month'], 1, $month['year']));
-                                $selected = ($month['month'] == $selected_month && $month['year'] == $selected_year) ? 'selected' : '';
+                                $month_name = date('m/Y', mktime(0, 0, 0, (int) $month['month'], 1, (int) $month['year']));
+                                $selected = ((int) $month['month'] === (int) $selected_month && (int) $month['year'] === (int) $selected_year) ? 'selected' : '';
                             ?>
-                            <option value="<?php echo $month['month']; ?>"
-                                    data-year="<?php echo $month['year']; ?>"
+                            <option value="<?php echo (int) $month['month']; ?>"
+                                    data-year="<?php echo (int) $month['year']; ?>"
                                     <?php echo $selected; ?>>
                                 Tháng <?php echo $month_name; ?>
                             </option>
@@ -322,27 +395,8 @@ $kho_percent = $stats['kho_percent'];
             $ngayin_formatted = date('d/m/Y', strtotime($row['ngayin']));
             $ngayout_formatted = date('d/m/Y', strtotime($row['ngayout']));
 
-            $kehoach_deadline = getDeadlineFromCache($deadline_map, $row['stt'], 'kehoach');
-
-            if (!$kehoach_deadline) {
-                $ngayin = new DateTime($row['ngayin']);
-                $kehoach = clone $ngayin;
-                $kehoach->modify('-7 days');
-                $kehoach_formatted = $kehoach->format('d/m/Y');
-            } else {
-                $kehoach_formatted = date('d/m/Y', strtotime($kehoach_deadline));
-            }
-
-            $kho_deadline = getDeadlineFromCache($deadline_map, $row['stt'], 'kho');
-
-            if (!$kho_deadline) {
-                $ngayin = new DateTime($row['ngayin']);
-                $kho = clone $ngayin;
-                $kho->modify('-14 days');
-                $kho_formatted = $kho->format('d/m/Y');
-            } else {
-                $kho_formatted = date('d/m/Y', strtotime($kho_deadline));
-            }
+            $kehoach_formatted = date('d/m/Y', strtotime(resolveDeptDeadline($deadline_map, $row['stt'], 'kehoach', $row['ngayin'])));
+            $kho_formatted = date('d/m/Y', strtotime(resolveDeptDeadline($deadline_map, $row['stt'], 'kho', $row['ngayin'])));
 
             $kehoach_completed = getDeptStatusFromCache($status_map, $row['stt'], 'kehoach');
             $chuanbi_completed = getDeptStatusFromCache($status_map, $row['stt'], 'chuanbi_sanxuat_phong_kt');
@@ -370,7 +424,7 @@ $kho_percent = $stats['kho_percent'];
             echo "<td>" . htmlspecialchars($row['po'], ENT_QUOTES, 'UTF-8') . "</td>";
             echo "<td>
                     <a href='" . BASE_URL . "/pages/incomplete_criteria.php?style=" . urlencode($row['style']) . "&stt=" . intval($row['stt']) . "'
-                       class='style-link" . (hasIncompleteCriteria($connect, $row['style'], $row['stt']) ? " has-incomplete" : "") . "'
+                       class='style-link" . (!empty($incomplete_map[$row['stt']]) ? " has-incomplete" : "") . "'
                        title='Xem tiêu chí chưa hoàn thành'>
                         " . htmlspecialchars($row['style'], ENT_QUOTES, 'UTF-8') . "
                     </a>
@@ -421,9 +475,7 @@ $kho_percent = $stats['kho_percent'];
             foreach ($departments as $dept_code => $dept_name) {
                 $dept_completed = getDeptStatusFromCache($status_map, $row['stt'], $dept_code);
 
-                $dept_deadline = getDeadlineFromCache($deadline_map, $row['stt'], $dept_code);
-
-                $dept_formatted_date = !$dept_deadline ? $kehoach_formatted : date('d/m/Y', strtotime($dept_deadline));
+                $dept_formatted_date = date('d/m/Y', strtotime(resolveDeptDeadline($deadline_map, $row['stt'], $dept_code, $row['ngayin'])));
 
                 echo "<td>";
                 if (!$dept_completed) {
@@ -457,15 +509,25 @@ window.indexConfig = {
     deptStats: {
         labels: <?php echo json_encode(array_keys($completion_rates)); ?>,
         data: <?php echo json_encode(array_values($completion_rates)); ?>,
-        colors: <?php echo json_encode(array_map(function($info) { return $info['color']; }, $chart_departments)); ?>
+        colors: <?php echo json_encode(array_values(array_map(function($info) { return $info['color']; }, $chart_departments))); ?>
     },
     chartDepartments: <?php echo json_encode(array_combine(
         array_keys($chart_departments),
         array_map(function($info) { return ['code' => $info['code']]; }, $chart_departments)
-    )); ?>
+    )); ?>,
+    mobile: {
+        selectedDept: <?php echo json_encode($mobile_selected_dept); ?>,
+        depts: <?php echo json_encode($mobile_depts_config); ?>,
+        xuongList: <?php echo json_encode($xuong_list); ?>,
+        months: <?php echo json_encode($mobile_months); ?>,
+        selectedMonth: <?php echo (int) $selected_month; ?>,
+        selectedYear: <?php echo (int) $selected_year; ?>,
+        baseUrl: <?php echo json_encode(BASE_URL); ?>
+    }
 };
 </script>
 <script src="assets/js/index.js?v=<?php echo filemtime('assets/js/index.js'); ?>"></script>
+<script src="assets/js/index/index-mobile.js?v=<?php echo filemtime('assets/js/index/index-mobile.js'); ?>"></script>
 
 
 <script src="assets/js/header.js?v=<?php echo filemtime('assets/js/header.js'); ?>"></script>

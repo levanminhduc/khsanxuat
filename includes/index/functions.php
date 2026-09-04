@@ -333,3 +333,88 @@ function getDeadlineFromCache($deadline_map, $id_sanxuat, $dept)
 {
     return isset($deadline_map[$id_sanxuat][$dept]) ? $deadline_map[$id_sanxuat][$dept] : null;
 }
+
+/**
+ * Hạn bộ phận đúng quy tắc cột bảng desktop: kehoach = hạn ghi hoặc ngayin−7;
+ * kho = hạn ghi hoặc ngayin−14; bộ phận khác = hạn ghi hoặc hạn kehoach đã resolve.
+ */
+function resolveDeptDeadline(array $deadline_map, $stt, string $dept_code, string $ngayin): string
+{
+    $stored = getDeadlineFromCache($deadline_map, $stt, $dept_code);
+    if ($stored) {
+        return date('Y-m-d', strtotime($stored));
+    }
+
+    if ($dept_code === 'kehoach') {
+        $date = new DateTime($ngayin);
+        $date->modify('-7 days');
+        return $date->format('Y-m-d');
+    }
+
+    if ($dept_code === 'kho') {
+        $date = new DateTime($ngayin);
+        $date->modify('-14 days');
+        return $date->format('Y-m-d');
+    }
+
+    return resolveDeptDeadline($deadline_map, $stt, 'kehoach', $ngayin);
+}
+
+function getDistinctXuong(mysqli $connect): array
+{
+    $xuong_list = [];
+    $stmt = $connect->prepare("SELECT DISTINCT xuong FROM khsanxuat WHERE xuong <> '' ORDER BY xuong");
+    if (!$stmt) {
+        return [];
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $xuong_list[] = $row['xuong'];
+    }
+    $stmt->close();
+    return $xuong_list;
+}
+
+function buildMobileDeptRows(array $rows, array $status_map, array $deadline_map, array $incomplete_map, array $dept_codes): array
+{
+    $all_completed_depts = [
+        'kehoach', 'chuanbi_sanxuat_phong_kt', 'kho', 'cat',
+        'ep_keo', 'co_dien', 'chuyen_may', 'kcs', 'ui_thanh_pham', 'hoan_thanh'
+    ];
+
+    $result = [];
+    foreach ($rows as $row) {
+        $stt = $row['stt'];
+        $all_done = true;
+        foreach ($all_completed_depts as $code) {
+            if (!getDeptStatusFromCache($status_map, $stt, $code)) {
+                $all_done = false;
+                break;
+            }
+        }
+
+        $depts = [];
+        foreach ($dept_codes as $code) {
+            $depts[$code] = [
+                'done' => (bool) getDeptStatusFromCache($status_map, $stt, $code),
+                'deadline' => resolveDeptDeadline($deadline_map, $stt, $code, $row['ngayin']),
+            ];
+        }
+
+        $result[] = [
+            'stt' => (int) $stt,
+            'xuong' => (string) $row['xuong'],
+            'line' => (string) $row['line1'],
+            'po' => (string) $row['po'],
+            'style' => (string) $row['style'],
+            'qty' => (int) $row['qty'],
+            'ngayin' => date('Y-m-d', strtotime($row['ngayin'])),
+            'has_incomplete' => !empty($incomplete_map[$stt]),
+            'all_done' => $all_done,
+            'depts' => $depts,
+        ];
+    }
+
+    return $result;
+}
