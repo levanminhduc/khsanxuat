@@ -14,46 +14,15 @@ session_start();
 $style = isset($_GET['style']) ? $_GET['style'] : '';
 $stt = isset($_GET['stt']) ? intval($_GET['stt']) : 0;
 
-// Ánh xạ tên hiển thị cho từng bộ phận và thứ tự hiển thị
-$dept_order = [
-    'kehoach' => 1,
-    'chuanbi_sanxuat_phong_kt' => 2,
-    'kho' => 3,
-    'cat' => 4,
-    'ep_keo' => 5,
-    'co_dien' => 6,
-    'chuyen_may' => 7,
-    'kcs' => 8,
-    'ui_thanh_pham' => 9,
-    'hoan_thanh' => 10
-];
+// Bộ phận hiển thị = đúng danh sách của index.php ($dashboard_dept_config); tên đầy đủ
+// lấy từ $dept_names. Điểm mặc định của tiêu chí lấy từ score-options.php để khớp cách
+// indexdept.php tính "chưa hoàn thành".
+require_once BASE_PATH . '/includes/indexdept/config.php';
+require_once BASE_PATH . '/includes/indexdept/score-options.php';
 
-$dept_names = [
-    'kehoach' => 'BỘ PHẬN KẾ HOẠCH',
-    'chuanbi_sanxuat_phong_kt' => 'BỘ PHẬN CHUẨN BỊ SẢN XUẤT (PHÒNG KT)',
-    'kho' => 'KHO NGUYÊN, PHỤ LIỆU',
-    'cat' => 'BỘ PHẬN CẮT',
-    'ep_keo' => 'BỘ PHẬN ÉP KEO',
-    'co_dien' => 'BỘ PHẬN CƠ ĐIỆN',
-    'chuyen_may' => 'BỘ PHẬN CHUYỀN MAY',
-    'kcs' => 'BỘ PHẬN KCS',
-    'ui_thanh_pham' => 'BỘ PHẬN ỦI THÀNH PHẨM',
-    'hoan_thanh' => 'BỘ PHẬN HOÀN THÀNH'
-];
-
-// Màu sắc cho từng bộ phận (lấy từ index.php)
-$dept_colors = [
-    'kehoach' => '#f59e0b',
-    'chuanbi_sanxuat_phong_kt' => '#8b5cf6',
-    'kho' => '#06b6d4',
-    'cat' => '#10b981',
-    'ep_keo' => '#f97316',
-    'co_dien' => '#6366f1',
-    'chuyen_may' => '#ec4899',
-    'kcs' => '#14b8a6',
-    'ui_thanh_pham' => '#8b5cf6',
-    'hoan_thanh' => '#ef4444'
-];
+$valid_depts = getDashboardDepts();
+// dept => vị trí trong danh sách dashboard, dùng để sắp xếp thẻ tổng kết
+$dept_order = array_flip($valid_depts);
 
 // Lấy thông tin chung về style và stt
 $sql_info = "SELECT stt, style, po, line1, xuong, ngayin, ngayout FROM khsanxuat WHERE style = ?";
@@ -78,7 +47,18 @@ if ($result_info->num_rows === 0) {
 $row_info = $result_info->fetch_assoc();
 $stt = $row_info['stt']; // Lấy STT từ kết quả truy vấn nếu không có trong URL
 
-// Lấy danh sách các tiêu chí chưa hoàn thành (điểm không phải 1 hoặc 3) của tất cả các bộ phận cho style và stt đã chọn
+// Lấy toàn bộ tiêu chí của mọi bộ phận cho đơn hàng này; việc lọc "chưa hoàn thành"
+// làm ở tầng PHP vì điểm hiệu lực phụ thuộc getDefaultScoreValueForCriteria().
+// An toàn injection: mã bộ phận là literal do $dept_names định nghĩa, không nhận input người dùng.
+$dept_in_list = "'" . implode("','", array_map([$connect, 'real_escape_string'], $valid_depts)) . "'";
+$dept_order_case = 'CASE tc.dept';
+$dept_case_order = 1;
+foreach ($valid_depts as $valid_dept) {
+    $dept_order_case .= " WHEN '" . $connect->real_escape_string($valid_dept) . "' THEN " . $dept_case_order;
+    $dept_case_order++;
+}
+$dept_order_case .= ' ELSE ' . $dept_case_order . ' END';
+
 $sql = "SELECT
             kh.stt,
             kh.style,
@@ -99,26 +79,13 @@ $sql = "SELECT
         FROM
             khsanxuat kh
         JOIN
-            tieuchi_dept tc ON tc.dept IN ('" . implode("','", array_keys($dept_names)) . "')
+            tieuchi_dept tc ON tc.dept IN (" . $dept_in_list . ")
         LEFT JOIN
             danhgia_tieuchi dg ON kh.stt = dg.id_sanxuat AND tc.id = dg.id_tieuchi
         WHERE
             kh.stt = ?
-            AND (dg.diem_danhgia IS NULL OR dg.diem_danhgia = 0)
         ORDER BY
-            CASE tc.dept
-                WHEN 'kehoach' THEN 1
-                WHEN 'chuanbi_sanxuat_phong_kt' THEN 2
-                WHEN 'kho' THEN 3
-                WHEN 'cat' THEN 4
-                WHEN 'ep_keo' THEN 5
-                WHEN 'co_dien' THEN 6
-                WHEN 'chuyen_may' THEN 7
-                WHEN 'kcs' THEN 8
-                WHEN 'ui_thanh_pham' THEN 9
-                WHEN 'hoan_thanh' THEN 10
-                ELSE 11
-            END,
+            " . $dept_order_case . ",
             tc.nhom,
             tc.thutu";
 
@@ -149,9 +116,23 @@ if (isset($_GET['error'])) {
 $dept_counts = [];
 $total_incomplete = 0;
 
-// Lưu kết quả vào mảng để xử lý
+// Lưu kết quả vào mảng để xử lý.
+// Cách xác định "chưa hoàn thành" phải khớp fetchEvaluationRows() của indexdept.php:
+// điểm hiệu lực = điểm đã lưu, chưa lưu thì lấy điểm mặc định; tiêu chí có điểm mặc
+// định >= 1 được coi như hoàn thành sẵn (không do người dùng chấm) nên bị ẩn.
 $criteria_data = [];
 while ($row = $result->fetch_assoc()) {
+    $default_score_value = getDefaultScoreValueForCriteria($connect, $row['tieuchi_id'], $row['dept'], $row['thutu']);
+    if (floatval($default_score_value) >= 1) {
+        continue;
+    }
+
+    $has_saved_score = isset($row['diem_danhgia']) && $row['diem_danhgia'] !== null;
+    $effective_score = $has_saved_score ? floatval($row['diem_danhgia']) : floatval($default_score_value);
+    if ($effective_score > 0) {
+        continue;
+    }
+
     $criteria_data[] = $row;
     $dept = $row['dept'];
     if (!isset($dept_counts[$dept])) {
@@ -628,9 +609,10 @@ $dept_counts = $sorted_dept_counts;
             </div>
 
             <?php foreach ($dept_counts as $dept => $count): ?>
-                <div class="summary-card" id="summary-<?php echo $dept; ?>" style="border-top: 4px solid <?php echo $dept_colors[$dept]; ?>;" onclick="scrollToDept('<?php echo $dept; ?>')">
-                    <h3><?php echo $dept_names[$dept]; ?></h3>
-                    <div class="count" style="color: <?php echo $dept_colors[$dept]; ?>;"><?php echo $count; ?></div>
+                <?php $summary_color = getDashboardDeptColor($dept); ?>
+                <div class="summary-card" id="summary-<?php echo $dept; ?>" style="border-top: 4px solid <?php echo $summary_color; ?>;" onclick="scrollToDept('<?php echo $dept; ?>')">
+                    <h3><?php echo getDeptDisplayName($dept, $dept_names); ?></h3>
+                    <div class="count" style="color: <?php echo $summary_color; ?>;"><?php echo $count; ?></div>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -656,8 +638,8 @@ $dept_counts = $sorted_dept_counts;
                             $stt_display = 1;
 
                             foreach ($criteria_data as $row) {
-                                $dept_display = isset($dept_names[$row['dept']]) ? $dept_names[$row['dept']] : $row['dept'];
-                                $dept_color = isset($dept_colors[$row['dept']]) ? $dept_colors[$row['dept']] : '#333333';
+                                $dept_display = getDeptDisplayName($row['dept'], $dept_names);
+                                $dept_color = getDashboardDeptColor($row['dept']);
 
                                 // Hiển thị header bộ phận nếu thay đổi
                                 if ($current_dept != $row['dept']) {

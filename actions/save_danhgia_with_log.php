@@ -12,6 +12,7 @@ require_once BASE_PATH . '/includes/security/csrf-helper.php';
 require_once BASE_PATH . '/includes/security/auth-helper.php';
 require_once BASE_PATH . '/includes/indexdept/score-options.php';
 require_once BASE_PATH . '/includes/indexdept/config.php';
+require_once BASE_PATH . '/includes/indexdept/functions.php'; // setIndexdeptFlash()
 
 // Khởi tạo phiên làm việc
 session_start();
@@ -100,6 +101,9 @@ try {
     $all_old_values = [];
     $all_new_values = [];
     $changed_tieuchi_info = [];
+    // Bản ghi INSERT mới không đi qua nhánh so sánh bên dưới (không có giá trị cũ),
+    // nên đếm riêng để "lưu lần đầu có nhập liệu" vẫn được coi là thay đổi thật.
+    $has_new_data = false;
 
     // Lưu đánh giá cho từng tiêu chí
     $sql = "SELECT id, thutu, noidung FROM tieuchi_dept WHERE dept = ? ORDER BY thutu";
@@ -137,9 +141,12 @@ try {
 
             $diem_danhgia = (float) $diem_danhgia;
 
+            // Điểm mặc định auto (mốc điểm không có mốc 0) không do user chấm nên miễn
+            // kiểm tra ảnh; tiêu chí vẫn bắt buộc ảnh cho mọi mốc điểm còn lại.
             if (
                 $diem_danhgia > 0
                 && isset($required_image_criteria[(int) $id_tieuchi])
+                && !isAutoDefaultScore($connect, (int) $id_tieuchi, $dept, $thutu, $diem_danhgia)
                 && !checkTieuchiHasImage($connect, $id_sanxuat, (int) $id_tieuchi)
             ) {
                 throw new Exception("Bạn cần đính kèm hình ảnh cho tiêu chí {$thutu} trước khi cập nhật điểm đánh giá.");
@@ -242,10 +249,22 @@ try {
                         'noidung' => $noidung
                     ];
                 }
+            } else {
+                // INSERT: dòng toàn giá trị rỗng/điểm 0 là hệ quả của việc form submit
+                // mọi tiêu chí, không phải user nhập gì — không tính là thay đổi.
+                if (($diem_danhgia !== null && $diem_danhgia != 0)
+                    || !empty($nguoi_thuchien)
+                    || ($ghichu !== null && $ghichu !== '')
+                ) {
+                    $has_new_data = true;
+                }
             }
         }
     }
-    
+
+    // Có thay đổi thật hay không: quyết định cả việc ghi log lẫn việc có báo cho user.
+    $has_real_change = !empty($all_changes) || $has_new_data;
+
     // Ghi log một lần duy nhất nếu có thay đổi
     if (!empty($all_changes) && $can_log) {
         $change_description = "Thay đổi " . implode(", ", $all_changes);
@@ -338,15 +357,20 @@ try {
     // Commit transaction
     $connect->commit();
     
-    // Chuyển hướng về trang đánh giá với thông báo thành công
-    header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&success=1");
+    // Bấm Lưu mà không sửa gì thì im lặng: chỉ đặt flash khi dữ liệu thực sự đổi.
+    if ($has_real_change) {
+        setIndexdeptFlash('success', 'Đã lưu đánh giá');
+    }
+
+    // URL không mang tham số thông báo, nên F5/back không hiện lại thông báo cũ.
+    header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat);
     exit;
-    
+
 } catch (Exception $e) {
     // Rollback nếu có lỗi
     $connect->rollback();
-    
-    // Chuyển hướng về trang đánh giá với thông báo lỗi
-    header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat . "&error=" . urlencode($e->getMessage()));
+
+    setIndexdeptFlash('error', $e->getMessage());
+    header("Location: " . BASE_URL . "/indexdept.php?dept=" . urlencode($dept) . "&id=" . $id_sanxuat);
     exit;
 }

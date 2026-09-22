@@ -7,6 +7,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 require_once BASE_PATH . '/includes/security/auth-helper.php';
 require_once BASE_PATH . '/includes/security/csrf-helper.php';
+require_once BASE_PATH . '/includes/indexdept/functions.php'; // setIndexdeptFlash()
 requireFeature('edit_settings', 'redirect');
 verifyCsrfOrDie();
 
@@ -26,7 +27,8 @@ if (!isset($_POST['id_sanxuat']) || !isset($_POST['so_ngay_xuly'])) {
     
     // Chuyển hướng về trang indexdept.php nếu có thông tin dept và id_sanxuat
     if (isset($_POST['dept']) && isset($_POST['id_sanxuat'])) {
-        header("Location: indexdept.php?dept=" . urlencode($_POST['dept']) . "&id=" . urlencode($_POST['id_sanxuat']) . "&error=missing_data");
+        setIndexdeptFlash('error', 'Thiếu dữ liệu cần thiết!');
+        header("Location: indexdept.php?dept=" . urlencode($_POST['dept']) . "&id=" . urlencode($_POST['id_sanxuat']));
     } else {
         header("Location: index.php?error=missing_data");
     }
@@ -48,8 +50,8 @@ try {
     // Bắt đầu transaction để đảm bảo tính nhất quán của dữ liệu
     $connect->begin_transaction();
     
-    // Lấy ngày vào từ database
-    $sql = "SELECT ngayin FROM khsanxuat WHERE stt = ?";
+    // Lấy ngày vào + giá trị hạn hiện tại (để biết lần lưu này có đổi gì không)
+    $sql = "SELECT ngayin, so_ngay_xuly, han_xuly FROM khsanxuat WHERE stt = ?";
     $stmt = $connect->prepare($sql);
     $stmt->bind_param("i", $id_sanxuat);
     $stmt->execute();
@@ -59,7 +61,8 @@ try {
         // Không tìm thấy bản ghi
         file_put_contents('update_deadline_debug.log', "Record not found: $id_sanxuat\n", FILE_APPEND);
         $connect->rollback(); // Rollback transaction
-        header("Location: $return_url&error=record_not_found");
+        setIndexdeptFlash('error', 'Không tìm thấy bản ghi!');
+        header("Location: $return_url");
         exit();
     }
     
@@ -71,7 +74,11 @@ try {
     $han_xuly = clone $ngayin;
     $han_xuly->modify("-{$so_ngay_xuly} days");
     $han_xuly_formatted = $han_xuly->format('Y-m-d');
-    
+
+    // So sánh trước khi ghi: submit lại đúng số ngày cũ thì không báo gì cho user.
+    $has_real_change = ((int) $row['so_ngay_xuly'] !== $so_ngay_xuly)
+        || ((string) $row['han_xuly'] !== $han_xuly_formatted);
+
     // Debug: Ghi lại thông tin tính toán chi tiết
     $debug_calc = "Tính toán hạn xử lý chung: Ngày vào ($ngayin_str) - $so_ngay_xuly ngày = Hạn xử lý ($han_xuly_formatted)\n";
     file_put_contents('update_deadline_debug.log', $debug_calc, FILE_APPEND);
@@ -108,20 +115,27 @@ try {
         
         $rows_affected_tieuchi = $stmt_update_tieuchi->affected_rows;
         file_put_contents('update_deadline_debug.log', "Update danhgia_tieuchi SQL: $sql_update_tieuchi (Affected: $rows_affected_tieuchi)\n", FILE_APPEND);
+
+        // Tiêu chí chưa có hạn riêng vừa được điền hạn cũng là một thay đổi thật.
+        if ($rows_affected_tieuchi > 0) {
+            $has_real_change = true;
+        }
     }
     
     // Commit transaction để lưu các thay đổi
     $connect->commit();
     
-    // Chuyển về trang indexdept.php với dept và id tương ứng
-    if (isset($_POST['return_url']) && !empty($_POST['return_url'])) {
-        $final_url = $_POST['return_url'] . "&success=updated";
-    } else {
-        $final_url = "indexdept.php?dept=" . urlencode($dept) . "&id=" . urlencode($id_sanxuat) . "&success=updated";
+    // Thông báo đi qua session flash, không gắn vào URL (F5/back sẽ không hiện lại).
+    if ($has_real_change) {
+        setIndexdeptFlash('success', 'Đã cập nhật hạn xử lý');
     }
+
+    // Chuyển về trang indexdept.php với dept và id tương ứng
+    $final_url = (isset($_POST['return_url']) && !empty($_POST['return_url']))
+        ? $_POST['return_url']
+        : "indexdept.php?dept=" . urlencode($dept) . "&id=" . urlencode($id_sanxuat);
     file_put_contents('update_deadline_debug.log', "Chuyển hướng đến URL mới (update_deadline.php): $final_url\n", FILE_APPEND);
-    
-    // Luôn coi như cập nhật thành công
+
     header("Location: " . $final_url);
     exit();
     
@@ -136,11 +150,10 @@ try {
     file_put_contents('update_deadline_debug.log', $error_message, FILE_APPEND);
     
     // Nếu có lỗi, vẫn chuyển về trang indexdept.php với thông báo lỗi
-    if (isset($_POST['return_url']) && !empty($_POST['return_url'])) {
-        $error_url = $_POST['return_url'] . "&error=" . urlencode($e->getMessage());
-    } else {
-        $error_url = "indexdept.php?dept=" . urlencode($dept) . "&id=" . urlencode($id_sanxuat) . "&error=" . urlencode($e->getMessage());
-    }
+    setIndexdeptFlash('error', $e->getMessage());
+    $error_url = (isset($_POST['return_url']) && !empty($_POST['return_url']))
+        ? $_POST['return_url']
+        : "indexdept.php?dept=" . urlencode($dept) . "&id=" . urlencode($id_sanxuat);
     file_put_contents('update_deadline_debug.log', "Chuyển hướng đến URL lỗi (update_deadline.php): $error_url\n", FILE_APPEND);
     header("Location: " . $error_url);
     exit();

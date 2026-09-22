@@ -6,6 +6,9 @@ require_once __DIR__ . '/bootstrap.php';
 require_once BASE_PATH . '/includes/security/auth-helper.php';
 requireLogin();
 
+// Nạp trước includes/index/config.php để $dept_names bản rút gọn của dashboard vẫn thắng;
+// ở đây chỉ cần $dashboard_dept_config (danh sách bộ phận hiển thị).
+require_once BASE_PATH . '/includes/indexdept/config.php';
 require_once 'includes/index/config.php';
 require_once 'includes/index/functions.php';
 require_once 'includes/security/csrf-helper.php';
@@ -76,16 +79,11 @@ $completion_percent = $stats['completion_percent'];
 $kehoach_percent = $stats['kehoach_percent'];
 $kho_percent = $stats['kho_percent'];
 
-$chart_departments = [
-    'Kế Hoạch' => ['code' => 'kehoach', 'color' => '#FF6384'],
-    'Kho' => ['code' => 'kho', 'color' => '#FFCE56'],
-    'Cắt' => ['code' => 'cat', 'color' => '#4BC0C0'],
-    'Trung Tâm BTP' => ['code' => 'trung_tam_btp', 'color' => '#8B5CF6'],
-    'Kỹ Thuật' => ['code' => 'chuanbi_sanxuat_phong_kt', 'color' => '#36A2EB'],
-    'Cơ Điện' => ['code' => 'co_dien', 'color' => '#9966FF'],
-    'Chuyền May' => ['code' => 'chuyen_may', 'color' => '#14B8A6'],
-    'KCS' => ['code' => 'kcs', 'color' => '#F97316']
-];
+// Bộ phận hiển thị trên dashboard lấy từ nguồn chung $dashboard_dept_config
+$chart_departments = [];
+foreach ($dashboard_dept_config as $dept_code => $dept_info) {
+    $chart_departments[$dept_info['label']] = ['code' => $dept_code, 'color' => $dept_info['color']];
+}
 
 $completion_rates = [];
 foreach ($chart_departments as $dept_name => $info) {
@@ -390,6 +388,18 @@ foreach ($available_months as $month) {
                 </thead>
                 <tbody>
         <?php
+        $departments = [
+            'cat' => 'Cắt',
+            'trung_tam_btp' => 'Trung Tâm BTP',
+            'chuanbi_sanxuat_phong_kt' => 'Kỹ Thuật',
+            'co_dien' => 'Cơ Điện',
+            'chuyen_may' => 'Chuyền May',
+            'kcs' => 'KCS'
+        ];
+
+        // Dong chi to xanh khi moi bo phan CO COT tren bang deu hoan tat (kehoach + kho render rieng)
+        $table_dept_codes = array_merge(['kehoach', 'kho'], array_keys($departments));
+
         $stt = 1;
         foreach ($rows as $row) {
             $ngayin_formatted = date('d/m/Y', strtotime($row['ngayin']));
@@ -399,22 +409,17 @@ foreach ($available_months as $month) {
             $kho_formatted = date('d/m/Y', strtotime(resolveDeptDeadline($deadline_map, $row['stt'], 'kho', $row['ngayin'])));
 
             $kehoach_completed = getDeptStatusFromCache($status_map, $row['stt'], 'kehoach');
-            $chuanbi_completed = getDeptStatusFromCache($status_map, $row['stt'], 'chuanbi_sanxuat_phong_kt');
             $kho_completed = getDeptStatusFromCache($status_map, $row['stt'], 'kho');
-            $cat_completed = getDeptStatusFromCache($status_map, $row['stt'], 'cat');
-            $epkeo_completed = getDeptStatusFromCache($status_map, $row['stt'], 'ep_keo');
-            $codien_completed = getDeptStatusFromCache($status_map, $row['stt'], 'co_dien');
-            $chuyenmay_completed = getDeptStatusFromCache($status_map, $row['stt'], 'chuyen_may');
-            $kcs_completed = getDeptStatusFromCache($status_map, $row['stt'], 'kcs');
-            $ui_completed = getDeptStatusFromCache($status_map, $row['stt'], 'ui_thanh_pham');
-            $hoanthanh_completed = getDeptStatusFromCache($status_map, $row['stt'], 'hoan_thanh');
 
-            $all_completed = $kehoach_completed && $chuanbi_completed && $kho_completed &&
-                            $cat_completed && $epkeo_completed && $codien_completed &&
-                            $chuyenmay_completed && $kcs_completed && $ui_completed &&
-                            $hoanthanh_completed;
+            $all_completed = true;
+            foreach ($table_dept_codes as $table_dept_code) {
+                if (!getDeptStatusFromCache($status_map, $row['stt'], $table_dept_code)) {
+                    $all_completed = false;
+                    break;
+                }
+            }
 
-            $row_class = $all_completed ? 'style="background-color:rgba(107, 243, 141, 0.95);"' : '';
+            $row_class = $all_completed ? 'style="background-color:rgba(107, 243, 141, 0.10);"' : '';
 
             echo "<tr {$row_class}>";
             echo "<td><input type='checkbox' name='selected_rows[]' value='" . intval($row['stt']) . "'></td>";
@@ -461,16 +466,6 @@ foreach ($available_months as $month) {
                 echo "</div>";
             }
             echo "</td>";
-
-            $departments = [
-                'cat' => 'Cắt',
-                'trung_tam_btp' => 'Trung Tâm BTP',
-                'chuanbi_sanxuat_phong_kt' => 'Kỹ Thuật',
-                'co_dien' => 'Cơ Điện',
-                'chuyen_may' => 'Chuyền May',
-                'kcs' => 'KCS'
-
-            ];
 
             foreach ($departments as $dept_code => $dept_name) {
                 $dept_completed = getDeptStatusFromCache($status_map, $row['stt'], $dept_code);

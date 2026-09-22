@@ -7,6 +7,7 @@ requireFeature('edit_settings', 'redirect');
 verifyCsrfOrDie();
 
 require_once BASE_PATH . '/includes/indexdept/config.php';
+require_once BASE_PATH . '/includes/indexdept/functions.php'; // setIndexdeptFlash()
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dept = $_POST['dept'];
@@ -61,15 +62,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("siss", $dept, $thutu, $noidung, $nhom);
         
         if ($stmt->execute()) {
-            // Chuyển hướng về trang trước với thông báo thành công và giữ nguyên id_sanxuat
-            header("Location: " . BASE_URL . "/indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat . "&success=1");
+            // Thêm tiêu chí luôn là thay đổi thật. Thông báo qua session flash chứ không
+            // gắn vào URL, để F5/back không hiện lại thông báo của lần thêm trước.
+            setIndexdeptFlash('success', 'Đã thêm tiêu chí');
+            header("Location: " . BASE_URL . "/indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat);
             exit();
         } else {
             throw new Exception("Lỗi khi thêm tiêu chí");
         }
     } catch (Exception $e) {
         // Chuyển hướng về trang trước với thông báo lỗi và giữ nguyên id_sanxuat
-        header("Location: " . BASE_URL . "/indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat . "&error=1&message=" . urlencode($e->getMessage()));
+        setIndexdeptFlash('error', $e->getMessage());
+        header("Location: " . BASE_URL . "/indexdept.php?dept=" . $dept . "&id=" . $id_sanxuat);
         exit();
     }
 } else {

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
+require_once BASE_PATH . '/includes/display_deadline.php';
 include BASE_PATH . '/components/modal.php';
 require_once BASE_PATH . '/components/form-page.php';
 
@@ -9,64 +10,6 @@ ini_set('display_errors', 1);
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $message = '';
 $error = '';
-
-function calculateDeadline($ngay_vao, $ngay_ra, $ngay_tinh_han, $so_ngay_xuly)
-{
-    if (empty($ngay_vao)) {
-        return null;
-    }
-
-    $deadline = null;
-
-    try {
-        $ngay_vao_date = new DateTime($ngay_vao);
-    } catch (Exception $e) {
-        return null;
-    }
-
-    $ngay_ra_date = null;
-    if (!empty($ngay_ra)) {
-        try {
-            $ngay_ra_date = new DateTime($ngay_ra);
-        } catch (Exception $e) {
-        }
-    }
-
-    switch ($ngay_tinh_han) {
-        case 'ngay_vao':
-            $deadline = clone $ngay_vao_date;
-            $deadline->add(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            break;
-        case 'ngay_vao_cong':
-            $deadline = clone $ngay_vao_date;
-            $deadline->add(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            break;
-        case 'ngay_ra':
-            if ($ngay_ra_date) {
-                $deadline = clone $ngay_ra_date;
-                $deadline->add(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            } else {
-                $deadline = clone $ngay_vao_date;
-                $deadline->add(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            }
-            break;
-        case 'ngay_ra_tru':
-            if ($ngay_ra_date) {
-                $deadline = clone $ngay_ra_date;
-                $deadline->sub(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            } else {
-                $deadline = clone $ngay_vao_date;
-                $deadline->add(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            }
-            break;
-        default:
-            $deadline = clone $ngay_vao_date;
-            $deadline->add(new DateInterval('P' . $so_ngay_xuly . 'D'));
-            break;
-    }
-
-    return $deadline ? $deadline->format('Y-m-d') : null;
-}
 
 function updateDeptDeadlines($connect, $id_sanxuat, $new_ngayin, $new_ngayout)
 {
@@ -108,6 +51,54 @@ function updateDeptDeadlines($connect, $id_sanxuat, $new_ngayin, $new_ngayout)
     return $updated;
 }
 
+/**
+ * Đồng bộ khsanxuat.han_xuly theo tiêu chí bộ phận kehoach.
+ *
+ * Giữ đúng cách import làm (pages/import.php) để hạn chung của đơn hàng không thành dữ liệu cũ
+ * sau khi sửa ngày in — cột này còn được đọc ở indexdept.php, actions/save_danhgia.php và
+ * pages/image_handler.php để gán hạn cho bản ghi đánh giá tạo sau.
+ */
+function syncOrderDeadline($connect, $id_sanxuat)
+{
+    $sql = "SELECT dt.han_xuly, dt.ngay_tinh_han, dt.so_ngay_xuly
+            FROM danhgia_tieuchi dt
+            JOIN tieuchi_dept tc ON dt.id_tieuchi = tc.id
+            WHERE dt.id_sanxuat = ? AND tc.dept = 'kehoach'
+            ORDER BY dt.id
+            LIMIT 1";
+
+    $stmt = $connect->prepare($sql);
+    $stmt->bind_param("i", $id_sanxuat);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+
+    if (!$row || empty($row['han_xuly'])) {
+        return false;
+    }
+
+    $update_sql = "UPDATE khsanxuat SET han_xuly = ?, ngay_tinh_han = ?, so_ngay_xuly = ? WHERE stt = ?";
+    $update_stmt = $connect->prepare($update_sql);
+    $update_stmt->bind_param("ssii", $row['han_xuly'], $row['ngay_tinh_han'], $row['so_ngay_xuly'], $id_sanxuat);
+
+    return $update_stmt->execute();
+}
+
+/**
+ * Đọc ngày từ DB, trả null khi rỗng hoặc '0000-00-00' thay vì để DateTime ném lỗi.
+ */
+function parseOrderDate($value)
+{
+    if (empty($value) || $value === '0000-00-00') {
+        return null;
+    }
+
+    try {
+        return new DateTime($value);
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
 if ($id <= 0) {
     $error = "ID không hợp lệ.";
 } else {
@@ -126,10 +117,16 @@ if ($id <= 0) {
         $style = $item_data['style'];
         $qty = $item_data['qty'];
 
-        $ngayin = new DateTime($item_data['ngayin']);
-        $ngayout = new DateTime($item_data['ngayout']);
-        $ngayin_formatted = $ngayin->format('d/m/Y');
-        $ngayout_formatted = $ngayout->format('d/m/Y');
+        $ngayin = parseOrderDate($item_data['ngayin']);
+        $ngayout = parseOrderDate($item_data['ngayout']);
+
+        if (!$ngayin || !$ngayout) {
+            $error = "Mã hàng ID $id có ngày vào hoặc ngày ra không hợp lệ, không thể sửa ngày.";
+            $item_data = null;
+        } else {
+            $ngayin_formatted = $ngayin->format('d/m/Y');
+            $ngayout_formatted = $ngayout->format('d/m/Y');
+        }
     } else {
         $error = "Không tìm thấy mã hàng với ID: " . $id;
         $item_data = null;
@@ -167,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_date']) && $item_d
 
         if ($update_stmt->execute()) {
             $updated_deadlines = updateDeptDeadlines($connect, $id, $ngayin_string, $ngayout_string);
+            syncOrderDeadline($connect, $id);
 
             $message = "Đã cập nhật ngày, số lượng và LINE thành công!" . ($updated_deadlines > 0 ? " Cập nhật {$updated_deadlines} hạn xử lý của các bộ phận." : "");
 

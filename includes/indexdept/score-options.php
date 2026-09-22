@@ -144,6 +144,17 @@ function getDefaultScoreValueForCriteria($connect, $id_tieuchi, $dept, $thutu) {
     return '0';
 }
 
+/**
+ * Tiêu chí có mốc điểm cấu hình nhưng KHÔNG có mốc 0 thì điểm mặc định (>= 1) là do
+ * hệ thống chấm sẵn, user không thao tác gì. Vì vậy điểm đó không bị ràng buộc ảnh;
+ * mọi mốc khác vẫn phải có ảnh nếu tiêu chí nằm trong required_images_criteria.
+ */
+function isAutoDefaultScore($connect, $id_tieuchi, $dept, $thutu, $score) {
+    $default_score = (float) getDefaultScoreValueForCriteria($connect, $id_tieuchi, $dept, $thutu);
+
+    return $default_score >= 1 && scoreValuesAreEqual($score, $default_score);
+}
+
 function getMaxScoreFromOptions(array $score_options) {
     $max_score = 0;
 

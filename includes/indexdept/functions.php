@@ -162,6 +162,7 @@ function fetchEvaluationRows($connect, $id, $dept, $han_xuly, $han_xuly_formatte
             'is_overdue' => $is_overdue,
             'is_completed' => $is_completed,
             'has_high_default' => $has_high_default,
+            'default_score_value' => $default_score_value,
         ];
     }
 
@@ -207,26 +208,30 @@ function getXuongList($connect) {
     return $connect->query($sql);
 }
 
-function displayMessages() {
-    if (isset($_GET['success'])) {
-        $messages = [
-            'updated' => 'Cập nhật hạn xử lý thành công!',
-            'updated_deadline' => 'Cập nhật hạn xử lý cho tiêu chí thành công!'
-        ];
-        $msg = $messages[$_GET['success']] ?? 'Lưu đánh giá thành công!';
-        echo '<div class="success-message">' . $msg . '</div>';
+/**
+ * Flash message của trang indexdept: action đặt trước khi redirect, trang đọc 1 lần rồi xoá.
+ *
+ * Dùng session chứ KHÔNG dùng query param (?success=): param nằm lại trên URL nên F5,
+ * back/forward hay mở lại link từ lịch sử đều hiện lại thông báo của lần lưu cũ.
+ * Action chỉ gọi hàm này khi dữ liệu thực sự đổi — không đổi thì im lặng.
+ *
+ * $type: 'success' | 'error'
+ */
+function setIndexdeptFlash($type, $msg) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+    $_SESSION['indexdept_flash'] = ['type' => $type, 'msg' => $msg];
+}
 
-    if (isset($_GET['error'])) {
-        $errors = [
-            'not_authorized' => 'Bạn không có quyền thực hiện thao tác này!',
-            'missing_data' => 'Thiếu dữ liệu cần thiết!',
-            'record_not_found' => 'Không tìm thấy bản ghi!',
-            'not_updated' => 'Cập nhật không thành công!'
-        ];
-        $msg = $errors[$_GET['error']] ?? 'Có lỗi xảy ra: ' . htmlspecialchars($_GET['error']);
-        echo '<div class="error-message">' . $msg . '</div>';
+/** Đọc flash và xoá khỏi session. Trả null khi không có. */
+function takeIndexdeptFlash() {
+    if (empty($_SESSION['indexdept_flash'])) {
+        return null;
     }
+    $flash = $_SESSION['indexdept_flash'];
+    unset($_SESSION['indexdept_flash']);
+    return $flash;
 }
 
 function checkMissingFiles($required_files) {

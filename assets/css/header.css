@@ -77,8 +77,11 @@
 }
 
 .header-component .navbar-left img {
-    width: 45px;
+    width: 52px;
     height: auto;
+    border: 0;
+    outline: none;
+    box-shadow: none;
 }
 
 /* ========================================
@@ -806,7 +809,7 @@
     }
 
     .header-component .navbar-left img {
-        width: 38px;
+        width: 44px;
     }
 
     /* Center section takes remaining space */
@@ -858,7 +861,7 @@
    ======================================== */
 @media (max-width: 767.98px) {
     .header-component .navbar-left img {
-        width: 35px;
+        width: 42px;
     }
 
     .header-component .navbar-brand {
@@ -893,7 +896,7 @@
     }
 
     .header-component .navbar-left img {
-        width: 30px;
+        width: 38px;
     }
 
     .header-component .navbar-brand {

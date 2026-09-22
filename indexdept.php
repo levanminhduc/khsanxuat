@@ -144,7 +144,11 @@ $missing_files = checkMissingFiles($required_settings_files);
 </head>
 <body>
 
-<?php displayMessages(); ?>
+<?php
+// Thông báo lưu KHÔNG render ở đây nữa: đọc flash 1 lần rồi đẩy xuống
+// INDEXDEPT_BOOTSTRAP.flash để JS hiện bằng toast góc dưới (xem cuối file).
+$indexdept_flash = takeIndexdeptFlash();
+?>
 <?php displayMissingFilesWarning($missing_files); ?>
 
 <?php
@@ -155,7 +159,7 @@ $header_config = [
     'title' => $dept_display_name,
     'title_short' => 'BỘ PHẬN',
     'logo_path' => 'img/logoht.png',
-    'logo_link' => '/trangchu/',
+    'logo_link' => BASE_URL . '/index.php',
     'show_search' => false,
     'show_mobile_menu' => true,
     'actions' => [],
@@ -227,7 +231,8 @@ window.INDEXDEPT_BOOTSTRAP = {
     totalTieuchi: <?php echo json_encode((int) $total_tieuchi); ?>,
     requiredCriteria: <?php echo json_encode(getRequiredImagesCriteria($connect, $dept)); ?>,
     autoSelectImage: <?php echo json_encode(isset($_REQUEST['autoselect_image']) && $_REQUEST['autoselect_image'] == 1); ?>,
-    autoSelectTieuchiId: <?php echo json_encode(isset($_REQUEST['tieuchi_id']) ? (int) $_REQUEST['tieuchi_id'] : null); ?>
+    autoSelectTieuchiId: <?php echo json_encode(isset($_REQUEST['tieuchi_id']) ? (int) $_REQUEST['tieuchi_id'] : null); ?>,
+    flash: <?php echo json_encode($indexdept_flash); ?>
 };
 </script>
 <!-- indexdept-core.js phải nạp TRƯỚC: nó dựng namespace window.IndexDept và chạy khởi tạo chung -->

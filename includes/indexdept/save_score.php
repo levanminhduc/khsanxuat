@@ -99,8 +99,13 @@ if (!isScoreAllowed($score_options, $diem_danhgia)) {
 $diem_danhgia = (float) $diem_danhgia;
 
 // Kiểm tra hình ảnh bắt buộc
+// Điểm mặc định auto (mốc điểm không có mốc 0) không do user chấm nên miễn kiểm tra ảnh;
+// tiêu chí vẫn nằm trong diện bắt buộc ảnh cho mọi mốc điểm còn lại.
 $required_image_criteria = array_flip(array_map('intval', getRequiredImagesCriteria($connect, $dept)));
-if ($diem_danhgia > 0 && isset($required_image_criteria[$id_tieuchi])) {
+if ($diem_danhgia > 0
+    && isset($required_image_criteria[$id_tieuchi])
+    && !isAutoDefaultScore($connect, $id_tieuchi, $dept, $thutu, $diem_danhgia)
+) {
     if (!checkTieuchiHasImage($connect, $id_sanxuat, $id_tieuchi)) {
         http_response_code(400);
         echo json_encode([
@@ -141,8 +146,11 @@ if (!$stmt->execute()) {
 // Cột diem_danhgia là FLOAT NULL: ép kiểu để bản ghi chưa chấm vẫn ghi log ra "điểm 0".
 $old_score = $exists ? (float) $old_row['diem_danhgia'] : 0.0;
 
+// Cùng một cờ quyết định 2 việc: có ghi activity_log không, và client có toast "Đã lưu" không.
+$changed = ($old_score !== $diem_danhgia);
+
 // Autosave chỉ đổi điểm; người thực hiện/ghi chú giữ nguyên nên cũ & mới dùng chung giá trị.
-if ($old_score !== $diem_danhgia) {
+if ($changed) {
     $nguoi_thuchien = $exists ? $old_row['nguoi_thuchien'] : '';
     $ghichu = $exists ? $old_row['ghichu'] : '';
 
@@ -186,4 +194,4 @@ if ($old_score !== $diem_danhgia) {
     }
 }
 
-echo json_encode(['success' => true, 'message' => 'Đã lưu', 'score' => $diem_danhgia]);
+echo json_encode(['success' => true, 'changed' => $changed, 'message' => 'Đã lưu', 'score' => $diem_danhgia]);

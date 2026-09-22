@@ -22,16 +22,13 @@
         return 'indexdept.php?dept=' + dept + '&id=' + id + '&autoselect_image=1&tieuchi_id=' + encodeURIComponent(tieuchiId);
     }
 
-    // tự ẩn (fade) sau AUTO_HIDE_SUCCESS_MS để không che nội dung.
-    const AUTO_HIDE_SUCCESS_MS = 3000;
-    function autoHideSuccessMessage() {
-        const banner = document.querySelector('.success-message');
-        if (!banner) return;
-        setTimeout(function () {
-            banner.style.transition = 'opacity 0.4s ease';
-            banner.style.opacity = '0';
-            setTimeout(function () { banner.remove(); }, 400);
-        }, AUTO_HIDE_SUCCESS_MS);
+    // Kết quả của lần lưu vừa rồi (form đầy đủ, thêm tiêu chí, đổi hạn xử lý) về
+    // theo INDEXDEPT_BOOTSTRAP.flash sau redirect. PHP chỉ đặt flash khi dữ liệu
+    // thực sự đổi, nên không có flash = không báo gì.
+    function showBootstrapFlash() {
+        const flash = INDEXDEPT_BOOTSTRAP.flash;
+        if (!flash || !flash.msg) return;
+        window._showAutoSaveToast(flash.msg, flash.type === 'error');
     }
 
 
@@ -95,6 +92,22 @@
         return number.toFixed(decimals);
     }
 
+    // Điểm mặc định auto của dòng: mốc điểm cấu hình không có mốc 0 nên hệ thống chấm
+    // sẵn mức >= 1, user chưa thao tác gì. Trả null nếu dòng không thuộc diện đó.
+    // Giá trị lấy từ data-default-score để khớp đúng với isAutoDefaultScore() phía PHP.
+    function getAutoDefaultScore(element) {
+        if (!element) return null;
+        const row = element.closest('tr[data-tieuchi-row]');
+        if (!row) return null;
+        const defaultScore = parseFloat(row.getAttribute('data-default-score'));
+        return (!isNaN(defaultScore) && defaultScore >= 1) ? defaultScore : null;
+    }
+
+    function isAutoDefaultScore(element, score) {
+        const defaultScore = getAutoDefaultScore(element);
+        return defaultScore !== null && Math.abs(score - defaultScore) < 0.00001;
+    }
+
     // Hàm kiểm tra có hình ảnh cho tiêu chí hay không
     function checkImageForTieuchi(tieuchiId, selectElement) {
         console.log("Kiểm tra hình ảnh cho tiêu chí: " + tieuchiId);
@@ -121,6 +134,13 @@
 
                         // Hiển thị cảnh báo và liên kết để upload hình ảnh
                         warningDiv.innerHTML = buildRequiredImageWarning(uploadUrl);
+
+                        // Điểm mặc định auto không do user chấm nên không reset về 0 và
+                        // không khoá mốc điểm; cảnh báo + nút upload vẫn giữ vì tiêu chí
+                        // vẫn bắt buộc ảnh khi user chọn mốc điểm khác.
+                        if (isAutoDefaultScore(selectElement, parseFloat(selectElement.value))) {
+                            return;
+                        }
 
                         // Nếu có điểm > 0, reset về 0
                         if (parseFloat(selectElement.value) > 0) {
@@ -170,7 +190,7 @@
 
     /* ---------- Khởi tạo (core gọi) ---------- */
     ns.initEvaluation = function () {
-        autoHideSuccessMessage();
+        showBootstrapFlash();
 
         // Khởi tạo các select điểm đánh giá
         const diemSelects = document.querySelectorAll('.diem-dropdown');
@@ -283,8 +303,10 @@
                         diemValue = parseFloat(diemSelect.value) || 0;
                     }
 
-                    // Chỉ kiểm tra tiêu chí được đánh giá (điểm > 0)
-                    if (diemValue > 0 && diemValue !== 999) {
+                    // Chỉ kiểm tra tiêu chí được đánh giá (điểm > 0), bỏ qua điểm mặc định
+                    // auto vì server cũng miễn kiểm tra ảnh cho đúng mốc điểm đó.
+                    if (diemValue > 0 && diemValue !== 999
+                        && !isAutoDefaultScore(diemSelect || diemInput, diemValue)) {
                         // Kiểm tra AJAX xem có hình ảnh chưa (sử dụng AJAX đồng bộ để đảm bảo kiểm tra xong trước khi tiếp tục)
                         const xhr = new XMLHttpRequest();
                         xhr.open('GET', buildCheckImageUrl(tieuchiId), false);
@@ -432,7 +454,10 @@ window._autoSaveScore = function(id_tieuchi, diem) {
     .then(function(res) { return res.json(); })
     .then(function(data) {
         if (data.success) {
-            window._showAutoSaveToast('Đã lưu');
+            // data.changed = false khi user chọn lại đúng điểm cũ: không có gì đổi thì không báo.
+            if (data.changed) {
+                window._showAutoSaveToast('Đã lưu');
+            }
         } else {
             window._showAutoSaveToast(data.message || 'Lỗi lưu', true);
             if (data.require_image) {
@@ -457,11 +482,14 @@ window._showAutoSaveToast = function(msg, isError) {
     toast.textContent = msg;
     document.body.appendChild(toast);
 
+    // Lỗi ở lâu hơn: trước đây lỗi hiện bằng banner không tự ẩn, 2s là quá ngắn để đọc kịp.
+    var visibleMs = isError ? 6000 : 2000;
+
     setTimeout(function() { toast.classList.add('autosave-toast--visible'); }, 10);
     setTimeout(function() {
         toast.classList.remove('autosave-toast--visible');
         setTimeout(function() { toast.remove(); }, 300);
-    }, 2000);
+    }, visibleMs);
 };
 
 /* ============================================================

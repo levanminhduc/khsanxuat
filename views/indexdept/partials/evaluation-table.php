@@ -84,6 +84,8 @@
                             $is_overdue = $item['is_overdue'];
                             $is_completed = $item['is_completed'];
                             $has_high_default = $item['has_high_default'];
+                            // JS cần đúng con số này để nhận ra điểm mặc định auto (xem data-default-score)
+                            $default_score_value = $item['default_score_value'];
                             $deadline_class = $is_overdue ? 'overdue' : '';
 
                             // Parse CSV id (tương thích dữ liệu cũ chỉ 1 id)
@@ -122,7 +124,7 @@
                                 $row_classes[] = 'is-note-open';
                             }
                             ?>
-                            <tr class="<?php echo implode(' ', $row_classes); ?>" data-has-default="<?php echo $has_high_default ? '1' : '0'; ?>" data-overdue="<?php echo $is_overdue ? '1' : '0'; ?>" data-tieuchi-row="<?php echo $row['id']; ?>">
+                            <tr class="<?php echo implode(' ', $row_classes); ?>" data-has-default="<?php echo $has_high_default ? '1' : '0'; ?>" data-default-score="<?php echo htmlspecialchars($default_score_value, ENT_QUOTES, 'UTF-8'); ?>" data-overdue="<?php echo $is_overdue ? '1' : '0'; ?>" data-tieuchi-row="<?php echo $row['id']; ?>">
                                 <td><?php echo $row['thutu']; ?></td>
                                 <td class="text-left;">
                                     <span class="tc-stt-inline"><?php echo $row['thutu']; ?></span>

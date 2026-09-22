@@ -14,6 +14,20 @@ $dept_names = [
     'hoan_thanh' => 'BỘ PHẬN HOÀN THÀNH'
 ];
 
+// Nguồn duy nhất định nghĩa các bộ phận ĐƯỢC HIỂN THỊ trên dashboard (tập con của
+// $dept_names, thứ tự = thứ tự cột bảng ở index.php). index.php và
+// pages/incomplete_criteria.php cùng derive từ đây để luôn hiện đúng cùng bộ phận.
+$dashboard_dept_config = [
+    'kehoach'                  => ['label' => 'Kế Hoạch',      'color' => '#FF6384'],
+    'kho'                      => ['label' => 'Kho',           'color' => '#FFCE56'],
+    'cat'                      => ['label' => 'Cắt',           'color' => '#4BC0C0'],
+    'trung_tam_btp'            => ['label' => 'Trung Tâm BTP', 'color' => '#8B5CF6'],
+    'chuanbi_sanxuat_phong_kt' => ['label' => 'Kỹ Thuật',      'color' => '#36A2EB'],
+    'co_dien'                  => ['label' => 'Cơ Điện',       'color' => '#9966FF'],
+    'chuyen_may'               => ['label' => 'Chuyền May',    'color' => '#14B8A6'],
+    'kcs'                      => ['label' => 'KCS',           'color' => '#F97316'],
+];
+
 // Nguồn duy nhất định nghĩa nhóm cho các bộ phận có phân nhóm.
 // Thứ tự khai báo trong mỗi dept = thứ tự sắp xếp hiển thị (1,2,3,...).
 // Thêm/sửa nhóm chỉ cần sửa mảng này; mọi nơi khác derive qua helper bên dưới.
@@ -82,4 +96,14 @@ function getNhomOrderByCase($col = 'tc.nhom') {
 function getValidDepts() {
     global $dept_names;
     return array_keys($dept_names);
+}
+
+function getDashboardDepts() {
+    global $dashboard_dept_config;
+    return array_keys($dashboard_dept_config);
+}
+
+function getDashboardDeptColor($dept) {
+    global $dashboard_dept_config;
+    return $dashboard_dept_config[$dept]['color'] ?? '#333333';
 }

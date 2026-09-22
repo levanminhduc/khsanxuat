@@ -1159,9 +1159,10 @@ select[id^="ngay_tinh_han_"] {
         margin: 0 4px;
     }
 
+    .order-strip__po,
     .order-strip__style {
-        font-weight: 500;
-        color: #475569;
+        font-weight: 600;
+        color: #0f172a;
     }
 
     .order-strip__score {
